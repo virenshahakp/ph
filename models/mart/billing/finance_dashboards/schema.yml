@@ -1,0 +1,56 @@
+version: 2
+
+models:
+  - name: fct_addon_package_daily_paid_accounts_by_dma
+    description: >
+      For each addon package identify the daily number of paid subscribers per DMA.
+    columns:
+      - name: day_of
+        description: The day for which we are reporting the number of paid subscribers.
+      - name: package
+        description: Add-on Package Name
+        tests:
+          - accepted_values:
+              values: [
+                'epix'
+                , 'starz'
+                , 'movie'
+              ]
+      - name: dma_sort
+        description: The sort order we use for displaying the DMAs. This forces "unknown" to be last.
+      - name: dma_code
+        description: Nielsen's three digit code for the DMA.
+      - name: dma_name
+        description: Nielsen's market name.
+      - name: active_paid_total
+        description: >
+          The total number of distinct accounts paying for the package on this day.
+          This reflects the count at midnight at the start of the day.
+          It is inclusive of all billers.
+      - name: active_paid_chargebee_regular_total
+        description: > 
+          The total number of distinct accounts with a chargebee regular paid account on this day.
+          This is for QA purposes the values are already included in active_paid_total.
+      - name: active_paid_chargebee_prorated_total
+        description: > 
+          The total number of distinct accounts with a chargebee prorated paid account on this day.
+          This is for QA purposes the values are already included in active_paid_total.
+      - name: active_paid_stripe_total
+        description: > 
+          The total number of distinct accounts with a stripe (prorated or regular) paid account on this day.
+          This is for QA purposes the values are already included in active_paid_total.     
+      - name: record_id
+        description: A surrogate key used for updating records per package and day.
+
+  - name: fct_addon_package_monthly_paid_accounts_by_dma
+    description: >
+      The number of accounts paying for each add-on package by dma for each month.
+      This is a view on top of the daily data that simply filters to the first day of the month
+      and pivots all months into columns for reporting purposes.
+      There are columns for each month in the data in addition to the columns listed here.
+    columns:
+      - name: month_of
+      - name: package
+      - name: dma_sort
+      - name: dma_code
+      - name: dma_name

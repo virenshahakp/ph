@@ -1,0 +1,142 @@
+version: 2
+
+models:
+  - name: bby_billing_api_prod_activated_source
+    description: >
+      When a subscription is purchased through best buy (either online or in store) 
+      and we generate an activation code and a subscription in waiting to be redeemed at a later time.
+    columns:
+      - name: anonymous_id
+        description: '{{ doc("anonymous_id") }}'
+      - name: activated_at
+        description: A timestamp
+        tests:
+          - not_null
+      - name: bby_contract_number
+        description: '{{ doc("bby_contract_number") }}'
+        tests:
+          - not_null
+      - name: bby_serial_number
+        description: '{{ doc("bby_serial_number") }}'
+      - name: bby_sku
+        description: '{{ doc("bby_sku") }}'
+      - name: bby_store_number
+        description: '{{ doc("bby_store_number") }}'
+      - name: bby_transaction_date
+        description: '{{ doc("bby_transaction_date") }}'
+      - name: bby_price_type
+        description: '{{ doc("bby_price_type") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+  - name: bby_billing_api_prod_cancelled_source
+    description: >
+      When a user has contacted best buy to cancel their subscription, 
+      or the user has entered a failed auth state because their credit card could not be charged.
+    columns:
+      - name: anonymous_id
+        description: '{{ doc("anonymous_id") }}'
+      - name: cancelled_at
+        description: A timestamp
+        tests:
+          - not_null
+      - name: cancel_reason_code
+        description: The cancellation code
+      - name: end_date
+        description: When the contract will end
+      - name: bby_contract_number
+        description: '{{ doc("bby_contract_number") }}'
+        tests:
+          - not_null    
+      - name: bby_serial_number
+        description: '{{ doc("bby_serial_number") }}'
+      - name: bby_sku
+        description: '{{ doc("bby_sku") }}'
+      - name: bby_store_number
+        description: '{{ doc("bby_store_number") }}'
+      - name: bby_transaction_date
+        description: '{{ doc("bby_transaction_date") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+  - name: bby_billing_api_prod_identifies_source
+    description: Identifies to map anonymous_ids (best buy activation code) to user_ids
+    columns:
+      - name: anonymous_id
+        description: The best buy activation code.
+        tests:
+          - not_null
+      - name: account_id
+        description: The Philo user (and account) id
+        tests:
+          - not_null
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+  - name: bby_billing_api_prod_modified_source
+    description: >
+      When a user has contacted best buy to update their subscription, 
+      for example, renew after a pending cancel, 
+      or update credit card after being in failed auth. 
+      In the case where a credit card is expiring, we will report a 
+      modify event and a cancel event on the credit card expiration date. 
+      In the case of turning off auto renew, then we will emit a cancel 
+      event at the end of the billing period.
+    columns:
+      - name: anonymous_id
+        description: '{{ doc("anonymous_id") }}'
+      - name: modified_at
+        description: A timestamp
+        tests:
+          - not_null
+      - name: modify_reason_code
+        description: The cancellation code
+      - name: bby_contract_number
+        description: '{{ doc("bby_contract_number") }}'
+        tests:
+          - not_null    
+      - name: bby_serial_number
+        description: '{{ doc("bby_serial_number") }}'
+      - name: bby_sku
+        description: '{{ doc("bby_sku") }}'
+      - name: bby_store_number
+        description: '{{ doc("bby_store_number") }}'
+      - name: bby_transaction_date
+        description: '{{ doc("bby_transaction_date") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+  - name: bby_billing_api_prod_redeemed_source
+    description: >
+      When a user goes to philo.com to redeem the activation code, 
+      thus tying their subscription "in waiting" to a philo user. 
+      This flow will also produce and identify call that will match 
+      the best buy anonymous_id (activation code) to the 
+      philo user_id of the user who redeemed the subscription.
+    columns:
+      - name: anonymous_id
+        description: '{{ doc("anonymous_id") }}'
+      - name: redeemed_at
+        description: A timestamp
+        tests:
+          - not_null
+      - name: bby_contract_number
+        description: '{{ doc("bby_contract_number") }}'
+        tests:
+          - not_null
+      - name: bby_serial_number
+        description: '{{ doc("bby_serial_number") }}'
+      - name: bby_sku
+        description: '{{ doc("bby_sku") }}'
+      - name: bby_store_number
+        description: '{{ doc("bby_store_number") }}'
+      - name: bby_transaction_date
+        description: '{{ doc("bby_transaction_date") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'        

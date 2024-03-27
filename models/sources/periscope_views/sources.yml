@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: periscope_views
+    database: warehouse
+    schema: periscope_views
+    loader: periscope
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    tables:
+      - name: rno_users_aug_10_2020
+      - name: initial_saves
+      - name: initial_unsaves

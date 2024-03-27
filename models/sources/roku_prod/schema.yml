@@ -1,0 +1,276 @@
+version: 2
+
+models:
+  - name: roku_prod_application_opened_source
+    description: >
+      Appplication opened events, these are indicating the app 
+      was brought into the foreground having been previously opened.
+      The initial application opened on a device is reported as a launch
+      event indicating that the app was not already running in the background.
+    columns:
+      - name: anonymous_id
+        tests:
+          - not_null
+      - name: has_fast_account_request
+        description: > 
+          indicates when an app open was performed by an uncredentialed 
+          FAST user clicking on FAST eligible content (refine)
+  - name: roku_prod_browse_while_watching_activated_source
+    description: captures when browse while watching is activated 
+    columns:
+      - name: event_id
+        description: '{{ doc("event_id") }}'
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: position_ms
+        description: what second the video playback is on
+      - name: original_timestamp
+        description: When the identify event occurred according to roku down to the millisecond
+      - name: anonymous_id
+        description: Segment generated anonymous id
+      - name: environment_analytics_version
+        description: Analytics version 
+      - name: event
+        description: description of event that is triggered 
+      - name: environment_screen_width
+        description: width of device's screen in pixels
+      - name: environment_screen_height
+        description: height of device's screen in pixels
+      - name: timestamp
+        description: When the identify event occurred according to roku
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+      - name: playback_session_id
+        description: unique id for a playback session 
+      - name: sent_at
+        description: when the event was sent to segment according to roku 
+      - name: asset_id
+        description: unique id assigned to an asset
+      - name: trigger
+        description: how browse while watching was activated (which button was clicked to trigger it)
+      - name: hashed_session_id
+        description: ID that tracks a user session which can last an indefinite amount of time. Each time a user signs in they get a new hashed_session_id.
+      - name: asset_type
+        description: type of asset being watched 
+  - name: roku_prod_browse_while_watching_deactivated_source
+    description: captures when browse while watching is activated 
+    columns:
+      - name: event_id
+        description: '{{ doc("event_id") }}'
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: position_ms
+        description: what second the video playback is on
+      - name: original_timestamp
+        description: When the identify event occurred according to roku down to the millisecond
+      - name: anonymous_id
+        description: Segment generated anonymous id
+      - name: environment_analytics_version
+        description: Analytics version 
+      - name: event
+        description: description of event that is triggered 
+      - name: environment_screen_width
+        description: width of device's screen in pixels
+      - name: environment_screen_height
+        description: height of device's screen in pixels
+      - name: timestamp
+        description: When the identify event occurred according to roku
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+      - name: playback_session_id
+        description: unique id for a playback session 
+      - name: sent_at
+        description: when the event was sent to segment according to roku 
+      - name: asset_id
+        description: unique id assigned to an asset
+      - name: hashed_session_id
+        description: ID that tracks a user session which can last an indefinite amount of time. Each time a user signs in they get a new hashed_session_id.
+      - name: asset_type
+        description: type of asset being watched 
+  - name: roku_prod_identifies_source
+    description: Identify events that connect an anonymous id to a Philo user_id
+    columns:
+      - name: anonymous_id
+        description: Segment generated anonymous id
+      - name: user_id 
+        description: '{{ doc("user_id") }}'
+      - name: context_device_advertising_id
+        description: A unique device id managed by the roku device
+      - name: received_at
+        description: Timestamp for when the user was identified
+  - name: roku_prod_launch_source
+    description: Launch events tracked via segment on roku prod
+    columns:
+      - name: anonymous_id
+        tests:
+          - not_null
+      - name: visited_at
+        tests:
+          - not_null
+      - name: has_fast_account_request
+        description: > 
+          when an app launch was performed by an uncredentialed 
+          FAST user clicking on FAST eligible content (refine)
+  - name: roku_prod_message_clicked_source 
+    description: clicked message notification events from roku
+    columns:
+      - name: message_id
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+        tests:
+          - not_null:
+              severity: error
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+        tests:
+          - not_null:
+              severity: error
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: message_external_id
+        description: internally set message id (set on the backend and sent to segment)
+      - name: message_channel
+        description: channel the notification is delivered through
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: message_event
+        description: The type of message that was recorded
+        tests:
+          - accepted_values:
+              values: [
+                'message_clicked'
+              ]
+  - name: roku_prod_message_dismissed_source 
+    description: dismissed message notification events from roku
+    columns:
+      - name: message_id
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+        tests:
+          - not_null:
+              severity: error
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+        tests:
+          - not_null:
+              severity: error
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: message_external_id
+        description: internally set message id (set on the backend and sent to segment)
+      - name: message_channel
+        description: channel the notification is delivered through
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: message_event
+        description: The type of message that was recorded
+        tests:
+          - accepted_values:
+              values: [
+                'message_dismissed'
+              ]
+  - name: roku_prod_message_opened_source 
+    description: opened message notification events from roku
+    columns:
+      - name: message_id
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+        tests:
+          - not_null:
+              severity: error
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+        tests:
+          - not_null:
+              severity: error
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: message_external_id
+        description: internally set message id (set on the backend and sent to segment)
+      - name: message_channel
+        description: channel the notification is delivered through
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: message_event
+        description: The type of message that was recorded
+        tests:
+          - accepted_values:
+              values: [
+                'message_opened'
+              ]
+  - name: roku_prod_message_received_source 
+    description: received message notification events from roku
+    columns:
+      - name: message_id
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+        tests:
+          - not_null:
+              severity: error
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+        tests:
+          - not_null:
+              severity: error
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: message_external_id
+        description: internally set message id (set on the backend and sent to segment)
+      - name: message_channel
+        description: channel the notification is delivered through
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: message_event
+        description: The type of message that was recorded
+        tests:
+          - accepted_values:
+              values: [
+                'message_received'
+              ]
+  - name: roku_prod_player_state_changed_source
+    description: Video playback events that tracked what users watched via segment on roku prod
+  - name: roku_prod_poll_submit_source
+    description: Answers to our how did you hear about us survey
+    columns:
+      - name: event_id
+        description: '{{ doc("event_id") }}'
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+        tests:
+          - not_null
+      - name: poll_name
+        description: The name of the Philo poll answered
+      - name: question
+        description: The question that was displayed to the user
+      - name: answer
+        description: The poll answer selected
+      - name: environment_analytics_version
+        description: Analytics version which indicates what possible answers were available in the poll
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+  - name: roku_prod_screens_source 
+    description: Event fired when a screen loads in the Roku app
+    columns: 
+      - name: anonymous_id
+      - name: device_id
+        description: A unique identifier for the device the screen was requested from 
+      - name: environment_analytics_version
+        description: Analytics version at the time the event was fired
+      - name: event_id
+        description: '{{ doc("event_id") }}'
+      - name: event_timestamp 
+        description: '{{ doc("event_timestamp") }}'
+      - name: hashed_session_id 
+        description: '{{ doc("hashed_session_id") }}'
+      - name: is_bww
+        description: indicator for whether or not the user was in BWW mode at the time when the screen event occurred 
+      - name: screen_name
+        description: A name, typically descriptive, for the screen loaded
+      - name: user_id
+        description: '{{ doc("user_id") }}'

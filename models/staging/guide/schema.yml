@@ -1,0 +1,146 @@
+version: 2
+
+models:
+    - name: guide_broadcasts_stage
+      description: Broadcasts on all channels
+      columns:
+        - name: broadcast_id
+          tests:
+            - not_null
+            - unique
+        - name: asset_id
+          tests:
+            - not_null
+        - name: channel_id
+          tests:
+            - not_null
+        - name: show_id
+          tests:
+            - not_null
+        - name: episode_id
+        - name: is_new
+        - name: is_premiere
+        - name: new_at
+        - name: premiered_at
+        - name: starts_at
+          tests:
+            - not_null
+        - name: ends_at
+          tests:
+            - not_null
+        - name: run_time
+          tests:
+            - not_null
+    - name: guide_channels_stage
+      description: Channels
+      columns:
+        - name: channel_id
+          tests:
+            - not_null
+            - unique
+        - name: asset_id
+          tests:
+            - not_null
+        - name: callsign
+          tests:
+            - not_null
+            - unique
+        - name: channel_name
+          tests:
+            - not_null
+        - name: has_public_view
+        - name: is_premium
+          description: deprecated field, indicated premium channels in EDU product
+        - name: is_free
+          description: Boolean indicating whether a channel is available to watch without a paid subscription. (e.g. FAST)
+    - name: guide_shows_stage
+      description: Shows
+      columns:
+        - name: show_id
+          tests:
+            - not_null
+            - unique
+        - name: asset_id
+          tests:
+            - not_null
+        - name: show_title
+          tests:
+            - not_null
+        - name: content_type
+          tests:
+            - not_null
+        - name: has_public_view
+        - name: is_premium
+        - name: original_air_date
+        - name: is_tmsid_valid
+        - name: is_current
+        - name: is_paid_programming
+          description: Flags content that is of the program type TBA, Paid Programming, or Off Air
+        - name: tms_root_id
+        - name: tms_series_id
+        - name: total_seasons
+        - name: total_episodes
+        - name: root_show_id
+        - name: run_time
+        - name: has_numbered_episodes
+    - name: guide_episodes_stage
+      description: Episodes
+      columns:
+        - name: episode_id
+          tests:
+            - not_null
+        - name: asset_id
+          tests:
+           - not_null
+        - name: episode_title
+          tests:
+            - not_null
+        - name: episode_num
+        - name: orig_air_date
+    - name: guide_recordings_stage
+      description: Recordings
+      columns:
+        - name: recording_id
+          tests:
+            - not_null
+            - unique
+        - name: asset_id
+          tests:
+            - not_null
+        - name: broadcast_id
+          tests:
+            - not_null
+            # LB: removing unique constraint because some new recordings for older
+            # broadcasts where created for extended dvr testing
+            # - unique
+        - name: run_time
+          tests:
+            - not_null
+        - name: asset_type
+    - name: guide_vod_assets_stage
+      description: Video On Demand assets
+      columns:
+        - name: vod_asset_id
+          tests:
+            - not_null
+            - unique
+        - name: asset_id
+          tests:
+            - not_null
+        - name: channel_id
+          tests:
+            - not_null
+        - name: show_id
+          # skip null check as there are VOD assets with no show_id
+        - name: episode_id
+        - name: run_time
+          tests:
+            - not_null
+        - name: asset_type
+          tests:
+            - not_null
+        - name: content_type
+            - not_null
+        - name: license_start
+        - name: license_end
+

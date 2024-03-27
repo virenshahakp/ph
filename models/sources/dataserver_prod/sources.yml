@@ -1,0 +1,31 @@
+version: 2
+
+sources:
+  - name: dataserver_prod
+    database: warehouse
+    schema: dataserver_prod
+    loader: segment
+    loaded_at_field: uuid_ts
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    freshness:
+      warn_after: {count: 8, period: hour}
+      error_after: {count: 24, period: hour}
+
+    tables:
+      - name: channel_favorite
+      - name: channel_unfavorite
+      - name: experiment_viewed
+      - name: message_sent_to_client
+      - name: playback_session_created
+      - name: playback_session_ended
+      - name: search_term
+      - name: scrolled
+        freshness: null # do not check, no events being generated at this time 2024-02-01
+      - name: show_save
+      - name: show_unsave
+      - name: error

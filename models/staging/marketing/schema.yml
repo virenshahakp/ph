@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: marketing_daily_spend_mmm_acquisition_other_stage
+    description: Groups brand and acquistion other channels from daily spend data
+  - name: marketing_daily_spend_mmm_adverity
+    description: Consolided data from the marketing campaign spending collected via Adverity data connectors
+  - name: marketing_daily_spend_mmm_adverity_other
+    description: Consolided data from the marketing campaign spending collected via Adverity data connectors
+  - name: marketing_daily_spend_mmm_facebook
+    description: Facebook ad performance data from reporting API
+  - name: marketing_daily_spend_mmm_google_brand_non_brand
+    descritpion: Google ad performance data from reporting API
+  - name: marketing_daily_spend_mmm_google_other
+    description: Uploaded Google ad performance data for campaigns Performance Max, Discovery, and UAC from daily spend 
+  - name: marketing_daily_spend_mmm_tv
+    desciption: Uploaded Simulmedia spend and impression ad performance
+  - name: marketing_daily_spend_mmm_uploads_excluding_google
+    description: Consolidates spend from uploads and apis from marketing partners 
+  - name: marketing_spend_consolidated_stage
+    description: Consolidates spend from uploads and apis from marketing partners 
+  
+  
+ 
+
+
+
+
+
+  
+  
+
+    
+ 
+  

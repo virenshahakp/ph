@@ -1,0 +1,9 @@
+[sqlfluff]
+warnings = LT05, ST06
+
+[sqlfluff:rules:references.special_chars] #L057
+# Special characters in identifiers
+unquoted_identifiers_policy = all
+quoted_identifiers_policy = all
+allow_space_in_identifier = False
+additional_allowed_characters = "",-

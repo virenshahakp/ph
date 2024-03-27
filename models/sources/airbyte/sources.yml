@@ -1,0 +1,25 @@
+version: 2
+
+sources:
+  - name: airbyte
+    database: warehouse
+    schema: airbyte
+    loader: segment
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    tables:
+      - name: ad_revenue
+      - name: ad_revenue_by_network
+      - name: bestbuy_coupons_redeemed
+      - name: costs
+      - name: daily_spend
+      - name: demand_partner_map
+      - name: media_groups
+      - name: qa_users
+      - name: quality_of_experience_benchmarks
+      - name: rev_per_hour
+      - name: demand_partner_diversity_map

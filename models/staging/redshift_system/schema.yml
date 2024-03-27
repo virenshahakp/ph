@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: query_history_stage
+    description: >
+      {{ doc("query_history") }}
+  - name: query_metrics_stage
+    description: >
+      {{ doc("query_metrics") }}
+  - name: stl_scan_stage
+    description: >
+      {{ doc("stl_scan") }}
+  - name: svv_table_info_stage
+    description: >
+      {{ doc("table_info") }}
+  - name: ungranted_locks_stage
+    description: >
+      {{ doc("ungranted_locks") }}
+   

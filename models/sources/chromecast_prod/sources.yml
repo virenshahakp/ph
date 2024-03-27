@@ -1,0 +1,29 @@
+version: 2
+
+sources:
+  - name: chromecast_prod
+    database: warehouse
+    schema: chromecast_prod
+    loader: segment
+    loaded_at_field: uuid_ts
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    freshness:
+      warn_after: {count: 8, period: hour}
+      error_after: {count: 24, period: hour}
+
+    tables:
+      - name: identifies
+      - name: launch
+      - name: player_state_changed
+      - name: stream_start
+      - name: stream_end
+      - name: stream_error
+      - name: rebuffering_start
+      - name: rebuffering_end
+      - name: pages
+        freshness: null # don't check, rare on chromecast

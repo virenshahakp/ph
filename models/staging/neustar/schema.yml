@@ -1,0 +1,40 @@
+version: 2
+
+models:
+    - name: neustar_persons_stage
+      description: grouping of persons data based on account_id
+      columns:
+        - name: account_id
+          description: account asscoiated with this entry
+        - name: males
+          description: number of males in the household
+        - name: females
+          description: number fo females in the household
+        - name: account_id
+          description: account asscoiated with this entry
+        - name: males
+          description: number of males in the household
+        - name: females
+          description: number of females in the household
+    - name: neustar_households_stage
+      description: grouping of persons household data based on account_id
+      columns:
+        - name: account_id
+          description: account asscoiated with this entry
+        - name: homeowner
+          description: house ownership asscoiated with the household
+        - name: demographic_people_in_household
+          description: total number of people in the household
+        - name: composition
+          description: The composition of thw hohusehold
+        - name: income_narrow
+          description: an income representation of the household
+    - name: neustar_household_summary_stage
+      description: grouping of persons gender data based on account_id
+      columns:
+        - name: account_id
+          description: account asscoiated with this entry
+        - name: males
+          description: number of males in the household
+        - name: females
+          description: number fo females in the household

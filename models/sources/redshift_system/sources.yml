@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: system
+    database: warehouse
+    schema: pg_catalog
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    tables:
+      - name: sys_query_history
+      - name: svl_query_metrics_summary
+      - name: stl_query
+      - name: stl_scan
+      - name: svv_table_info
+      - name: pg_locks
+      - name: svv_transactions
+      - name: pg_class
+      - name: pg_namespace

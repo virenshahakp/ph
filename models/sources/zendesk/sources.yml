@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: zendesk
+    database: warehouse
+    schema: zendesk
+    loader: rails
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    tables:
+      - name: zd_agents

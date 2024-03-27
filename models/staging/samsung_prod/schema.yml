@@ -1,0 +1,220 @@
+version: 2
+
+models:
+  - name: samsung_prod_pages_stage
+    description: Pages events tracked via segment on the samsung app
+    columns: 
+      - name: anonymous_id
+        description: '{{ doc("anonymous_id") }}'
+        tests:
+          - not_null
+      - name: context_user_agent_id
+        description: A md5 hash of the user agent, to be used in user agent attribute lookups
+      - name: device_id
+        description: A unique identifier for the device the screen was requested from 
+      - name: environment_analytics_version
+        description: '{{ doc("environment_analytics_version") }}'
+      - name: event_id
+        description: '{{ doc("event_id") }}'
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: screen_name
+        description: A name, typically descriptive, for the screen loaded
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: visited_at 
+        description: The timestamp the event was received by Segment's tracking service.
+        tests:
+          - not_null
+  - name: samsung_prod_player_state_changed_boundaries_stage
+    description: Player state changed records annotated with boundary flags and validation attributes
+    columns:
+      - name: event_id
+        description: Segment generated event id
+      - name: user_id
+        description: >
+          {{ doc("user_id") }}
+          The user (profile) that watched this asset.
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+      - name: asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: timestamp
+        description: '{{ doc("timestamp") }}'
+      - name: delay
+        description: >
+          The number of seconds the user is watching behind live; this should be
+          null when the asset is not live.
+      - name: hashed_session_id
+        description: '{{ doc("hashed_session_id") }}'
+      - name: context_ip
+        description: '{{ doc("context_ip") }}'
+      - name: bitrate
+        description: Always null as derived tables did not send this information.
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+      - name: position_start
+        description: '{{ doc("position_start") }}'
+      - name: position_stop
+        description: '{{ doc("position_stop") }}'
+      - name: action
+        description: Player action for this event (start, stop, sync)
+      - name: position_duration_seconds
+        description: The elapsed duration from the playback positions
+      - name: watched_range_timestamp_duration_seconds
+        description: The elapsed duration from the timestamps of the start and end of this range
+      - name: is_starting_event
+        description: Indicator for the starting event of a watched range
+      - name: is_ending_event
+        description: Indicator for the ending event of a watched range
+      - name: previous_action
+        description: The action for the previous event in this range
+      - name: previous_timestamp
+        description: The timestamp for the previous event in this range
+      - name: next_action
+        description: The action for the next event in this range
+      - name: next_timestamp
+        description: The timestamp for the next event in this range
+      - name: watched_range_start_at
+        description: Client timestamp for the first event in this range
+      - name: watched_range_end_at
+        description: Client timestamp for the last event in this range      
+      - name: has_reporting_delay
+        description: Did this event come more than 310 seconds after the last event?
+      - name: has_position_start_jump
+        description: Is this position start different than the previous value by more than 10 seconds?
+      - name: has_position_stop_jump
+        description: Is this position stop more than 310 seconds after the last position stop event?
+      - name: played_asset_reporting_delay_count
+        description: The number of events in this range with a reporting delay
+      - name: played_asset_position_start_jump_count
+        description: The number of events in this range with a start jump
+      - name: played_asset_position_stop_jump_count
+        description: The number of events in this range with a stop jump      
+      - name: played_asset_total_event_count
+        description: The total number of events in this range
+      - name: dbt_processed_at 
+        description: '{{ doc("dbt_processed_at") }}'
+  - name: samsung_prod_time_to_stream_start
+    description: Counts the number of seconds between an app being launched and the first stream start
+    columns: 
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: platform
+        description: Platform on which this stream was played
+      - name: open_date
+        description: the date on which the app was opened
+      - name: open_time
+        description: time when the app was opened
+      - name: time_to_stream_start
+        description: seconds from app launch to first stream start
+  - name: samsung_prod_watched_ranges_stage
+    description: Continuous ranges of watching an asset
+    columns:
+      - name: event_id
+        description: Segment generated event id
+      - name: user_id
+        description: >
+          {{ doc("user_id") }}
+          The user (profile) that watched this asset.
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+      - name: asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: requested_asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: played_asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: timestamp_start
+        description: The timestamp, from the client, the user first started watching the range.
+      - name: timestamp
+        description: The timestamp, from the client, indicating the end of the watched range.
+      - name: delay
+        description: >
+          The number of seconds the user is watching behind live; this should be
+          null when the asset is not live.
+      - name: hashed_session_id
+        description: '{{ doc("hashed_session_id") }}'
+      - name: context_ip
+        description: '{{ doc("context_ip") }}'
+      - name: bitrate
+        description: Always null as derived tables did not send this information.
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+      - name: position_start
+        description: '{{ doc("position_start") }}'
+      - name: position_stop
+        description: '{{ doc("position_stop") }}'
+      - name: action
+        description: Player action that ended the event range
+      - name: position_duration_seconds
+        description: The elapsed duration from the playback positions
+      - name: watched_range_timestamp_duration_seconds
+        description: The elapsed duration from the timestamps of the start and end of this range
+      - name: watched_seconds
+        description: The minimum of position changes and timestamp differences
+      - name: dbt_processed_at 
+        description: '{{ doc("dbt_processed_at") }}'
+  - name: samsung_prod_debug_stage
+    description: Debug events from the Samsung platform
+    columns:
+      - name: event_id
+        description: '{{ doc("event_id") }}'
+      - name: event_name
+        description: Descriptive name describing the type of event that occurred.
+      - name: user_id
+        description: >
+          {{ doc("user_id") }}
+          The user (profile) that watched this asset.
+      - name: anonymous_id
+        description: '{{ doc("anonymous_id") }}'
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+      - name: environment_analytics_version
+        description: '{{ doc("environment_analytics_version") }}'
+      - name: environment_os_version
+        description: '{{ doc("environment_os_version") }}'
+      - name: environment_app_version
+        description: '{{ doc("environment_app_version") }}'
+      - name: event_timestamp
+        description: The time the event was recorded at.
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+      - name: original_timestamp
+        description: The timestamp, from the client, indicating the time the event was recorded at.
+      - name: context_ip
+        description: '{{ doc("context_ip") }}'
+      - name: context_page_referrer
+        description: '{{ doc("context_page_referrer") }}'
+      - name: context_user_agent
+        description: '{{ doc("context_user_agent") }}'
+      - name: context_user_agent_id
+        description: An MD5 hash of the user agent 
+      - name: context_page_path
+        description: '{{ doc("context_page_path") }}'
+      - name: context_page_url
+        description: '{{ doc("context_page_url") }}'
+      - name: device_used_jsheap_size
+        description: The amount of the device's memory (in bytes) being used for the JS heap
+      - name: device_tizen_cpuload
+        description: The amount of load on the device's CPU 
+      - name: device_total_jsheap_size
+        description: The amount of the device's memory (in bytes) being allocated to the JS heap
+      - name: device_js_heap_size_limit
+        description: The maximum amount of the device's memory (in bytes) that can be allocated to the JS heap
+      - name: device_tizen_memory_status
+        description: String describing if memory status is normal or otherwise.
+      - name: gap_size
+        description: The gap (in seconds) between the start and end of the event
+      - name: position
+        description: The position (in seconds) in the asset the event occured at.
+      - name: dbt_processed_at 
+        description: '{{ doc("dbt_processed_at") }}'

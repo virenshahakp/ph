@@ -1,0 +1,30 @@
+bidrequest_site_id,publica_channel,client_type
+927,tvOS,tvos_tv
+1693,Android TV,android_tv
+4609,iOS,ios_phone
+4610,Android Mobile,android_phone
+4611,Desktop,web_desktop
+4612,Roku,roku_tv
+4613,Fire TV,fire_tv
+4614,Fire Tablet,fire_tablet
+4615,Chromecast,chromecast
+8412,Roku - Viacom fallback,roku_tv
+8422,Desktop - Viacom fallback,web_desktop
+9159,tvOS - Viacom Fallback,tvos_tv
+9502,Android Mobile - Viacom fallback,android_phone
+9503,Android TV - Viacom fallback,android_tv
+9504,Chromecast - Viacom fallback,chromecast
+9505,Fire Tablet - Viacom fallback,fire_tablet
+9506,Fire TV - Viacom fallback,fire_tv
+9507,iOS - Viacom fallback,ios_phone
+10902,Desktop - A&E Fallback,web_desktop
+12171,FireTV - A&E Fallback,fire_tv
+12172,Android Mobile - A&E Fallback,android_phone
+12173,AndroidTV  - A&E Fallback,android_tv
+12174,Chromecast - A&E Fallback,chromecast
+12175,Fire Tablet - A&E Fallback,fire_tablet
+12176,iOS - A&E Fallback,ios_phone
+12177,Roku - A&E Fallback,roku_tv
+12178,tvOS - A&E Fallback,tvos_tv
+20128,Roku- Staging Test May 2022,roku_tv
+23697,SamsungTV,samsung_tv

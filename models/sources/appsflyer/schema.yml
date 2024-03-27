@@ -1,0 +1,21 @@
+version: 2
+
+models:
+    - name: appsflyer_amazon_installs_source
+      description: Amazon install events tracked via appsflyer
+      columns:
+        - name: context_device_advertising_id
+          tests:
+            - not_null
+    - name: appsflyer_google_installs_source
+      description: Google install events tracked via appsflyer
+      columns:
+        - name: context_device_advertising_id
+          tests:
+            - not_null
+    - name: appsflyer_ios_installs_source
+      description: Apple IOS install events tracked via appsflyer
+      columns:
+        - name: context_device_advertising_id
+          tests:
+            - not_null

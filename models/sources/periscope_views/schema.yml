@@ -1,0 +1,8 @@
+version: 2
+
+models:
+  - name: periscope_views_initial_saves_source
+    description: CSV file that was loaded through periscope for data not captured in segment
+  - name: periscope_views_initial_unsaves_source
+    description: CSV file that was loaded through periscope for data not captured in segment  
+  - name: periscope_views_rno_account_list_source

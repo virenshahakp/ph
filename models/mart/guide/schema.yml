@@ -1,0 +1,227 @@
+version: 2
+
+models:
+    - name: dim_channel_episodes
+      description: >
+        Guide data for all of the combination of content distributed on a channel. This is an aggregation above the asset level,
+        but duplicated across channels if a particular piece of content has been broadcast on multiple channels.
+        This does not differentiate VOD assets from broadcasts.
+      columns:
+        - name: asset_id
+          description: Unique identifier for assets
+        - name: asset_type
+          description: Despription of type of an asset
+        - name: license_start
+          description: Date when license is first available
+        - name: license_end
+          description: Date when license ends
+        - name: channel_id
+          description: Unique identifier for a channel
+        - name: channel_callsign
+          description: '{{ doc("channel_callsign") }}'
+        - name: channel_name
+          description: '{{ doc("channel_name") }}'
+        - name: tms_series_id
+          description: '{{ doc("tms_series_id") }}'
+        - name: show_title
+          description: '{{ doc("show_title") }}'
+        - name: show_id
+          description: '{{ doc("show_id") }}'
+        - name: episode_title
+          description: '{{ doc("episode_title") }}'
+        - name: episode_id
+          description: '{{ doc("episode_id") }}'
+        - name: original_air_date
+          description: The date this content was first broadcast (not the first broadcast on Philo)
+        - name: content_type
+          description: An indication of whether the content is a show, movie or unknown (null).
+        - name: is_premium
+          description: (Deprecated - EDU field) Is this a premium channel?
+        - name: is_free
+          description: Is this a free (FAST) channel?
+        - name: has_public_view
+          description: Is this a publicly viewable piece of content?
+        - name: root_show_id
+          description: A reference to another show in the series if there are multiple.
+        - name: philo_series_id  
+          description: '{{ doc("philo_series_id") }}'
+        - name: show_episode_id
+          description: '{{ doc("show_episode_id") }}'
+        - name: channel_episode_id
+          description: '{{ doc("channel_episode_id") }}'
+        - name: show_run_time
+          description: The duration of the show or movie.
+        - name: series_title
+          description: Title of a series.
+        - name: run_time
+          description: The length of the asset in seconds.
+    - name: dim_channels
+      description: Channels for which we have show and guide data.
+      columns:
+        - name: channel_id
+          description: Unique identifier for a channel
+        - name: channel_callsign
+          description: '{{ doc("channel_callsign") }}'
+        - name: channel_name
+          description: '{{ doc("channel_name") }}'
+        - name: has_public_view
+          description: Is this a publicly viewable piece of content?
+        - name: is_premium
+          description: (Deprecated - EDU) Is this a premium channel?
+        - name: is_free
+          description: Is this a free (FAST) channel?          
+        - name: media_group
+          description: What media group owns the channel?
+    - name: dim_episodes
+      description: Episodes information such as name, id, number.
+      columns:
+        - name: episode_id
+          description: Episode identification numnber
+          tests:
+            - unique
+        - name: episode_title
+          description: Title of episode.
+        - name: episode_number
+          description: Number of episode in a series.
+    - name: dim_guide_metadata
+      description: Live, recording, and VOD assets all in one table searchable by asset_id.
+      columns:
+        - name: asset_id
+          description: '{{ doc("asset_id") }}'
+          tests:
+            - not_null
+        - name: asset_type
+          description: Indicates if the asset aired on a live channel, recording, or VOD.
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['CHANNEL', 'RECORDING', 'VOD']
+        - name: channel_id
+          description: Philo unique identifier for the channel
+          tests:
+            - not_null
+        - name: channel_callsign
+          description: The callsign for the channel
+          tests:
+            - not_null
+        - name: channel_name
+          description: Channel name that aired the asset.
+          tests:
+            - not_null
+        - name: show_id
+          description: Show id taken from the Rails database.
+        - name: show_title
+          description: Show title. Movies and specials are also called "shows".
+        - name: episode_id
+          description: >
+            Episode id taken from the Rails database. This can be null for
+            movies and specials.
+        - name: episode_title
+          description: Episode title. This can be null for movies and specials.
+        - name: run_time
+          description: The length of the asset in seconds.
+        - name: license_start
+          description: The start date of the license for VOD content.
+        - name: license_end
+          description: The end date of the license for VOD content
+        - name: original_air_date
+          description: The origianl date an episode was released to broadcast.
+        - name: is_premiere
+          description: Indicates if a movie or show is a premiere.
+        - name: is_new
+          description: Identfies a if a show episode is new
+        - name: premiered_at
+          description: Date a show premieres
+        - name: new_at
+          descrition: Date new show plays
+        - name: show_status 
+          description: Indicates if a show or movie is rebroadcast, new, or premiere.
+        - name: content_type
+          description: Indicates if content is either a movie or tv show.
+        - name: has_public_view
+          description: Content is part of generally available channel lineup.
+        - name: is_premium
+          description: (Deprecated - EDU field) Content is premium and requires payment.
+        - name: is_free
+          description: Is this content on a free (FAST) channel?
+        - name: root_show_id
+          description: The reported show root id, to connect shows that are duplicated in the metadata.
+        - name: show_run_time
+          description: The duration of the show or movie.
+        - name: tms_series_id
+          description: Another id that can be used to unify records that are truly the same content.
+        - name: has_audio_description
+          description: Whether an asset has audio descriptions available 
+    - name: dim_show_episodes
+      description: >
+        Guide data for all of the combinations of content distributed across our channels. 
+        This is an aggregation above the asset by channel level (dim_channel_episodes). 
+        This does not differentiate VOD assets from broadcasts.
+      columns:
+        - name: tms_series_id
+          description: '{{ doc("tms_series_id") }}'
+        - name: show_title
+          description: '{{ doc("show_title") }}'
+        - name: show_id
+          description: '{{ doc("show_id") }}'
+        - name: episode_title
+          description: '{{ doc("episode_title") }}'
+        - name: episode_id
+          description: '{{ doc("episode_id") }}'
+        - name: original_air_date
+          description: The origianl date an episode was released to broadcast. (Not first broadcast on Philo)
+        - name: content_type
+          description: Indicates if content is either a movie or tv show.
+        - name: root_show_id
+          description: A reference to a parent show id if one exists in the guide data.
+        - name: show_run_time
+          description: The duration of the show or movie.
+        - name: philo_series_id
+          description: '{{ doc("philo_series_id") }}'
+        - name: show_episode_id
+          description: '{{ doc("show_episode_id") }}'
+        - name: has_public_view
+          description: Is there an instance of this episode or movie that has been on a publicly available channel?
+    - name: dim_shows
+      description: A table of extended show attributes, beyond the set that are typically needed in the guide metadata.
+      columns:
+        - name: show_id
+          tests:
+            - not_null
+            - unique
+        - name: asset_id
+          tests:
+            - not_null
+        - name: show_title
+          tests:
+            - not_null
+        - name: content_type
+          tests:
+            - not_null
+        - name: has_public_view
+        - name: is_premium
+        - name: original_air_date
+        - name: is_tmsid_valid
+        - name: is_current
+        - name: is_paid_programming
+          description: Flags content that is of the program type TBA, Paid Programming, or Off Air
+        - name: tms_root_id
+        - name: tms_series_id
+        - name: total_seasons
+        - name: total_episodes
+        - name: root_show_id
+        - name: run_time
+        - name: has_numbered_episodes
+    - name: fct_guide_genre_shows
+      description: table used to identify content genre
+      columns:
+        - name: genre_id
+          description: id of genre
+        - name: genre_name
+          descripton: name of show genre
+        - name: show_id
+          description: id of show
+        - name: created_at
+          description: date when the show was added to the guide
+        - name: updated_at
+          description: date when meta data about the show was last updated

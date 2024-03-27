@@ -1,0 +1,113 @@
+version: 2
+
+models:
+    - name: facebook_ads_ads_source
+      description: Ad performance date from the Facebook reporting API
+      columns:
+        - name: ad_id
+          description: Ad ID
+          tests:
+            - not_null
+        - name: received_at
+          description: Date Segment recieved data
+          tests:
+            - not_null
+        - name: uuid
+          description: Segment's universally unique identifier is a 128-bit label for data events
+        - name: utm_medium
+          description: Ad type used
+        - name: bid_amount
+          description: Amount spent given an optimization goal
+        - name: url_parameters
+          description: The list of mappings used to substitute custom parameter tags in a tracking_url_template, final_urls, or mobile_final_urls.
+        - name: campaign_name
+          description: Campaign's name
+        - name: status
+          description: Status of ad campaign such as active or paused
+        - name: utm_campaign
+          description: URL code which describes campaign
+        - name: uuid_ts
+          description: Segment's universally unique identifier and the epoch timestamp when the event was created, in milliseconds - events must be sent as soon as possible, as events created more than 3 hours before the current time are rejected.
+        - name: adset_id
+          description: The unique ID of the ad set you're viewing in reporting. An ad set is a group of ads that share the same budget, schedule, delivery optimization and targeting.
+        - name: bid_type
+          description: Identifies type of bid
+        - name: utm_content
+          description: URL code that provides content name
+        - name: utm_term
+          description: URL code used to describe search o keyword or term used for ad
+        - name: account_id
+          description: ID of the ad account that owns this campaign
+        - name: campaign_id
+          description: ID of campaign
+        - name: utm_source
+          description: URL code added to identify the source of the URL
+    - name: facebook_ads_campaigns_source
+      description: Campaign specific data from Facebook report
+      columns:
+        - name: campaign_id
+          description: Campaign's ID
+          tests:
+            - not_null
+        - name: received_at
+          description: Date Segment recieved data
+          tests:
+            - not_null
+        - name: uuid
+          description: Segment's universally unique identifier is a 128-bit label for data events
+        - name: campaign_name
+          description: Name of ad campaign
+        - name: spend_cap
+          description: A spend cap for the campaign, such that it will not spend more than this cap. Expressed as integer value of the subunit in your currency.
+        - name: account_id
+          description: ID of the ad account that owns this campaign
+        - name: effective_status
+          description: IN_PROCESS is available for version 4.0 or higher
+        - name: start_time
+          description: Merging of start_times for the ad sets belonging to this campaign. 
+        - name: uuid_ts
+          description: Unique user ID and the epoch timestamp when the event was created, in milliseconds events must be sent as soon as possible, as events created more than 3 hours before the current time are rejected.
+        - name: buying_type
+          description: Buying type, possible values are auction = default and reserved for reach and frequency ads.
+    - name: facebook_ads_insights_source
+      description: Ad specific data from Facebook report
+      columns:
+        - name: campaign_id
+          description: Campaign id assigned to each paid campaign
+          tests:  
+            - not_null
+        - name: received_at
+          description: Date Segment received data
+          tests: 
+            - not_null
+        - name: uuid
+          description: Segment's universally unique identifier is a 128-bit label for data events
+        - name: date_stop
+          description: The end date for your data.
+        - name: unique_impressions
+          description: Indicates that the metric shows the number of unique users who performed a specific action
+        - name: ad_id
+          description: The unique ID of the ad you're viewing in reporting.
+        - name: date_start
+          description: The start date for your data. 
+        - name: frequency
+          description: The average number of times each person saw your ad. This metric is estimated.
+        - name: reach
+          description: The number of people who saw your ads at least once. Reach is different from impressions, which may include multiple views of your ads by the same people. This metric is estimated.
+        - name: social_spend
+          description: The total amount you've spent so far for your ads showed with social information such as someone's name.
+        - name: clicks
+          description: The number of clicks on your ads.
+        - name: inline_post_engagements
+          description: The total number of actions that people take involving your ads. Inline post engagements use a fixed 1-day-click attribution window.
+        - name: link_clicks
+          description: The number of clicks on ad links to select destinations or experiences, on or off Facebook-owned properties.
+        - name: uuid_ts
+          descritpion: Segment's universally unique identifier and the epoch timestamp when the event was created, in milliseconds - events must be sent as soon as possible, as events created more than 3 hours before the current time are rejected.
+        - name: impressions
+          description: The number of times your ads were on screen.
+        - name: unique_clicks
+          description: Indicates that the metric shows the number of unique users who performed a specific action.
+        - name: spend
+          description: The estimated total amount of money you've spent on your campaign, ad set or ad during its schedule. This metric is estimated.
+      

@@ -1,0 +1,172 @@
+version: 2
+
+models:
+  - name: rails_prod_account_created_fast_stage
+    description: account with access only to fast content is created 
+    columns: 
+      - name: signup_source
+        description: a string to indicate attribution of where the user signed up from 
+        test: 
+        - accepted_values:
+            values: [
+              'FAST 1.5'
+              ]
+  - name: rails_prod_account_created_paid_stage
+    description: account with access only to fast content is created 
+    columns: 
+      - name: signup_source
+        description: a string to indicate attribution of where the user signed up from
+  - name: rails_prod_account_created_stage
+    description: account with access only to fast content is created 
+    columns: 
+      - name: signup_source
+        description: a string to indicate attribution of where the user signed up from
+  # may want to add a test for "paid" account created. May require knowing all other options for source.
+  - name: rails_prod_addon_subscription_range_stage
+    description: >
+      With the introduction of addons, each with an independent trial, and proration (used to cover
+      costs for content access granted until a user's next, regularly scheduled bill), the "typical"
+      sequence is to go from trial, to proration, to paid phases. But users can cancel at an point.
+
+      This view is intended to create "tenure" records describing a contiguous set of phases which
+      match one of the following sequences. Note that proration and paid phases will have to be
+      contiguous, as there is natural flow from one (pre-bill) to the other (post-bill). However,
+      there is no requirement that trials necessarily flow into proration, so trial ranges are treated
+      a bit differently than the content ranges (proration and paid) for which content costs are due.
+
+      NOTE: Case 5, 6, and 7 are just case 2, 3, and 4 with a contiguous, leading trial. This fact
+            is leveraged below in how content ranges (proration and paid) are joined to trials.
+
+      Case #1 Trial only
+        |--- trial ---|    (trial completed); phase: "churned"
+        |--- trial --->    (active trial);    phase: "trial"
+
+      Case #2 Trial and Proration
+        |--- trial ---|--- proration ---|    (trial completed, proration completed); phase: "churned"
+        |--- trial ---|--- proration --->    (trial completed, active proration);    phase: "proration"
+
+      Case #3 Trial, Proration, and Paid
+        |--- trial ---|--- proration ---|--- paid ---|    (trial completed, proration completed, paid completed); phase: "churned"
+        |--- trial ---|--- proration ---|--- paid --->    (trial completed, proration completed, active paid);    phase: "billed"
+
+      Case #4 Trial and Paid
+        |--- trial ---|--- paid ---|    (trial completed, paid completed); phase: "churned"
+        |--- trial ---|--- paid --->    (trial completed, active paid);    phase: "billed"
+
+      Case #5 Proration only
+        |--- proration ---|    (proration completed); phase: "churned"
+        |--- proration --->    (active proration);    phase: "proration"
+
+      Case #6 Proration and Paid
+        |--- proration ---|--- paid ---|    (proration completed, paid completed); phase: "churned"
+        |--- proration ---|--- paid --->    (proration completed, active paid);    phase: "billed"
+
+      Case #7 Paid only
+        |--- paid ---|    (paid completed); phase: "churned"
+        |--- paid --->    (active paid);    phase: "billed"
+    columns:
+      - name: package
+        description: String to indicate an individual package (plan or addon) added to the account
+        tests:
+        - accepted_values:
+            values: "{{ var('addon_accepted_values') }}"
+        - dbt_utils.at_least_one
+  - name: rails_prod_fsm_state_changed_stage
+    description: A record for each time the billing state aka subscriber_state of an account changes.
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: subscriber_billing
+        description: '{{ doc("subscriber_billing") }}'
+      - name: subscriber_state
+        description: '{{ doc("subscriber_state") }}'
+      - name: state_started_at
+        description: When the fsm state changed to this subscriber state value.
+      - name: state_ended_at
+        description: When the user fsm state changed from this subscriber state value to a new value.
+      - name: is_active
+        description: Is this the currently active user state? (equivalent to state_ended_at is null)
+  - name: rails_prod_message_sent_stage
+    description: notification events to platforms that include sent messages
+    columns:
+      - name: message_id
+        description: unique id of message event
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: message_external_id
+        description: internally set message id (set on the backend and sent to segment)
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: loaded_at
+      - name: event_timestamp
+        description: time of event set by client's internal clock 
+        tests:
+          - not_null:
+              severity: error
+      - name: message_event
+        description: The type of message that was recorded
+        tests:
+          - accepted_values:
+              values: [
+                'message_sent'
+              ]
+      - name: message_channel
+        description: channel message wast sent through
+        tests:
+          - not_null:
+              severity: warn
+      - name: message_type
+        description: type of message sent
+      - name: message_name
+        description: name of message
+      - name: answers
+        description: Answer from an inApp notifications such as the welcome survey
+      - name: braze_campaign_id
+        description: braze campaign id
+      - name: braze_canvas_id
+        description: braze canvas id
+      - name: braze_step_id
+        description: braze set id
+      - name: braze_variant_id
+        description: braze variant id 
+      - name: dbt_processed_at
+        description: '{{ doc("dbt_processed_at") }}'
+  - name: rails_prod_package_added_stage
+    description: Server events indicating when a content package was added to an account
+    columns:
+      - name: package_added_id
+        description: Segment event unique id
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: package
+        description: Content package that was added
+        tests:
+          - not_null
+      - name: trial_duration
+        description: Length of trial in seconds
+      - name: trial_remaining
+        description: Remaining trial amount in seconds
+      - name: event
+        description: Event name
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+  - name: rails_prod_pages_stage
+    description: Page view events tracked via segment on rails prod
+    columns:
+      - name: anonymous_id
+        tests:
+          - not_null
+      - name: priority
+        tests:
+          - accepted_values:
+              values: [1]
+      - name: visit_type
+        tests:
+          - accepted_values:
+              values: ['try']
+      - name: visited_at
+        tests:
+          - not_null
+  - name: rails_prod_signup_code_generated_stage

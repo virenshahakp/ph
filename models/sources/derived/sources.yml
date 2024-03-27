@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: derived
+    database: warehouse
+    schema: derived
+    loader: rails_ott_analytics_scripts
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    tables:
+      - name: android_prod_watched_range
+      - name: androidtv_prod_watched_range
+      - name: fire_prod_watched_range
+      - name: fire_tv_prod_watched_range
+      - name: ios_prod_watched_range
+      - name: roku_prod_watched_range
+      - name: tvos_prod_watched_range
+      - name: web_prod_watched_range

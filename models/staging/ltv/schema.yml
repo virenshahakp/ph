@@ -1,0 +1,127 @@
+version: 2
+
+models:
+  - name: account_monthly_gross_revenue_by_source
+    description: Daily revenue per account_id
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: month
+        description: month revenue was received
+        tests:
+          - not_null
+      - name: revenue_source
+        description: Is this revenue from subscription fees or inferred ad revenue from hours watched?
+        tests:
+          - accepted_values: 
+              values: [
+                'ad_revenue',
+                'subscription_fees'
+              ]
+      - name: revenue
+        description: The amount of revenue for this account in this month and revenue source.
+        tests:
+          - not_null
+  - name: daily_ad_revenue_per_user
+    description: Daily ad revenue per account_id
+    columns:
+      - name: partition_date
+        description: day ad calls were made
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: daily_ad_revenue
+        description: daily ad revenue in dollars for each user based upon playback session level ad calls
+  - name: hours_per_user_by_show_channel
+    description: hours per user by show and channel
+    columns: 
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+        tests:
+          - not_null
+      - name: month
+        description: month shows were watched
+      - name: show_title
+        description: title of show watched
+      - name: channel_name
+        description: name of the channel the user watched
+      - name: hours
+        description: total hours watched by user
+  - name: hours_per_user
+    description: hours watched per user_id
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+        tests:
+          - not_null
+      - name: played_month_at
+        description: month content was played at
+        name: hours_per_user
+        description: hours of played content per user_id
+  - name: ltv_by_genre_stage
+    description: ltv by genres
+    columns: 
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: watch_month
+        description: The date a user watched content
+      - name: genre_name
+        description: genre name of content watched by the user
+      - name: genre_id
+        description: id of genre name
+      - name: avg_revenue
+        description: average total revenue per user
+      - name: ltv_months_with_payments
+        description: month user watched content and paid
+      - name: ltv_rev
+        description: total revenue per user
+      - name: ltv_margin
+        description: total margin per user
+  - name: ltv_by_show_channel
+    description: hours per user by show and channel
+    columns: 
+      - name: watch_month
+        description: month shows were watched
+      - name: show_title
+        description: title of show watched
+      - name: show_id
+        description: id of show
+      - name: channel_name
+        description: name of the channel the user watched
+      - name: number_of_users
+        description: number of users that watch a show or channel
+      - name: hours_per_user
+        description: number of hours a user watched content or a channel
+      - name: avg_billed_months
+        description: average months a user account has paid Philo
+      - name: ltv_margin
+        description: total margin for channel or show
+      - name: ltv_revenue
+        descritpion: totat revenue for channel or show
+  - name: ltv_stage
+    description: calculates ltv by both revenue and margin 
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: month
+        description: date costs and revenue occurred
+        tests:
+          - not_null
+      - name: revenue
+        description: the recorded revenue for the account month
+      - name: costs
+        description: the incurred costs for the account month
+      - name: margin
+        description: revenue minus the costs for the month
+  - name: subscriber_billing_rev_share
+    description: subscriber revenue per account_id
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null

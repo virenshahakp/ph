@@ -1,0 +1,525 @@
+version: 2
+
+models:
+  - name: dim_playback_sessions
+    description: >
+      A table with basic information about each playback session. The attributes
+      in this table (eg app version, asset id, device model) are based on the first
+      event that we see in a given session.
+    columns:
+      - name: rebuffering_start_count
+        description: The count of rebuffering start events fired for this session.
+      - name: rebuffering_end_count
+        description: >
+          The count of rebuffering end events fired for this session. Note
+          that there should never be more rebuffering end events than rebuffering start
+          events.
+      - name: stream_error_count
+        description: >
+          The count of stream_error events fired for this session. Note that
+          stream_errors should be fatal, so this number should never exceed 1,
+          but may due to issues with client events.
+      - name: stream_start_count
+        description: >
+          The count of stream_start events for this session. Note that this can be
+          0 if a client succeeds to create its playback sessions, but never
+          successfully starts playback.
+      - name: stream_end_count
+        description: >
+          The count of stream_end events for this session. Barring client issues, this
+          should always be exactly 1, or 0. Note that some clients will not send this
+          event if the user exits the app mid-stream.
+      - name: rebuffering_duration_total
+        description: The total time in seconds spent rebuffering during this session.
+      - name: startup_duration_max
+        description: >
+          The time to first frame for this session. This is represented as max
+          in case the client erroneously fires more than one stream_start event.
+          Note that if a client does not send a stream_start event, this value will
+          be null.
+      - name: is_buffering_at_stream_end
+        description: >
+          A value greater than 1 means that this session ended while a rebuffering
+          event was in progress. This is a count in case the client erroneously sends
+          more than one stream_end, but it should never be greater than 1.
+      - name: is_errored_at_stream_end
+        description: >
+          A value greater than 1 means that this session ended with a fatal error
+          event was in progress. This is a count in case the client erroneously sends
+          more than one stream_end, but it should never be greater than 1. If the value
+          is 1, there stream_error_count should also be 1.
+      - name: position_start
+        description: The position in seconds where the player started playback.
+      - name: position_end
+        description: >
+          The position in seconds where the player ended playback. Note that
+          players may not be consistent about whether this time is relative to
+          the overall timeline, or a particular broadcast, so this value should
+          not be used for live assets.
+      - name: started_at
+        description: The UTC time when the first event was received for the session.
+      - name: ended_at
+        description: The UTC time when the last event was received for the session.
+      - name: started_at
+        description: The UTC time when the first event was received for the session.
+      - name: created_at
+        description: The UTC time when the playback session was created server-side
+      - name: error_code
+        description: '{{ doc("error_code") }}'
+      - name: error_description
+        description: '{{ doc("error_description") }}'
+
+      - name: as_number
+        description: '{{ doc("as_number") }}'
+      - name: as_name
+        description: '{{ doc("as_name") }}'
+      - name: geohash
+        description: '{{ doc("geohash") }}'
+      - name: dma
+        description: '{{ doc("dma") }}'
+      - name: sutured_pid
+        description: '{{ doc("sutured_pid") }}'
+      - name: is_new_session
+        description: '{{ doc("is_new_session") }}'
+      - name: manifest_environment
+        description: '{{ doc("manifest_environment") }}'
+      - name: content_cdn_host
+        description: '{{ doc("content_cdn_host") }}'
+      - name: is_sender
+        description: '{{ doc("is_sender") }}'
+      - name: played_asset_id
+        description: '{{ doc("played_asset_id") }}'
+        # tests:
+        #   - not_null
+
+      - name: platform
+        description: '{{ doc("platform") }}'
+        # tests:
+          # - not_null
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: hashed_session_id
+        description: '{{ doc("hashed_session_id") }}'
+      - name: asset_id
+        description: '{{ doc("asset_id") }}'
+
+      - name: adapted_bitrate
+        description: '{{ doc("adapted_bitrate") }}'
+      - name: user_selected_bitrate
+        description: '{{ doc("user_selected_bitrate") }}'
+      - name: estimated_bandwidth
+        description: '{{ doc("estimated_bandwidth") }}'
+      - name: is_wifi
+        description: '{{ doc("is_wifi") }}'
+      - name: is_cellular
+        description: '{{ doc("is_cellular") }}'
+      - name: app_version
+        description: '{{ doc("app_version") }}'
+      - name: os_version
+        description: '{{ doc("os_version") }}'
+      - name: screen_height
+        description: '{{ doc("screen_height") }}'
+      - name: screen_width
+        description: '{{ doc("screen_width") }}'
+      - name: client_ip
+        description: '{{ doc("client_ip") }}'
+      - name: device_name
+        description: '{{ doc("device_name") }}'
+      - name: device_manufacturer
+        description: '{{ doc("device_manufacturer") }}'
+      - name: device_model
+        description: '{{ doc("device_model") }}'
+      - name: error_philo_code
+        description: '{{ doc("error_philo_code") }}'
+      - name: error_detailed_name
+        description: '{{ doc("error_detailed_name") }}'
+      - name: error_http_status_code
+        description: '{{ doc("error_http_status_code") }}'
+
+  - name: fct_playback_sessions
+    description: >
+      A table with basic information about each playback session. The attributes
+      in this table (eg app version, asset id, device model) are based on the first
+      event that we see in a given session.
+    columns:
+      - name: rebuffering_start_count
+        description: The count of rebuffering start events fired for this session.
+      - name: rebuffering_end_count
+        description: >
+          The count of rebuffering end events fired for this session. Note
+          that there should never be more rebuffering end events than rebuffering start
+          events.
+      - name: stream_error_count
+        description: >
+          The count of stream_error events fired for this session. Note that
+          stream_errors should be fatal, so this number should never exceed 1,
+          but may due to issues with client events.
+      - name: stream_start_count
+        description: >
+          The count of stream_start events for this session. Note that this can be
+          0 if a client succeeds to create its playback sessions, but never
+          successfully starts playback.
+      - name: stream_end_count
+        description: >
+          The count of stream_end events for this session. Barring client issues, this
+          should always be exactly 1, or 0. Note that some clients will not send this
+          event if the user exits the app mid-stream.
+      - name: rebuffering_duration_total
+        description: The total time in seconds spent rebuffering during this session.
+      - name: startup_duration_max
+        description: >
+          The time to first frame for this session. This is represented as max
+          in case the client erroneously fires more than one stream_start event.
+          Note that if a client does not send a stream_start event, this value will
+          be null.
+      - name: abandonment_buffering_count
+        description: >
+          A value greater than 1 means that this session ended while a rebuffering
+          event was in progress. This is a count in case the client erroneously sends
+          more than one stream_end, but it should never be greater than 1.
+      - name: abandonment_error_count
+        description: >
+          A value greater than 1 means that this session ended with a fatal error
+          event was in progress. This is a count in case the client erroneously sends
+          more than one stream_end, but it should never be greater than 1. If the value
+          is 1, there stream_error_count should also be 1.
+      - name: position_start
+        description: The position in seconds where the player started playback.
+      - name: position_end
+        description: >
+          The position in seconds where the player ended playback. Note that
+          players may not be consistent about whether this time is relative to
+          the overall timeline, or a particular broadcast, so this value should
+          not be used for live assets.
+      - name: started_at
+        description: The UTC time when the first event was received for the session.
+      - name: ended_at
+        description: The UTC time when the last event was received for the session.
+      - name: started_at
+        description: The UTC time when the first event was received for the session.
+      - name: created_at
+        description: The UTC time when the playback session was created server-side
+      - name: error_code
+        description: '{{ doc("error_code") }}'
+      - name: error_description
+        description: '{{ doc("error_description") }}'
+
+      - name: as_number
+        description: '{{ doc("as_number") }}'
+      - name: as_name
+        description: '{{ doc("as_name") }}'
+      - name: geohash
+        description: '{{ doc("geohash") }}'
+      - name: dma
+        description: '{{ doc("dma") }}'
+      - name: sutured_pid
+        description: '{{ doc("sutured_pid") }}'
+      - name: is_new_session
+        description: '{{ doc("is_new_session") }}'
+      - name: manifest_environment
+        description: '{{ doc("manifest_environment") }}'
+      - name: content_cdn_host
+        description: '{{ doc("content_cdn_host") }}'
+      - name: is_sender
+        description: '{{ doc("is_sender") }}'
+      - name: played_asset_id
+        description: '{{ doc("played_asset_id") }}'
+        # tests:
+        #   - not_null
+
+      - name: platform
+        description: '{{ doc("platform") }}'
+        # tests:
+          # - not_null
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: hashed_session_id
+        description: '{{ doc("hashed_session_id") }}'
+      - name: asset_id
+        description: '{{ doc("asset_id") }}'
+
+      - name: adapted_bitrate
+        description: '{{ doc("adapted_bitrate") }}'
+      - name: user_selected_bitrate
+        description: '{{ doc("user_selected_bitrate") }}'
+      - name: estimated_bandwidth
+        description: '{{ doc("estimated_bandwidth") }}'
+      - name: is_wifi
+        description: '{{ doc("is_wifi") }}'
+      - name: is_cellular
+        description: '{{ doc("is_cellular") }}'
+      - name: app_version
+        description: '{{ doc("app_version") }}'
+      - name: os_version
+        description: '{{ doc("os_version") }}'
+      - name: screen_height
+        description: '{{ doc("screen_height") }}'
+      - name: screen_width
+        description: '{{ doc("screen_width") }}'
+      - name: client_ip
+        description: '{{ doc("client_ip") }}'
+      - name: device_name
+        description: '{{ doc("device_name") }}'
+      - name: device_manufacturer
+        description: '{{ doc("device_manufacturer") }}'
+      - name: device_model
+        description: '{{ doc("device_model") }}'
+      - name: error_philo_code
+        description: '{{ doc("error_philo_code") }}'
+      - name: error_detailed_name
+        description: '{{ doc("error_detailed_name") }}'
+      - name: error_http_status_code
+        description: '{{ doc("error_http_status_code") }}'
+
+  - name: fct_playback_sessions_ad_breaks
+    description: >
+      A table that relates ad breaks to playback session id information 
+      and also reports ad pod position data. This data is only available
+      for DVR & VOD content (not for live viewing). 
+    columns:
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: is_new_session
+        description: '{{ doc("is_new_session") }}'
+      - name: is_sender
+        description: '{{ doc("is_sender") }}'
+      - name: shared_playback_session_id
+        description: >
+          shared_playback_session_id is a way for clients to identify sutured
+          pid. The point of shared playback is to be able to link playback sessions. 
+      - name: session_created_at
+        description: '{{ doc("session_created_at") }}'
+      - name: start_ms
+        description: ad start position in milliseconds
+      - name: end_ms
+        description: ad end position in milliseconds
+      - name: ad_break_index
+        description:  ad pod sequence per playback session 
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+
+
+  -  name: fct_playback_session_stats__hourly
+     description: >
+      hourly aggregate counts of various quality of experience metrics.
+      Mainly used in modeling and dashboards.
+     columns:
+      - name: partition_date
+        description: date of the record
+        tests:
+          - not_null
+      - name: ended_at
+        description: hour of the record
+        tests:
+          - not_null
+      - name: platform
+        description: '{{ doc("platform") }}'
+        tests:
+          - accepted_values:
+              values: [
+                'android'
+                , 'web'
+                , 'chromecast'
+                , 'firetv'
+                , 'androidtv'
+                , 'tvos'
+                , 'fire'
+                , 'ios'
+                , 'roku'
+              ]
+          - not_null
+      - name: app_version
+        description: '{{ doc("app_version") }}'
+      - name: as_number
+        description: '{{ doc("as_number") }}'
+      - name: as_name
+        description: '{{ doc("as_name") }}'
+      - name: geohash4
+        description: '{{ doc("geohash") }}'
+      - name: sessions_with_error
+        description: count of sessions with playback errors
+      - name: sessions_with_rebuffering
+        description: count of sessions with rebuffering
+      - name: sessions_with_rebuffering_1
+        description: count of sessions with rebuffering longer than 1 second
+      - name: sessions_with_rebuffering_by_duration_5
+        description: count of sessions with rebuffering longer than 5 seconds
+      - name: sessions_with_high_startup_5
+        description: count of sessions with startup time longer than 5 seconds
+      - name: sessions_with_high_startup_10
+        description: count of sessions with startup time longer than 10 seconds
+      - name: sessions_perfect
+        description: count of sessions with no errors, rebuffering, or long startup times
+      - name: sessions_total
+        description: count of sessions
+          
+  - name: fct_playback_session_stats__user__daily
+    description: >
+      daily user level counts of various quality of experience metrics.
+      Mainly used in modeling and dashboards.
+    columns:
+      - name: partition_date
+        description: date of the record
+        tests:
+          - not_null
+      - name: ended_at
+        description: hour of the record
+        tests:
+          - not_null
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: platform
+        description: '{{ doc("platform") }}'
+        tests:
+          - accepted_values:
+              values: [
+                'android'
+                , 'web'
+                , 'chromecast'
+                , 'firetv'
+                , 'androidtv'
+                , 'tvos'
+                , 'fire'
+                , 'ios'
+                , 'roku'
+              ]
+          - not_null
+      - name: app_version
+        description: '{{ doc("app_version") }}'
+      - name: as_number
+        description: '{{ doc("as_number") }}'
+      - name: as_name
+        description: '{{ doc("as_name") }}'
+      - name: geohash4
+        description: '{{ doc("geohash") }}'
+      - name: sessions_with_error
+        description: count of sessions with playback errors
+      - name: sessions_with_rebuffering
+        description: count of sessions with rebuffering
+      - name: sessions_with_rebuffering_1
+        description: count of sessions with rebuffering longer than 1 second
+      - name: sessions_with_rebuffering_by_duration_5
+        description: count of sessions with rebuffering longer than 5 seconds
+      - name: sessions_with_high_startup_5
+        description: count of sessions with startup time longer than 5 seconds
+      - name: sessions_with_high_startup_10
+        description: count of sessions with startup time longer than 10 seconds
+      - name: sessions_perfect
+        description: count of sessions with no errors, rebuffering, or long startup times
+      - name: sessions_total
+        description: count of sessions
+    tests:
+      - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
+          date_col: "to_timestamp(ended_at, 'YYYY-MM-DD HH24:00:00')"
+          date_part: day
+          test_start_date: '2022-02-01'
+
+
+  - name: fct_qoe_benchmarks
+    description: Philo and Industry benchmarks for application performance
+    columns:
+      - name: asset_type
+        description: Does this metric apply to 'overall' performance or for a specific type of asset
+      - name: metric
+        description: The name of the metric
+      - name: metric_date
+        description: When was this benchmark captured
+      - name: metric_period
+        description: How long should this metric be considered valid
+      - name: platform
+        description: Which platform does the metric apply to? 'overall' is used for all platform performance
+      - name: source
+        description: What is the source of the metric?
+      - name: metric_value
+        description: The value of the metric defined in this record
+
+  - name: fct_stream_events
+    description: >
+      A table with one record for each client-fired playback event.
+      The possible events are:
+        * stream_start
+        * stream_end
+        * rebuffering_start
+        * rebuffering_end
+        * stream_error
+    columns:
+      - name: event
+        description: The name of the event that fired
+        tests:
+          - accepted_values:
+              values: [
+                'stream_start'
+                , 'stream_end'
+                , 'rebuffering_start'
+                , 'rebuffering_end'
+                , 'stream_error'
+              ]
+          - not_null
+      - name: platform
+        description: '{{ doc("platform") }}'
+        tests:
+          - not_null
+      - name: position
+        description: The position (in seconds) of the player when the event fired.
+      - name: duration
+        description: >
+          A duration in seconds that has a different meaning depending on the event:
+            * stream_start: The duration of player startup (time to first frame).
+            * rebuffering_end: The duration of the rebuffering event.
+            * stream_end: The duration of the playback session.
+
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: hashed_session_id
+        description: '{{ doc("hashed_session_id") }}'
+      - name: asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+        tests:
+          - not_null
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+        tests:
+          - not_null
+      - name: adapted_bitrate
+        description: '{{ doc("adapted_bitrate") }}'
+      - name: user_selected_bitrate
+        description: '{{ doc("user_selected_bitrate") }}'
+      - name: estimated_bandwidth
+        description: '{{ doc("estimated_bandwidth") }}'
+      - name: is_wifi
+        description: '{{ doc("is_wifi") }}'
+      - name: is_cellular
+        description: '{{ doc("is_cellular") }}'
+      - name: app_version
+        description: '{{ doc("app_version") }}'
+      - name: analytics_version
+        description: '{{ doc("analytics_version") }}'
+      - name: os_version
+        description: '{{ doc("os_version") }}'
+      - name: screen_height
+        description: '{{ doc("screen_height") }}'
+      - name: screen_width
+        description: '{{ doc("screen_width") }}'
+      - name: client_ip
+        description: '{{ doc("client_ip") }}'
+      - name: device_name
+        description: '{{ doc("device_name") }}'
+      - name: device_manufacturer
+        description: '{{ doc("device_manufacturer") }}'
+      - name: device_model
+        description: '{{ doc("device_model") }}'
+      - name: dbt_processed_at
+        description: '{{ doc("dbt_processed_at") }}'

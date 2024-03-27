@@ -1,0 +1,100 @@
+version: 2
+
+models:
+  - name: all_platforms_attributed_visits
+    description: Join all of the platform install and open events into one consolidated view.
+    columns:
+      - name: anonymous_id
+      - name: priority
+      - name: visit_type
+      - name: visited_at
+  - name: all_platforms_identifies
+    description: A unioned table to assemble all of the platform specific identify events
+    columns:
+      - name: anonymous_id
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: platform
+        description: The platform that was used to track the identify event
+      - name: timestamp
+        description: When the identify event occurred
+  - name: all_users_first_platform
+    description: >
+      The time and platform for each user and all of the anonymous_ids that map to the user.
+      NULL anonymous_ids are expected as there is fallback logic to the rails account creation
+      date if no other platform is identified for the user, this should ensure that all users
+      have at least one platform on record.
+    columns:
+      - name: anonymous_id
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: timestamp
+        description: The timestamp of the initial platform event
+      - name: platform
+        description: The platform where the first event occurred for each user. Web events are split by parsing the user agent for android and ios.
+  - name: android_prod_attributed_installs
+    description: Android visits data joined with appsflyer tracking
+    columns:
+      - name: attributed_touch_type
+        tests:
+          - not_null
+  - name: apple_signups_fix_2020_03_02
+    description: >
+      Apple devices had a bug where the anonymous_id was set as the user_id before the anonymous_id is linked to the user_id with
+      the segment identify call.
+      This meant we lost signups from apple sources because the anonymous id used for the signup was reset before identify was
+      called (identify links the anonymous_id to the user_id).
+      signup_auth_success is the last event in signup that fires before identifying the user_id with an anonymous id.
+      tvOS has a bug that is preventing the signup_auth_success event from firing, so signup_auth_submit is used.
+      the best was to link the identify with the previous funnel steps is via the context_device_id.  This is supposed to be
+      unique per device and allows us to link the devices.  There is a 10 minute window where auth codes are valid, that is why we
+      use a 10 minute range for the timestamps.
+    columns:
+      - name: anonymous_id
+      - name: user_id
+      - name: platform
+      - name: timestamp
+  - name: fire_tv_prod_attributed_installs
+    description: Android visits data joined with appsflyer tracking
+    columns:
+      - name: attributed_touch_type
+        tests:
+          - not_null
+  - name: ios_prod_attributed_installs
+    description: ios visits data joined with appsflyer tracking
+    columns:
+      - name: attributed_touch_type
+        tests:
+          - not_null
+  - name: samsung_prod_attributed_installs
+    description: samsung visits data joined with appsflyer tracking
+    columns:
+      - name: attributed_touch_type
+        tests:
+          - not_null
+  - name: roku_prod_attributed_installs
+    description: roku visits data joined with appsflyer tracking
+    columns:
+      - name: attributed_touch_type
+        tests:
+          - not_null
+  - name: viziotv_prod_attributed_installs
+    description: vizio visits data joined with appsflyer tracking
+    columns:
+      - name: attributed_touch_type
+        tests:
+          - not_null
+  - name: rails_prod_attributed_visits
+    description: >
+      This model is to address some events that would otherwise pass through our attribution logic.
+      Comment from migrated periscope view as to why we include rails_prod data in our
+      attributed visits:
+      A campaign that we ran with AMC was using the go link /guhhatl before it was
+      ready.  So to help attribute this data, we have to get these visits from the
+      server side try logs.
+
+      AP: TODO: I do not understand the above comment. Why do we need to inner join
+          on web_prod.pages?
+      LB: the inner join ensures that the user didn actualy load the web page and it was not
+      LB: the inner join ensures that the user did actually load the web page and it was not
+      some fake traffic.

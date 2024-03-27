@@ -1,0 +1,347 @@
+version: 2
+
+models:
+  - name: fct_account_signed_up_all_sources
+    description: '{{ doc("fct_account_signed_up_all_sources") }}'
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: anonymous_id
+        description: Segment generated anonymous ids for this account
+      - name: platform
+        description: The platform the user was on for this visit
+      - name: signed_up_at
+        description: The first timestamp for which the initial user of the account was identified.
+  - name: fct_acquisition_funnel
+    description: '{{ doc("fct_acquisition_funnel") }}'
+    columns:
+      - name: account_id
+        description: The account id of this philo account
+      - name: context_ip
+        description: IP address where the account connected from
+      - name: context_campaign_source
+        description: Campaign source — attributed ad network
+      - name: context_campaign_name
+        description: The name of the attributed campaign.
+      - name: context_campaign_term
+        description: Campaign id
+      - name: context_campaign_medium
+        description: Identifies what type of link was used.
+      - name: context_page_referrer
+        description: Full URL of the previous page.
+      - name: context_user_agent
+        description: User agent of the visitor's browser/device/platform
+      - name: context_page_path
+        description: Philo modified page or app identifier for what was visited.
+      - name: context_campaign_content
+        description: The content of the campaign.
+      - name: visit_type
+        description: Philo categorized visit type to organize visits by platform, app stores, and small number of specific types of web campaigns.
+        tests:
+          - accepted_values:
+              values: [
+                'Amazon Appstore'
+                , 'Vizio App Store'
+                , 'about'
+                , 'android'
+                , 'androidtv'
+                , 'direct_signup'
+                , 'fire'
+                , 'firetv'
+                , 'go-page'
+                , 'help'
+                , 'iOS App Store'
+                , 'ios'
+                , 'public-page'
+                , 'referral'
+                , 'roku'
+                , 'samsung'
+                , 'share'
+                , 'try'
+                , 'tvos'
+                , 'unknown'
+              ]
+          - not_null
+      - name: url
+        description: The url of the visit or the name of the app installed or launched.
+      - name: traffic_type
+        description: Category of traffic - Philo specific logic that combines information from context_campaign_source, context_campaign_name, context_campaign_term, context_user_agent, context_page_referrer, and coupon_code.
+      - name: platform_type 
+        description: Type of platform a user has when visiting Philo such as streaming device, mobile, or desktop.
+      - name: platform_os
+        description: Operating system of device a user has when visiting Philo.
+      - name: browser
+        description: Identifies browser agent used by device to view Philo web pages.
+      - name: signup_platform
+        description: Plaform a user signsup service from.
+      - name: visit_platform
+        description: Platform a user visits from online.
+      - name: visited_at
+        description: The timestamp the user visited the marketing page and the timestamp was received by Segment's tracking service.
+        tests:
+          - not_null
+      - name: signed_up_at
+        description: Timestamp when account owner signed up, this can be null if the user never signs up.
+      - name: subscribed_at
+        description: Timestamp when account owner subscribed to Philo, this can be null if the user never subscribes.
+      - name: paid_at
+        description: Timestamp when account owner made a payment to Philo, this can be null if the user never makes a payment.
+      - name: visit_anonymous_id
+        description: Segment generated anonymous id for the visit
+      - name: subscriber_billing
+        description: The billing platform for the account for the first billing period.
+        tests:
+          - accepted_values:
+              values: "{{ var('subscriber_billing_accepted_values') }}"
+      - name: coupon_code
+        description: Philo coupon code used
+      - name: reference
+        description: >
+          Was the page resulting from a redirect with a ref query string parameter. Nginx
+          will set this value to be the host from the redirect example philo.tv
+      - name: context_campaign_content_id
+        description: The content id of the campaign.
+  - name: fct_user_signed_up_all_sources
+    description: '{{ doc("fct_user_signed_up_all_sources") }}'
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+        tests:
+          - not_null
+      - name: anonymous_id
+        description: Segment generated anonymous ids for this account
+      - name: platform
+        description: The platform the user was on for this visit
+        tests:
+          - accepted_values:
+              values: [
+                'android'
+                , 'android-web'
+                , 'androidtv'
+                , 'chromecast'
+                , 'fire'
+                , 'firetv'
+                , 'ios'
+                , 'ios-web'
+                , 'rails'
+                , 'roku'
+                , 'samsung'
+                , 'tvos'
+                , 'viziotv'
+                , 'web'
+              ]
+      - name: signed_up_at
+        description: The first timestamp for which this user was identified.
+  - name: fct_visits_from_all_sources
+    description: All attributed visits to web & apps from unknown users
+    columns:
+      - name: _dbt_source_relation
+        description: The source of this visit attribution record
+      - name: anonymous_id
+        description: Segment generated anonymous id
+        tests:
+          - not_null
+      - name: browser
+        description: The platform name or the browser family from the user_agent string.
+      - name: context_campaign_content
+        description: The content of the campaign.
+      - name: context_campaign_medium
+        description: Identifies what type of link was used.
+      - name: context_campaign_name
+        description: The name of the attributed campaign.
+      - name: context_campaign_source
+        description: Campaign source — attributed ad network
+      - name: context_campaign_term
+        description: Campaign id
+      - name: context_ip
+        description: The visitor's IP address
+      - name: context_page_path
+        description: Philo modified page or app identifier for what was visited.
+      - name: context_page_referrer
+        description: Full URL of the previous page.
+      - name: context_user_agent
+        description: User agent of the visitor's browser/device/platform
+      - name: coupon_code
+        description: Philo coupon code used
+      - name: platform_type
+        description: The device type that a visit came from, one of our platforms, or ios-web or android-web for mobile web devices.
+      - name: platform_os
+        description: The operating system determined by either the platform or the user_agent string.
+      - name: priority
+        description: Attribution priority - the lower this value the more we should prioritize this as the attribution for the visit.
+        tests:
+          - accepted_values:
+              values: [1, 2, 3]
+          - not_null
+      - name: traffic_type
+        description: Category of traffic - Philo specific logic that combines information from context_campaign_source, context_campaign_name, context_campaign_term, context_user_agent, context_page_referrer, and coupon_code.
+      - name: url
+        description: The url of the visit or the name of the app installed or launched.
+      - name: visit_type
+        description: Philo categorized visit type to organize visits by platform, app stores, and small number of specific types of web campaigns.
+        tests:
+          - accepted_values:
+              values: [
+                'Amazon Appstore'
+                , 'about'
+                , 'android'
+                , 'androidtv'
+                , 'direct_signup'
+                , 'fire'
+                , 'firetv'
+                , 'go-page'
+                , 'help'
+                , 'iOS App Store'
+                , 'ios'
+                , 'public-page'
+                , 'referral'
+                , 'roku'
+                , 'samsung'
+                , 'Samsung App Store'
+                , 'share'
+                , 'try'
+                , 'tvos'
+                , 'Vizio App Store'
+              ]
+          - not_null
+      - name: visited_at
+        description: The timestamp the event was received by Segment's tracking service.
+        tests:
+          - not_null
+      - name: reference
+        description: >
+          Was the page resulting from a redirect with a ref query string parameter. Nginx
+          will set this value to be the host from the redirect example philo.tv.
+      - name: context_campaign_content_id
+        description: The content id of the campaign.
+      - name: fct_daily_marketing_spend_summary
+        description: Daily marketing spend aggregated into high level channels. Data is aggregated primarily for use in marketing mix modeling.
+        columns:
+          - name: ad_date
+            description: The date the marketing spend and impressions occurred.
+          - name: fb_prospecting_on_s 
+            description: Facebook prospecting campaigns spend
+          - name: fb_prospecting_on_i 
+            description: Facebook prospecting campaigns impressions
+          - name: fb_retargeting_s 
+            description: Facebook retargeting campaigns spend
+          - name: fb_retargeting_i 
+            description: Facebook retargeting campaigns impressions
+          - name: fb_prospecting_show_s 
+            description: Facebook show prospecting campaigns spend
+          - name: fb_prospecting_show_i 
+            description: Facebook show prospecting campaigns impressions
+          - name: google_brand_s 
+            description: Google brand campaigns spend
+          - name: google_brand_i 
+            description: Google brand campaigns impressions
+          - name: bing_s
+            description: Bing campaigns spend
+          - name: bing_i
+            description: Bing campaigns impressions
+          - name: amazon_s
+            description: Amazon campaigns spend
+          - name: amazon_i
+            description: Amazon campaigns impressions
+          - name: cj_s
+            description: CJ (affiliate network) campaigns spend
+          - name: cj_i
+            description: CJ (affiliate network) campaigns impressions
+          - name: apple_s
+            description: Apple campaigns spend
+          - name: apple_i
+            description: Apple campaigns impressions
+          - name: youtube_s
+            description: YouTube campaigns spend
+          - name: youtube_i
+            description: YouTube campaigns impressions
+          - name: brand_s
+            description: Brand campaigns spend
+          - name: brand_i
+            description: Brand campaigns impressions
+          - name: tv_s
+            description: Television campaigns spend
+          - name: tv_i
+            description: Television campaigns impressions
+          - name: roku_cpa_s
+            description: Roku CPA campaigns spend
+          - name: roku_cpa_i
+            description: Roku CPA campaigns impressions
+          - name: roku_s
+            description: Roku other campaigns spend
+          - name: roku_i
+            description: Roku other campaigns impressions
+          - name: google_non_brand_s
+            description: Google non-brand campaigns spend
+          - name: google_non_brand_i
+            description: Google non-brand campaigns impressions
+          - name: google_other_brand_s
+            description: Google other campaigns spend
+          - name: google_other_i
+            description: Google other campaigns impressions
+          - name: google_show_s
+            description: Google show campaigns spend
+          - name: google_show_i
+            description: Google show campaigns impressions
+          - name: acquisition_other_s
+            description: Other Acquisition channels campaigns spend
+          - name: acquisition_other_i
+            description: Other Acquisition channels campaigns impressions
+          - name: tiktok_s
+            description: TikTok campaigns spend
+          - name: tiktok_i
+            description: TikTok campaigns impressions
+          - name: snapchat_s
+            description: Snapchat campaigns spend
+          - name: snapchat_i
+            description: Snapchat campaigns impressions
+          - name: radio_s
+            description: Radio campaigns spend
+          - name: radio_i
+            description: Radio campaigns impressions
+          - name: direct_mail_s
+            description: Direct mail campaigns spend
+          - name: direct_mail_i
+            description: Direct mail campaigns impressions
+          - name: conversions
+            description: First payments that are attributed to this marketing day. These conversions are adjusted to account for trial periods.
+          - name: revenue_one_month
+            description: First month revenue from conversions that are attributed to this marketing day.
+  - name: fct_marketing_welcome_survey_answers
+    description: Answers to a Philo in-app poll
+    columns:
+      - name: event_id
+        description: '{{ doc("event_id") }}'
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+        tests:
+          - not_null
+      - name: poll_name
+        description: The name of the Philo poll answered
+      - name: question
+        description: The question that was displayed to the user
+      - name: answers
+        description: The poll answer selected
+      - name: environment_analytics_version
+        description: Analytics version which indicates what possible answers were available
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'  
+  - name: fct_marketing_welcome_survey_views
+    description: Message sent tracking for welcome suvey views
+    columns:   
+      - name: user_id
+        description: '{{ doc("user_id") }}'   
+        tests:
+          - not_null
+      - name: received_at
+        description: '{{ doc("received_at") }}'   
+      - name: item_name
+        description: Item nane is answer available to select for the survey
+      - name: option_number
+        description: The option number refers to the location of the answer
+      - name: users  
+        description: Count of distinct users that viewed the survey

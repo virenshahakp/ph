@@ -1,0 +1,56 @@
+version: 2
+
+models:
+  - name: airbyte_ad_revenue_by_network_source
+    description: ad revenue per month for each network
+    columns:
+      - name: month
+        description: month for which the data is being recorded
+  - name: airbyte_ad_revenue_per_hour_source
+    description: ad revenue per hour
+    columns:
+      - name: event_date
+      - name: ad_rev_per_hour
+  - name: airbyte_media_groups_source
+    description: channel mapping to media groups and rates
+    columns:
+      - name: callsign
+        tests:
+          - unique
+  - name: airbyte_quality_of_experience_benchmarks_source
+    description: Philo and industry benchmarks for application performance, specifically video playback
+    columns:
+      - name: asset_type
+        description: Does this metric apply to 'overall' performance or for a specific type of asset
+      - name: metric
+        description: The name of the metric
+      - name: metric_date
+        description: When was this benchmark captured
+      - name: metric_period
+        description: How long should this metric be considered valid
+      - name: platform
+        description: Which platform does the metric apply to? 'overall' is used for all platform performance
+      - name: source
+        description: What is the source of the metric?
+      - name: metric_value
+        description: The value of the metric defined in this record
+  - name: airbyte_demand_partner_diversity_source
+    description: demand partner classification
+    columns:
+      - name: demand_partner
+        description: name of the demand partner
+      - name: diversity_type
+        description: demand_partner classification
+  - name: airbyte_demand_partner_map_source
+    description: bidder name to demand partner mapping
+    columns:
+      - name: is_paid
+        description: is the demand partner paying philo for the ad space
+      - name: is_count
+        description: > 
+          should the impressions and revenue of the demand partner be counted for
+          philos accounting
+      - name: philo_name
+        description: demand_partner name
+      - name: publica_name
+        description: bidder name

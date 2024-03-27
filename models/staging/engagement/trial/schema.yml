@@ -1,0 +1,71 @@
+version: 2
+
+models:
+  - name: watched_minutes_in_trial_historic
+    description: Usage statistics for accounts during the trial.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: created_at
+        description: When the account was created
+        tests:
+          - not_null:
+              severity: warn
+      - name: profiles_used
+        description: Number of profiles used
+        tests:
+          - not_null
+      - name: minutes
+        description: The total minutes watched
+        tests:
+          - not_null
+      - name: sessions
+        description: Number of playback sessions
+        tests:
+          - not_null
+      - name: distinct_shows
+        description: Number many shows were watched
+      - name: distinct_platforms
+        description: Number of platforms used
+        tests:
+          - not_null
+      - name: active_days
+        description: Number of days that had a playback session
+        tests:
+          - not_null
+  - name: watched_minutes_in_trial_recent
+    description: Usage statistics for accounts during the trial.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: created_at
+        description: When the account was created
+        tests:
+          - not_null:
+              severity: warn
+      - name: profiles_used
+        description: Number of profiles used
+        tests:
+          - not_null
+      - name: minutes
+        description: The total minutes watched
+        tests:
+          - not_null
+      - name: sessions
+        description: Number of playback sessions
+        tests:
+          - not_null
+      - name: distinct_shows
+        description: Number many shows were watched
+      - name: distinct_platforms
+        description: Number of platforms used
+        tests:
+          - not_null
+      - name: active_days
+        description: Number of days that had a playback session
+        tests:
+          - not_null

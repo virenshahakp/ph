@@ -1,0 +1,144 @@
+version: 2
+
+models:
+  - name: fct_vast_ads_usage
+    description: '{{ doc("fct_vast_ads_usage") }}'
+    columns:
+      - name: partition_date
+        description: date of the vast request
+##        tests:
+##          - dbt_expectations.expect_row_values_to_have_recent_data:
+##              datepart: day
+##              interval: 3
+      - name: hour
+        description: hour of the vast request
+      - name: zip
+        description: zip code of the user that the vast is for
+      - name: dma_code
+        description: designated marketing area of the user the vast is for (Nielsen defined)
+      - name: dma_region
+        description: region of the DMA
+      - name: dma_name
+        description: name of the DMA
+      - name: income
+        description: income band of the user the vast was for
+      - name: age_range
+        description: age band of the user the vast was for
+      - name: gender
+        description: gender of the user the vast was for
+      - name: ad_reseller
+        description: company that the ad was resold through
+      - name: device
+        description: device that the user was using when the vast request occured
+      - name: duration
+        description: >
+          ad length that was returned in the VAST. Set for common ad length bands
+          (less than 15s, 15s, between 15s and 30s, 30s, greater than 30s)
+      - name: empty_count
+        description: count of empty ads (no ad) returned in the VAST
+      - name: filled_count
+        description: count of filled ads (ad exists) returned in the VAST
+      - name: inserted_count
+        description: count of ads inserted into the pod
+      - name: ingested_count
+        description: count of ads that were seen for the first time by sutured and needed to be transcoded
+      - name: primary_count
+        description: count of ads recieved in the vast that werent fallback or evergreen
+      - name: fallback_count
+        description: count of ads recieved in the vast that were fallbacks
+      - name: evergreen_count
+        description: count of ads recieved in the vast that were evergreen (no revenue gained)
+      - name: evergreen_fallback_count
+        description: count of ads recieved in the vast that were evergreen and fallback (no revenue gained)
+      - name: primary__inserted_count
+        description: count of primary ads inserted into the pod
+      - name: fallback__inserted_count
+        description: count of fallback ads inserted into the pod
+      - name: evergreen__inserted_count
+        description: count of evergreen ads inserted into the pod
+      - name: evergreen_fallback__inserted_count
+        description: count of evergreen fallback ads inserted into the pod
+##    tests:
+##      - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
+##          date_col: "to_timestamp(partition_date || ' ' || hour, 'YYYY-MM-DD HH24:00:00')"
+##          date_part: hour
+##          test_start_date: '2021-07-01'
+  - name: dim_demand_partner_map
+    description: '{{ doc("dim_demand_partner_map") }}'
+    columns:
+      - name: bidder_id
+        description: publica id for the bidder
+      - name: bidder_name
+        description: publica name for the bidder
+      - name: is_paid
+        description: binary for whether or not the bidder's revenue should be counted for philo revenue
+      - name: is_count
+        description: binary for whether or not the bidder's impressions should be counted for philo
+      - name: demand_partner
+        description: demand partner name
+      - name: has_match_in_ad_pulse
+        description: binary for whether or not the demand partner has been classified in ad pulse yet
+      - name: fill_type_classification
+        description: unpaid, marketing, paid
+      - name: pod_owner
+        description: philo or distributor
+      - name: diversity_type
+        description: classification of the demand_partner
+
+  - name: fct_beacons
+    description: '{{ doc("fct_beacons") }}' 
+    columns:
+      - name: user_id
+        description: Indicates the user_id for the beacon    
+      - name: ad_duration
+        description: duration of the ad in seconds
+      - name: ad_ident
+        description: >
+          id of the ad. comes from the vast response
+      - name: ad_provider
+        description: provider of the ad
+      - name: ad_reseller
+        description: >
+          company that the ad was resold through
+      - name: asset_type
+        description: vod, dvr, live
+      - name: channel_name
+        description: >
+          e.g. MTV, animalplanet, cartoonnetwork
+      - name: dup_ident
+        description: transcoded ad fingerprint id.  Not available in sticher
+      - name: pod_owner
+        description: >
+          owner of the ad.  Philo currently only makes revenue on distributor records.
+      - name: player_id
+        description: >
+          unique id for device and account profile. New 
+          id created after 6 hours since the last 
+          viewed content.
+      - name: pod_id
+        description: >
+          id of the ad break in the content. NOT unique 
+          to the user
+      - name: provider_ident
+        description: id for the provider of the ad.  Works for both sutured and stitcher
+      - name: received_at
+        description: >
+          timestamp the ad was rendered in the feed
+      - name: partition_date
+        description: date the ad was inserted
+      - name: manifest_system
+        description: Indicates sticher or sutured
+      - name: beacon_type
+        description: Indicates if the beacon is an impression or complete
+      - name: is_house
+        description: indicates if the ad is evergreen/house or not.  This information is not provided in sutured
+      - name: hour
+        description: hour the ad was inserted
+      - name: ad_system
+        description: the ad system.  Works for both stitcher and sutured       
+      - name: creative_id
+        description: unique id for the ad.
+      - name: manifest_system
+        description: Flag for sutured or sticher 
+
+

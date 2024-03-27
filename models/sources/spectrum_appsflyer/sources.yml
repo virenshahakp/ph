@@ -1,0 +1,21 @@
+version: 2
+
+sources:
+  - name: spectrum_appsflyer
+    database: warehouse
+    schema: spectrum_appsflyer
+    loader: appsflyer 
+    loaded_at_field: event_time
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    freshness:
+      warn_after: {count: 24, period: hour}
+      error_after: {count: 36, period: hour}
+
+    tables:
+      - name: appsflyer_to_mode
+        freshness: null # do not check freshness for this table, we don't have a good timestamp

@@ -1,0 +1,32 @@
+version: 2
+
+sources:
+  - name: viziotv_prod
+    database: warehouse
+    schema: viziotv_prod
+    loader: segment
+    loaded_at_field: uuid_ts
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    freshness:
+      warn_after: {count: 8, period: hour}
+      error_after: {count: 24, period: hour}
+
+    tables:
+      - name: application_backgrounded
+      - name: application_installed
+      - name: application_opened
+      - name: application_updated
+        freshness: null # disabled until we have sufficient volume of users and app updates
+      - name: identifies
+      - name: pages
+      - name: player_state_changed
+      - name: rebuffering_end
+      - name: rebuffering_start
+      - name: stream_end
+      - name: stream_error
+      - name: stream_start

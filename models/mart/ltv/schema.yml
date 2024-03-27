@@ -1,0 +1,100 @@
+version: 2
+models:
+  - name: fct_account_monthly_gross_revenue
+    description: gross revenue by account id
+    columns: 
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: revenue_source
+        description: labels row by source such as subscription or ad revenue
+      - name: revenue
+        description: ad plus subscription revenue by account_id
+  - name: fct_lifetime_value
+    description: calculates total revenue and margin per account
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: first_payment_at
+        description: timestamp of the first subscription payment for an account
+      - name: lifetime_payment_number
+        description: months payments and costs occurred
+      - name: ltv_margin
+        description: revenue minus operational costs as aquisition costs are not included
+      - name: ltv_revenue
+        description: sum of revenue over the months they have been active with Philo
+      - name: ltv_costs
+        description: total operational costs per account
+      - name: avg_ltv_revenue
+        description: average monthly revenue since the customer has been with Philo
+      - name: ltv_margin_one_month
+        description: margin for the first month of the subscriber lifetime
+      - name: ltv_costs_one_month
+        description: costs for the first month of the subscriber lifetime
+      - name: ltv_revenue_one_month
+        description: revenue for the first month of the subscriber lifetime
+      - name: ltv_margin_three_months
+        description: margin for the first three months of the subscriber lifetime
+      - name: ltv_costs_three_months
+        description: costs for the first three months of the subscriber lifetime
+      - name: ltv_revenue_three_months
+        description: revenue for the first three months of the subscriber lifetime
+      - name: avg_ltv_revenue_three_months
+        description: average monthly revenue for the first three months of the subscriber lifetime
+      - name: ltv_margin_six_months
+        description: margin for the first six months of the subscriber lifetime
+      - name: ltv_costs_six_months
+        description: costs for the first six months of the subscriber lifetime
+      - name: ltv_revenue_six_months
+        description: revenue for the first six months of the subscriber lifetime
+      - name: avg_ltv_revenue_six_months
+        description: average monthly revenue for the first six months of the subscriber lifetime
+      - name: ltv_margin_twelve_months
+        description: margin for the first twelve months of the subscriber lifetime
+      - name: ltv_costs_twelve_months
+        description: costs for the first twelve months of the subscriber lifetime
+      - name: ltv_revenue_twelve_months
+        description: revenue for the first twelve months of the subscriber lifetime
+      - name: avg_ltv_revenue_twelve_months  
+        description: average monthly revenue for the first twelve months of the subscriber lifetime
+  - name: fct_lifetime_value_content
+    description: lifetime value of shows and channels
+    columns: 
+      - name: show_title
+        description: title of show
+      - name: show_id
+        description: id of show title
+      - name: channel_name
+        description: name of channel content was played
+      - name: watch_month
+        description: month content was played
+      - name: number_of_users
+        description: number of users that watched content
+      - name: hours_per_user
+        description: hours of content played per month by user
+      - name: avg_billed_months
+        description: average number of months a user has paid
+      - name: ltv_revenue
+        description: total revenue per account
+      - name: ltv_margin
+        description: total margin per account
+  - name: fct_lifetime_value_campaign
+    description: calculates life time value for marketing sources
+    columns:
+      - name: signup_month
+        description: date the user signed up for Philo
+      - name: campaign_source
+        description: referring source information paid channel
+      - name: campaign_name
+        description: referring campaign name from paid channel
+      - name: campaign_term
+        description: referring campaign term from paid channel
+      - name: avg_ltv_revenue
+        description: average revenue per user for marketing sources
+      - name: avg_ltv_margin
+        description: average margin per user for marketing sources
+      - name: avg_ltv_months
+        description: the average months per user that a customer pays Philo

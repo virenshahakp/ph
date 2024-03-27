@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: rails_sync_users_with_content_access_source
+    description: Nightly sync that indicates which users/accounts have content access
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: subscriber_billing
+        description: '{{ doc("subscriber_billing") }}'
+      - name: status
+        description: Status field indicating if the account in trial, in extended trial, or post-trial
+      - name: product_sku
+        description: The activated product SKU
+      - name: activated_plan
+        description: The content plan the account has access to, potentially 'null'
+      - name: reported_at
+        description: When the sync process ran on the rails db

@@ -1,0 +1,488 @@
+version: 2
+
+models:
+  - name: fct_account_billing_events
+    description: >
+      A row for each of the events that are in the account creation and billing events. 
+      This will include each event for each account from the following categories:
+        trial_started
+        trial_blocked
+        trial_lapsed
+        subscription_started
+        cancellation_complete
+        cancellation_scheduled
+        payment_succeeded
+        payment_failed
+        account_cancelled_never_paid
+        account_first_payment_refunded
+        account_first_payment_succeeded
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: event
+        description: The type of billing event that we recorded.
+        tests:
+          - accepted_values:
+              values: [
+                'cancellation_complete'
+                , 'cancellation_scheduled'
+                , 'first_payment_refunded'
+                , 'first_payment_succeeded'
+                , 'payment_failed'
+                , 'payment_succeeded'
+                , 'subscription_cancelled_never_paid'
+                , 'subscription_started'
+                , 'trial_blocked'
+                , 'trial_lapsed'
+                , 'trial_started'
+              ]
+      - name: amount
+        description: The amount paid or refunded during this event, can be null.
+      - name: subscriber_billing
+        description: The billing platform or "unreported" if not an event from a billing platform.
+        tests:
+          - accepted_values:
+              values: [
+                'amazon'
+                , 'apple'
+                , 'bestbuy'
+                , 'chargebee'
+                , 'edu'
+                , 'google'
+                , 'roku'
+                , 'stripe'
+                , 'unbilled'
+                , 'unreported'
+              ]
+      - name: received_at
+        description: When the event occurred.
+        tests:
+          - not_null
+  - name: fct_account_daily_count
+    description: Count of free and paid accounts on a daily basis. 
+    columns:
+      - name: num_accounts_paid    
+        description: Count of paid accounts for the observation date
+      - name: num_accounts_trial    
+        description: Count of trial accounts for the observation date
+      - name: observation_date    
+        description: The yyyy-mm-dd date we are looking up.
+        tests:
+          - not_null
+          - unique
+  - name: fct_account_fast_access_ranges
+    description: >
+      A row for each FAST access tenure a user has, built using the rails event fast_plan_state_changed
+      which fires every time a user's fast content access changes (including from unenrolled -> preenrolled)
+    columns: 
+        - name: user_id
+          description: '{{ doc("user_id") }}'
+        - name: is_user_credentialed
+          description: a boolean value indicating whether or not the user was credentialed at the time their fast plan state changed
+        - name: fast_plan_state
+          description: The fast plan state at the beginning of the user's FAST access tenure
+          tests:
+          - accepted_values:
+              values: [
+                'enrolled'
+              ]
+        - name: starting_biller
+          description: the biller associated with the account at the start of their fast access tenure
+        - name: next_biller
+          description: the biller associated with the account at the end of their fast access tenure
+        - name: user_fsm_state
+          description: the fsm state of the account at the start of their fast access tenure
+        - name: access_started_at
+          description: timestamp when the users' FAST content access began
+        - name: access_start_reason
+          description: a descriptive string indicating why a user gained FAST access (values subject to change)
+        - name: access_ended_at
+          description: timestamp when the users' FAST content access ended
+        - name: access_end_reason
+          description: a descriptive string indicating why a users' FAST access ended (values subject to change)
+        - name: next_fsm_state
+          description: the fsm state of the account at the start of their fast access tenure
+        - name: next_fast_plan_state
+          description: The fast plan state at the end of the user's FAST access tenure
+          # tests:
+          # - accepted_values:
+          #     values: [
+          #       'unenrolled'
+          #     ]
+  - name: fct_account_monthly_costs
+    description: Sum of costs for each subscriber for each month they are active. Imported from accounting spreadsheets. 
+    columns:
+      - name: account_id
+        description: The account that has an active subscription.
+        tests:
+         - not_null
+      - name: month
+        description: The date month is the month that that costs were recorded and is joined to subscriber payment date
+      - name: backend_costs
+        description: Sum of the variable costs such as gracenote, fastly, aws, taskus, ad costs, content costs.
+
+  - name: fct_account_payments
+    description: >
+      All payments made against an account. This does not include payments that have been refunded.
+      The payments are pulled from two models, one of confirmed payments, that is
+      from billers where we get an explicit event for each payment, and one of inferred
+      payments, from billers where a subscription starts and is understood to be auto-renewed
+      until we get an explicit cancellation event.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: packages
+        description: '{{ doc("packages") }}'
+      - name: subscriber_state
+        description: The subscriber state as reported by Philo's rails app.
+        tests:
+          - accepted_values:
+              values: "{{ var('subscriber_state_accepted_values') }}"
+          - dbt_utils.at_least_one             
+      - name: subscriber_billing
+        description: The billing platform for the account.
+        tests:
+          - not_null
+          - accepted_values:
+              values: "{{ var('subscriber_billing_accepted_values') }}"
+      - name: amount
+        description: The amount of this payment.
+      - name: list_price
+        description: >
+          The full retail price of this package. For some billers this is deduced 
+          from subsequent payments and not explicitly recorded.
+      - name: is_gift
+        description: Is this payment a gift
+      - name: promotion
+        description: Is this payment connected to a promotion
+      - name: received_at
+        description: When did this payment occur, or for an inferred bill when do we expect it to have occurred.
+      - name: lifetime_payment_number
+        description: >
+          An increasing integer recording the individual payments that have been made against the account. 
+          This is not equivalent to the number of months or the duration of the account as there are cases
+          where an account is double billed, changes billers, or potentially has pro-rated payments.
+  - name: fct_package_payment_succeeded
+    description: >
+      All package payments distributed by account_id sorted by when payment was received_at (within a few ms of when we record payment).
+      This includes base packages and add-ons. This does not indicate if a payment was later refunded, it will remain in this table as a payment.
+    columns: 
+      - name: package_payment_succeeded_id
+        description: UUID value of the payment event
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: package
+        description: Philo package string indicated the package purchased in this line item. Contrast with packages.
+      - name: package_type
+        description: The type of package, base plan or add-on.
+      - name: packages
+        description: Philo packages array indicating all of the packages paid for in this bill.
+      - name: invoice
+        description: Integer invoice number
+      - name: total_bill_cents
+        description: >
+          The total bill prior to taxes and fees. Stored in integers so 2500 means $25.00.
+          This total is inclusive of other packages that were paid for in the same bill.
+          amount_cents is the value to use for the amount paid specifically for this line item.
+      - name: proration_cents
+        description: The amount of the bill that is fees for a prorated package payment.
+      - name: amount_cents
+        description: The amount billed for this single line item (package). In contrast to total_bill_cents.
+      - name: proration_start
+        description: The start of the proration range if applicable.
+      - name: proration_end
+        description: The end of the proration range if applicable.
+      - name: access_start
+        description: The start of the time period for which this payment granted the user access to the package.
+      - name: access_end
+        description: The end of the time period for which this payment granted the user access to the package.
+      - name: event
+        description: Segment event name.
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+  - name: fct_paid_user_subscription_range
+    description: >
+      A row for each date range for which an account (historically called a root user) has paid for Philo. 
+      For a paid user with 12 monthly payments this would have 12 distinct rows. This is mostly generated off
+      of payment_succeeded events from rails_prod. So if a new payment occurs (new billing service, new add-on package)
+      a new row is created, the date ranges are not required to all be of equal duration.
+    columns:
+      - name: account_id
+        description: The account that has an active subscription.
+        tests:
+          - not_null
+      - name: packages
+        description: The content package that the account has subscribed to.
+      - name: subscriber_state
+        description: The subscriber state as reported by Philo's rails app.
+        tests:
+          - accepted_values:
+              values: "{{ var('subscriber_state_accepted_values') }}"
+          - dbt_utils.at_least_one
+      - name: subscriber_billing
+        description: The billing platform for the account.
+        tests:
+          - not_null
+          - accepted_values:
+              values: "{{ var('subscriber_billing_accepted_values') }}"
+      - name: date_range_start_at
+        description: The start of the billing period
+        tests:
+          - not_null
+      - name: date_range_end_at
+        description: The end of the billing period
+      - name: is_active
+        description: A flag for whether this subscription range is currently active, generated for query convenience.
+      - name: seq
+        description: An incrementing value for counting the number of subscription ranges for the account.
+        tests:
+          - not_null
+      - name: cancel_scheduled_at
+        description: The timestamp (or null if none) of when this account will be cancelled if payment is not made.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - account_id
+            - seq
+  - name: fct_samsung_attributed_subscriptions
+    description: >
+      A row for each account and the visit and payment timestamps for which we need to track the subscription revenue
+      inclusive of base plan and add-ons for which we will share revenue with Samsung under our contract signed in 2022.
+    columns:
+      - name: account_created_at
+        description: Timestamp of account creation (primarily for validation/auditing of the table)
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: anonymous_id
+        description: '{{ doc("anonymous_id") }}'
+      - name: first_platform_ident_at
+        description: The timestamp of the first completed authentication (identification or ident) on this platform.
+      - name: ident_platform
+        description: The viewing platform that the account used.
+      - name: first_samsung_ident_at
+        description: The timestamp of the first completed authentication on a samsung device.
+      - name: first_paid_at
+        description: The timestamp of the first bill payment.
+      - name: samsung_signup_visit_at
+        description: The timestamp indicating when the account first visited the signup page on a samsung device.
+      - name: activated_visit_at
+        description: The timestamp indicating when the account first visited the web platform from the link or QR code displayed on their samsung device.
+      - name: seq
+        description: The sequence of authentications so that we can validate the order in which the account used various platforms.
+  - name: fct_stripe_account_invoices_summary
+    description: Stripe data summarized at the invoice level 
+    columns:
+      - name: invoice_id
+        description: Unique identifier for the invoice.
+      - name: customer_id
+        description: Stripe customer id; maps to philo user id in the Stripe customers table.
+      - name: charge_id
+        description: Unique id of the last charge associated with the invoice 
+      - name: discount_coupon_id
+        description: Support coupon code applied. This field defaults to null
+      - name: subtotal_cents
+        description: Invoice level subtotal (pre-tax) in cents 
+      - name: tax_percent
+        description: Tax percentage points, where applicable. This field defaults to null.
+      - name: tax_cents
+        description: Tax amount charged at the invoice level. This field defaults to null.
+      - name: total_cents
+        description: Combined invoice total (subtotal + taxes) charged. 
+      - name: amount_paid_cents
+        description: Amount in cents paid for the invoice 
+      - name: was_paid
+        description: Boolean indicator for whether or not the invoice has been paid.
+      - name: billing_reason
+        description: Enumerate value, subscription_create for the start of a new subscription tenure or subscription_cycle for succedent charges. 
+      - name: attempt_count
+        description: total number of attempted charges per invoice 
+      - name: invoice_status
+        description: enumerated value indicating the invoice status (paid, void, uncollectible, draft, open)
+      - name: invoice_created_at
+        description: Timestamp when the invoice was created; not the same as the payment due date or subscription start date 
+      - name: period_end_at
+        description: Timestamp aligns with Stripe API value for when the invoice was actually due
+      - name: status_transitions_paid_at
+        description: Timestamp aligned with Stripe API value for when the invoice was actually paid
+      - name: invoice_product_count
+        description: Number of products (base and addons) per invoice. Maximum expected value is 1 (base) + the number of addons. 
+      - name: line_item_count
+        description: Number of line items base, addons, prorated items, or refunds) per invoice. Maximum expected value per invoice is 2 * (1+ the number of addons). 
+      - name: prorated_items_count
+        description: Number of prorated items per invoice.
+      - name: total_with_proration
+        description: Invoice level total accounting for proration, when applicable
+      - name: philo_base
+        description: Column indicating that the invoice includes the Philo base plan. Will return the price_id for the Philo base plan on the invoice.
+      - name: movie_addon
+        description: Column indicating that the invoice includes the movies and more add-on. Will return the price_id for the add-on on the invoice.
+      - name: mgm_addon
+        description: Column indicating that the invoice includes the mgm add-on. Will return the price_id for the add-on on the invoice.
+      - name: starz_addon
+        description:  Column indicating that the invoice includes the Starz add-on. Will return the price_id for the add-on on the invoice.
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: customer_zip
+        description: Zip code associated with the Stripe customer
+      - name: customer_state
+        description: State associated with the Stripe customer 
+      - name: payment_method_count
+        description: Approximated number of payment methods used
+      - name: card_address_zip
+        description: Zip code of the card used for the last charge on the invoice. 
+      - name: card_fingerprint
+        description: unique identifier for a card; null for cashapp and link(stripe wallet)
+      - name: card_funding
+        description: Funding type of the card used in the last charge for the invoice. Enumerated value (credit, prepaid, unknown, debit, NULL)
+      - name: amount_refunded_cents
+        description: Invoice total refunded amount 
+      - name: was_charge_refunded
+        description: Boolean indicator for whether or not the last charge on the invoice was refunded. 
+      - name: charge_status
+        description: Enumerated value indicating charge status (succeeded, failed, NULL) 
+      - name: charged_at
+        description: Timestamp of the last attempted charge for the invoice
+      - name: charge_amount_cents
+        description: Amount in cents for the last attempted charge for the invoice
+      - name: failure_code
+        description: Stripe failure code
+      - name: failure_message
+        description: Stripe failure message 
+      - name: dispute_reason
+        description: Stripe dispute reason
+      - name: dispute_status
+        description: Enumerated value indicating the status of the dispute for an invoice (won, lost, under_review, warning_under_review, warning_needs_response, needs_response, warning_closed, NULL)
+      - name: dispute_amount_cents
+        description: Invoice disputed amount in cents 
+      - name: dispute_id
+        description: Unique identifier for the dispute associated with the invoice 
+      - name: last_refund_id
+        description: Unique identifier for the refund associated with the invoice 
+      - name: last_refund_reason
+        description: Stripe refund reason for the last refund on an invoice, in the event of multiple refunds 
+      - name: last_refund_status
+        description: Enumerated value indicating the status of the last refund, in the case of multiple partial refunds for one invoice (succeeded, failed, canceled, NULL)
+      - name: last_refund_amount_cents
+        description: Amount of last refund, in the case of multiple refunds, associated with the invoice 
+      - name: refunds_batch_timestamp
+        description: '{{ doc("loaded_at") }}'
+      - name: invoices_batch_timestamp
+        description: '{{ doc("loaded_at") }}'
+      - name: disputes_batch_timestamp
+        description: '{{ doc("loaded_at") }}'
+
+  - name: fct_stripe_line_item_level_summary
+    description: Stripe data presented at the line item level, including calculated taxes, refund, dispute, and discount amounts otherwise only reported at the invoice level
+    columns:
+      - name: invoice_line_item_id
+        description: Unique identifier for the invoice line item.
+      - name: invoice_id
+        description: Unique identifier for the invoice.
+      - name: price_id
+        description: Unique identifier for the plan and price 
+      - name: line_item_discount_coupon_id
+        description: Support coupon code applied. This field defaults to null/
+      - name: description
+        description: Line item description
+      - name: line_item_subtotal_cents
+        description: Line item level subtotal amount in cents 
+      - name: line_item_discount_cents
+        description: Line item level discounted amount in cents. Calulated. 
+      - name: line_item_discounted_subtotal_cents
+        description: Line item total in cents after discounts but before taxes are applied. Calulated. 
+      - name: line_item_total_cents
+        description: Line item total in cents after discounts and taxes are applied. Calulated. 
+      - name: line_item_tax_cents
+        description: Line item level tax amount in cents. Calulated. 
+      - name: proration
+        description: Boolean value. True when the line item is a proration.
+      - name: line_items_batch_timestamp
+        description: '{{ doc("loaded_at") }}'
+      - name: invoice_total_cents
+        description: Invoice level total amount in cents. 
+      - name: customer_id
+        description: Stripe customer id; maps to philo user id in the Stripe customers table.
+      - name: charge_id
+        description: Unique id of the last charge associated with the invoice 
+      - name: invoice_status
+        description: enumerated value indicating the invoice status (paid, void, uncollectible, draft, open)
+      - name: attempt_count
+        description: total number of attempted charges per invoice 
+      - name: billing_reason
+        description: Enumerate value, subscription_create for the start of a new subscription tenure or subscription_cycle for succedent charges. 
+      - name: was_paid
+        description: Boolean 
+      - name: tax_percent
+        description: Tax percentage points, where applicable. This field defaults to null.
+      - name: invoice_created_at
+        description: Timestamp when the invoice was created; not the same as the payment due date or subscription start date 
+      - name: period_end_at
+        description: Timestamp aligns with Stripe API value for when the invoice was actually due
+      - name: status_transitions_paid_at
+        description: Timestamp aligned with Stripe API value for when the invoice was actually paid
+      - name: invoices_batch_timestamp
+        description: '{{ doc("loaded_at") }}'
+      - name: invoice_level_charge_cents
+        description: Charge amount in cents at the invoice level
+      - name: payment_method_id
+        description: Unique identifier for the payment method associated with the charge 
+      - name: dispute_id
+        description: Unique identifier for a dispute associated with the invoice 
+      - name: charge_created_at
+        description: Timestamp for when the last charge was created 
+      - name: charge_status
+        description: Enumerated value indicating charge status (succeeded, failed, NULL) 
+      - name: card_address_zip
+        description: Zip code of the card used for the last charge on the invoice. 
+      - name: card_fingerprint
+        description: unique identifier for a card; null for cashapp and link(stripe wallet)
+      - name: card_funding
+        description: Funding type of the card used in the last charge for the invoice. Enumerated value (credit, prepaid, unknown, debit, NULL)
+      - name: failure_code
+        description: Stripe failure code 
+      - name: failure_message
+        description: Stripe failure message 
+      - name: has_paid
+        description: Boolean value indicating whether or not the invoice was paid 
+      - name: was_refunded
+        description: Boolean value indicating whether or not the invoice was refunded
+      - name: invoice_level_disputes_cents
+        description: Total dispute amount, in cents, at the Invoice level
+      - name: dispute_reason
+        description: Stripe dispute reason 
+      - name: dispute_status
+        description: Enumerated value indicating the status of the dispute for an invoice (won, lost, under_review, warning_under_review, warning_needs_response, needs_response, warning_closed, NULL)
+      - name: disputes_batch_timestamp
+        description: '{{ doc("loaded_at") }}'
+      - name: last_refund_id
+        description: Unique identifier for the refund associated with the invoice 
+      - name: last_refund_reason
+        description: Stripe refund reason for the last refund on an invoice, in the event of multiple refunds 
+      - name: last_refund_status
+        description: Enumerated value indicating the status of the last refund, in the case of multiple partial refunds for one invoice (succeeded, failed, canceled, NULL)
+      - name: last_refund_created_at
+        description: Timestamp for last refund, in the evnet of multiple refunds per invoice
+      - name: refunds_batch_timestamp
+        description: '{{ doc("loaded_at") }}'
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: customer_zip
+        description: Zip code associated with the Stripe customer
+      - name: customer_state
+        description: State associated with the Stripe customer 
+      - name: nickname
+        description: Plan nickname in Stripe 
+      - name: product_id
+        description: Unique identifier for the product 
+      - name: line_item_refund_cents 
+        description: Line item level refunded amount in cents. Calculated.  
+      - name: line_item_dispute_cents
+        description: Line item level disputed amount in cents. Calculated. 
+      - name: line_item_last_refund_cents
+        description: Line item level refund amount in cents; in the case of multiple refunds per invoice, the amount associated with teh last refund.

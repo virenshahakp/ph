@@ -1,0 +1,178 @@
+version: 2
+
+models:
+  - name: all_platforms_derived_watched_ranges
+    description: >
+      Ranges of continuous playback over an asset for each user.
+      This set of ranges come from older apps that sent watched
+      seconds data and is processed into the 'derived' schema.
+    columns:
+      - name: event_id
+        description: Segment generated event id
+      - name: user_id
+        description: >
+          {{ doc("user_id") }}
+          The user (profile) that watched this asset.
+        tests:
+          - not_null
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+        tests:
+          - not_null:
+              severity: warn
+      - name: asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: requested_asset_id
+        description: '{{ doc("asset_id") }}'
+        tests:
+          - not_null
+      - name: played_asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: timestamp_start
+        description: The timestamp, from the client, the user first started watching the range.      
+      - name: timestamp
+        description: The timestamp, from the client, indicating the end of the watched range.
+        tests:
+          - not_null        
+      - name: delay
+        description: >
+          The number of seconds the user is watching behind live; this should be
+          null when the asset is not live.
+      - name: hashed_session_id
+        description: '{{ doc("hashed_session_id") }}'
+      - name: context_ip
+        description: '{{ doc("context_ip") }}'
+      - name: platform
+        description: '{{ doc("platform") }}'
+        tests:
+          - not_null
+          - accepted_values:
+              values: [
+                  'android'
+                , 'androidtv'
+                , 'chromecast'
+                , 'fire'
+                , 'firetv'
+                , 'ios'
+                , 'roku'
+                , 'samsung'
+                , 'tvos'
+                , 'viziotv'
+                , 'web'
+              ]
+      - name: bitrate
+        description: Always null as derived tables did not send this information.
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+      - name: position_start
+        description: '{{ doc("position_start") }}'
+        tests:
+          - not_null
+      - name: position_stop
+        description: '{{ doc("position_stop") }}'
+        tests:
+          - not_null
+      - name: channel_id
+        description: '{{ doc("channel_id") }}'
+      - name: show_id
+        description: '{{ doc("show_id") }}'
+      - name: episode_id
+        description: '{{ doc("episode_id") }}'
+      - name: run_time
+        description: '{{ doc("run_time") }}'
+      - name: tms_series_id
+        description: '{{ doc("tms_series_id") }}'
+      - name: philo_series_id    
+        description: '{{ doc("philo_series_id") }}'
+      - name: watched_seconds
+        description: The duration of the range (position_stop - position_start)
+      - name: watched_minutes_id
+        description: >
+          Surrogate key for each record in this table. 
+          It is a hash of user, playback session, requested asset, 
+          played asset, and platform.
+      - name: dbt_processed_at 
+        description: '{{ doc("dbt_processed_at") }}'
+  - name: all_platforms_watched_ranges
+    description: >
+      Ranges of continuous playback over an asset for each user.
+      This set of ranges come from combining the player state
+      changed data from each platform.
+    columns:
+      - name: event_id
+        description: Segment generated event id
+      - name: user_id
+        description: >
+          {{ doc("user_id") }}
+          The user (profile) that watched this asset.
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+      - name: asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: requested_asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: played_asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: timestamp_start
+        description: The timestamp, from the client, the user first started watching the range.      
+      - name: timestamp
+        description: The timestamp, from the client, indicating the end of the watched range.
+      - name: delay
+        description: >
+          The number of seconds the user is watching behind live; this should be
+          null when the asset is not live.
+      - name: hashed_session_id
+        description: '{{ doc("hashed_session_id") }}'
+      - name: context_ip
+        description: '{{ doc("context_ip") }}'
+      - name: platform
+        description: '{{ doc("platform") }}'
+        tests:
+          - not_null
+          - accepted_values:
+              values: [
+                  'android'
+                , 'androidtv'
+                , 'chromecast'
+                , 'fire'
+                , 'firetv'
+                , 'ios'
+                , 'roku'
+                , 'samsung'
+                , 'tvos'
+                , 'viziotv'
+                , 'web'
+              ]
+      - name: bitrate
+        description: Bitrate of the ending event
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+      - name: position_start
+        description: '{{ doc("position_start") }}'
+      - name: position_stop
+        description: '{{ doc("position_stop") }}'
+      - name: channel_id
+        description: '{{ doc("channel_id") }}'
+      - name: show_id
+        description: '{{ doc("show_id") }}'
+      - name: episode_id
+        description: '{{ doc("episode_id") }}'
+      - name: run_time
+        description: '{{ doc("run_time") }}'
+      - name: tms_series_id
+        description: '{{ doc("tms_series_id") }}'
+      - name: philo_series_id    
+        description: '{{ doc("philo_series_id") }}'
+      - name: watched_seconds
+        description: The duration of the range (position_stop - position_start)
+      - name: watched_minutes_id
+        description: >
+          Surrogate key for each record in this table. 
+          It is a hash of user, playback session, requested asset, 
+          played asset, and platform.
+      - name: dbt_processed_at 
+        description: '{{ doc("dbt_processed_at") }}'

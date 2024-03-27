@@ -1,0 +1,136 @@
+version: 2
+
+models:
+  - name: dim_media_groups
+    description: '{{ doc("dim_media_groups") }}'
+    columns:
+      - name: callsign
+        description: the callsign of the channel
+        tests:
+          - not_null
+      - name: channel_name
+        description: name of the channel
+        tests:
+          - not_null
+      - name: display_name
+        description: display name of the channel
+      - name: is_on_philo
+        description: is the channel on philo
+      - name: media_group
+        description: what media group owns the channel
+      - name: rate
+        description: the price per sub for the channel
+      - name: proposed_rate
+        description: proposed price per sub for the channel
+
+  - name: dim_qa_users
+    description: '{{ doc("dim_qa_users") }}'
+    columns:
+      - name: user_email
+        description: user email
+      - name: user_phone
+        description: user phone number
+      - name: user_role
+        description: the roles for the user
+      - name: product_generation
+        description: the product generation for the user
+      - name: billing_state
+        description: billing state for the user
+      - name: billed_by
+        description: billing platform
+      - name: attribute
+        description: was there a referral
+      - name: package
+        description: philo package
+      - name: user_rails_id
+        description: user rails DB id
+      - name: user_rails_id
+        description: external uuid (analytics id)
+      - name: notes
+        description: notes
+      - name: last_updated_at
+        description: last update time for the user
+      - name: last_verified_at
+        description: last verified time
+
+  - name: fct_ad_revenue
+    description: '{{ doc("fct_ad_revenue") }}'
+    columns:
+      - name: impression_date
+        description: when the impressions were served
+        tests:
+          - not_null
+      - name: impressions
+        description: number of ad impressions
+      - name: revenue
+        description: revenue brought in
+      - name: provider
+        description: the partner platform that provided the ad
+        tests:
+          - not_null
+
+  - name: fct_ad_revenue_by_network
+    description: the ad revenue per network per month
+    columns:
+      - name: ad_month
+        description: the month where this data is recorded
+        tests:
+          - not_null
+      - name: partner
+        description: network
+      - name: revenue
+        description: revenue brought in
+
+  - name: fct_business_costs
+    description: '{{ doc("fct_business_costs") }}'
+    columns:
+      - name: month
+        description: the month the costs
+        tests:
+          - not_null
+      - name: quarter
+        description: quarter of the year
+        tests:
+          - not_null
+      - name: aws_costs
+        description: aws costs
+      - name: taskus_costs
+        description: tasks us costs from support
+      - name: marketing_costs
+        description: marketing costs
+      - name: content_costs
+        description: costs of philo content
+      - name: ad_costs
+        description: cost of ad platform
+      - name: variable_costs
+        description: costs of other stuff like Gracenote, Fastly..
+      - name: platform_costs
+        description: revenue share costs of billing platforms
+
+  - name: fct_daily_ad_revenue_per_hour
+    description: '{{ doc("fct_ad_revenue_per_hour") }}'
+    columns: 
+    - name: event_date
+      description: date of average daily ad revenue
+      tests: 
+        - not_null
+    - name: ad_revenue_per_hour_watched
+      description: For each day this is the revenue per hour our users watched content on that day.
+      tests:
+        - not_null:
+            severity: warn
+    tests:
+      - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
+          date_col: event_date
+          date_part: day
+          test_start_date: '2018-03-19'
+
+  - name: fct_marketing_daily_spend
+    description: '{{ doc("fct_marketing_daily_spend") }}'
+    columns:
+      - name: ad_date
+        description: the day of the costs
+      - name: partner
+        description: the partner that was used for the spend
+      - name: spend
+        description: the amount spent in dollars

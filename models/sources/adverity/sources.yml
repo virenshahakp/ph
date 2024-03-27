@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: adverity
+    database: warehouse
+    schema: adverity
+    loader: adverity
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    tables:
+      - name: applesa_campaigns
+      - name: bing_ads_campaigns
+      - name: cjaffiliate_campaigns
+      - name: lift_off_campaigns
+      - name: mailgun_amazon_campaigns
+      - name: pinterest_campaigns
+      - name: snapchat_campaigns
+      - name: tiktok_campaigns

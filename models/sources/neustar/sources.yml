@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: demographics
+    database: warehouse
+    schema: demographics
+    loader: neustar
+
+    quoting:
+      database: true
+      schema: true
+      identifier: true
+
+    tables:
+      - name: neustar_households_historical
+      - name: neustar_persons_historical
+      - name: neustar_households
+      - name: neustar_persons

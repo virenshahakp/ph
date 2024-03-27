@@ -1,0 +1,29 @@
+version: 2
+
+models:
+  - name: dataserver_dev_show_save_source
+    description: dataserver dev show save events, a portion of production was configured to report to dev for a period of time 
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: show_id
+        description: The global identifier for the show.
+      - name: sent_at
+        description: The time the client indicates the save occurred.
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: timestamp
+        description: '{{ doc("timestamp") }}'
+  - name: dataserver_dev_show_unsave_source
+    description: dataserver prod show unsave events, a portion of production was configured to report to dev for a period of time 
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: show_id
+        description: The global identifier for the show.
+      - name: sent_at
+        description: The time the client indicates the unsave occurred.
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: timestamp
+        description: '{{ doc("timestamp") }}'

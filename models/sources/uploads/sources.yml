@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: uploads
+    database: warehouse
+    schema: uploads
+    loader: superset
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    tables:
+      - name: ad_revenue_historic
+      - name: daily_marketing_channel_performance
+      - name: daily_tv_performance

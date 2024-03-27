@@ -1,0 +1,162 @@
+name: 'philo_warehouse'
+version: '1.0.0'
+profile: 'default'
+require-dbt-version: ">=1.7.0"
+
+config-version: 2
+
+# These configurations specify where dbt should look for different types of files.
+# The `source-paths` config, for example, states that models in this project can be
+# found in the "models/" directory. You probably won't need to change these!
+model-paths: ["models"]
+analysis-paths: ["analysis"]
+test-paths: ["tests"]
+seed-paths: ["data"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"  # directory which will store compiled SQL files
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+# Configuring models
+# Full documentation: https://docs.getdbt.com/docs/configuring-models
+
+models:
+  bind: false
+  philo_warehouse:
+    materialized: view
+    sources:
+      materialized: ephemeral
+      schema: dbt_sources
+      +tags:
+        - "daily"
+      ## Add default tags for DAI ads models
+      publica:
+        +tags:
+          - "dai"
+          - "exclude_hourly"
+          - "exclude_daily"
+      spectrum_dai:
+        +tags:
+          - "dai"
+          - "exclude_hourly"
+          - "exclude_daily"
+    staging:
+      materialized: view
+      schema: dbt_staging
+      ## Add default tags for DAI ads models
+      ads:
+         +tags:
+          - "dai"
+          - "exclude_hourly"
+          - "exclude_daily"
+      spectrum_dai:
+        +tags:
+          - "dai"
+          - "exclude_hourly"
+          - "exclude_daily"
+    mart:
+      materialized: table
+      schema: analytics
+      +tags:
+        - "hourly"
+      ## Add default tags for DAI ads models
+      ads:
+         +tags:
+          - "dai"
+          - "exclude_hourly"
+          - "exclude_daily"
+  ## elementary models will be created in the schema '<your_schema>_elementary'
+  ## see docs: https://docs.elementary-data.com/
+  ## setting enabled flag via jinjia is to disable elementary calls in dev schemas
+  ## "{{ (target.name == 'prod') | as_bool }}"
+  elementary:
+    +schema: "elementary"
+    +enabled: "{{ (target.name == 'prod') | as_bool }}"
+
+seeds:
+  quote_columns: false
+  schema: analytics
+
+snapshots:
+  +target_schema: snapshots
+  +target_database: warehouse
+  #+unique_key: <column_name_or_expression>
+  
+# These variables are constants that we wish to re-use within the project particularly
+# to alleviate lots of copy/paste for tests of fields that are in many sources.
+vars:
+  # dbt_utils 1.0 changed how nulls are handled, this is to keep the older behavior to not break existing keys
+  surrogate_key_treat_nulls_as_empty_strings: true #turn on legacy behavior
+  dbt_date:time_zone: 'UTC'
+  subscriber_state_accepted_values: [
+      'blocked'
+      , 'card_blocked'
+      , 'card_lapsed'
+      , 'carded'
+      , 'curious'
+      , 'deactivated'
+      , 'deleted'
+      , 'delinquent'
+      , 'delinquent_access'
+      , 'delinquent_no_access'
+      , 'departing'
+      , 'engaged'
+      , 'known'
+      , 'lapsed'
+      , 'locked_out'
+      , 'plan_blocked'
+      , 'plan_lapsed'
+      , 'planned'
+      , 'probation'
+      , 'regular'
+      , 'respawnable'
+      , 'switched'
+      , 'unknown'
+    ]
+  subscriber_billing_accepted_values: [
+      'apple'
+      , 'amazon'
+      , 'bestbuy'
+      , 'chargebee'
+      , 'edu'
+      , 'google'
+      , 'roku'
+      , 'stripe'
+      , 'unbilled'
+    ]
+  package_accepted_values: [
+      'philo-core'
+      , 'philo-plus'
+      , 'philo-2021'
+      , 'philo-2021-2m'
+      , 'epix'
+      , 'starz'
+      , 'movie'
+    ]
+  addon_accepted_values: [
+      'epix'
+      , 'starz'
+      , 'movie'
+    ]
+  philo_start_date: '2017-11-14'
+  partition_size: "day"
+  philo_experiment_data_start_date: '2018-11-01'
+  start_date: ""
+  end_date: ""
+  channel: ""
+  default_lookback_days: 3
+
+#  ### Elementary observability settings
+#  #For dbt artifact export 
+#  days_back: 21   # maximum timeframe for collecting metrics and analyzing anomalies
+#  anomaly_sensitivity: 3   # sensitivity of anomaly detection
+#  backfill_days: 2   # days to backfill on each run, adjust to your data delays
+#  tests_schema_name: '_test_results'
+#  #model_sql_max_size: 16384
+#  #long_string_size: 16384
+#  #disable_dbt_invocation_autoupload: true # error in redshift with long strings
+
+

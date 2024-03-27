@@ -1,0 +1,20 @@
+version: 2
+
+sources:
+  - name: rails_sync
+    database: warehouse
+    schema: rails_sync
+    loader: tivli-main-ott
+    loaded_at_field: reported_at # true for at least one table, but not standardized
+
+    quoting:
+      database: true
+      schema: true
+      identifier: true
+
+    freshness:
+      warn_after: {count: 12, period: hour}
+      error_after: {count: 24, period: hour}
+
+    tables:
+      - name: users_with_content_access

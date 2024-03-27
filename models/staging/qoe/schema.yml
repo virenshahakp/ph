@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: all_platforms_stream_ends
+    description: Join all of the platform stream end events into one consolidated view.
+  - name: all_platforms_stream_errors
+    description: Join all of the platform stream error events into one consolidated view.
+  - name: playback_session_attributes
+    description: >
+      The attributes from the first stream event that we receive. We use this as an immutable
+      set of attributes for the session.
+  - name: playback_session_error_attributes
+    description: >
+      The code and description of the first error we receive for a session. Errors are supposed
+      to be fatal, so we should only get one error, but sometimes we get more than one. Taking
+      the first guarantees that the error code and description will not change.
+  - name: playback_sessions_historic
+    description: A record for each historic playback session with summary attributes
+    columns:
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+        tests:
+          - not_null
+  - name: playback_sessions_recent
+    description: A record for each recent playback session with summary attributes
+    columns:
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+        tests:
+          - not_null

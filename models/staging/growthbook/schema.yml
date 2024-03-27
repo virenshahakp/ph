@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: growthbook_braze_experiment_users_stage
+    description: A user entering a braze canvas
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: event_timestamp
+        description: When the user entered the experiment
+      - name: canvas_name
+        description: The name of the canvas
+      - name: canvas_variant_name
+        description: The name of the canvas variant
+      - name: new_or_existing
+        description: Is the user new or an existing customer
+      - name: dbt_processed_at
+        description: '{{ doc("dbt_processed_at") }}'
+  - name: growthbook_logged_in_users_stage
+    description: A user entering a braze canvas
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: event_timestamp
+        description: When the user entered the experiment
+      - name: canvas_name
+        description: The name of the canvas
+      - name: canvas_variant_name
+        description: The name of the canvas variant
+      - name: new_or_existing
+        description: Is the user new or an existing customer
+      - name: _dbt_source_relation
+        description: Which data source recorded the experiment viewed event
+      - name: dbt_processed_at
+        description: '{{ doc("dbt_processed_at") }}'        

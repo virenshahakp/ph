@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: neustar_persons_historical_source
+    description: Information about people that live in the same household as a primary Philo account holder. Historical information from v1 of the Neustar API.
+    columns:
+      - name: user_id
+        description: id associated with a philo account
+      - name: gender
+        description: gender of the individual who lives at this household
+      - name: birth_year
+        description: birth year format YYYY of the indivudal who lives at this household
+      - name: education
+        description: code representing the maximum level of education achieved by this individual
+      - name: index
+        description: integer uniquely identifying this individual within the household
+  - name: neustar_households_historical_source
+    description: Information about users that are connected to a philo account_id. Historical information from v1 of the Neustar API.
+    columns:
+      - name: user_id
+        description: id associated with a philo account
+      - name: homeowner
+        description: if the account holder is the homeowner or not
+      - name: people_in_household
+        description: the total number of people determined to be living in that household
+      - name: composition
+        description: identifier describing the occupants of the household based on the composition of males, females and children within the living unit
+      - name: income_narrow
+        description: A narrow bucketing of household income in dollars
+  - name: neustar_persons_source
+    description: Information about users that are connected to a philo account_id. Full data dictionary or source data can be found in notion here https://www.notion.so/philoinc/Neustar-Data-Definitions-Dictionary-5747371cbdd3497da9578b6fa6ce8cc0
+    columns:
+      - name: user_id
+        description: id associated with a philo account
+      - name: gender
+        description: gender of the individual who lives at this household
+      - name: birth_year
+        description: birth year format YYYY of the indivudal who lives at this household
+      - name: education
+        description: code representing the maximum level of education achieved by this individual
+      - name: index
+        description: integer uniquely identifying this individual within the household
+  - name: neustar_households_source
+    description: Information about users that are connected to a philo account_id. Full data dictionary or source data can be found in notion here https://www.notion.so/philoinc/Neustar-Data-Definitions-Dictionary-5747371cbdd3497da9578b6fa6ce8cc0
+    columns:
+      - name: user_id
+        description: id associated with a philo account
+      - name: homeowner
+        description: if the account holder was a homeowner or not
+      - name: people_in_household
+        description: the total number of people determined to be living in that household
+      - name: composition
+        description: identifier describing the occupants of the household based on the composition of males, females and children within the living unit
+      - name: income_narrow
+        description: A narrow bucketing of household income in dollars

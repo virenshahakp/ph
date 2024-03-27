@@ -1,0 +1,190 @@
+version: 2
+
+models:
+  - name: dataserver_prod_channel_favorite_stage
+    description: All of the playback sessions that are successfully created
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: timestamp
+        description: When the identify event was received
+      - name: channel_id
+        description: which channel was faved
+  - name: dataserver_prod_playback_session_created_stage
+    description: All of the playback sessions that are successfully created
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: received_at
+        description: When the identify event was received
+      - name: played_asset_type
+        description: What video asset type was played
+        tests:
+          - accepted_values:
+              values: [
+                'CHANNEL'
+                , 'RECORDING'
+                , 'VOD'
+              ]
+      - name: tile_group_id
+        description: '{{ doc("tile_group_id") }}'
+  - name: dataserver_prod_scrolled_stage
+    description: dataserver scrolled events across tiles and streams
+    columns:
+      - name: environment_analytics_version
+        description: Analytics version
+      - name: event_text 
+        description: describes event sent 
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+      - name: initial_index
+        description: index from which the skip occured 
+      - name: original_timestamp
+        description: When the event occurred according to dataserver down to the millisecond
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: scroll_distance 
+        description: depth of scroll, equal to the difference between terminal and initial index 
+      - name: terminal_index 
+        description: index on which the skip ended
+      - name: tile_group_id
+        description: '{{ doc("tile_group_id") }}'
+      - name: tile_group_id
+        description: Title of the tile group 
+      - name: uuid_ts
+        description: Segment's universally unique identifier and the epoch timestamp when the event was created, in milliseconds - events must be sent as soon as possible, as events created more than 3 hours before the current time are rejected.
+      - name: user_id
+        description: '{{ doc("user_id") }}' 
+      - name: uuid
+        description: Segment's universally unique identifier is a 128-bit label for data events
+  - name: dataserver_prod_show_save_stage
+    description: Events for each time a user saves a show. This can have multiple entries per user+show combination.
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: show_id
+        description: '{{ doc("show_id") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: sent_at
+        description: The client indicated time of when the event occurred.
+      - name: timestamp
+        description: '{{ doc("timestamp") }}'
+  - name: dataserver_prod_show_unsave_stage
+    description: Events for each time a user unsaves a show. This can have multiple entries per user+show combination.
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: show_id
+        description: '{{ doc("show_id") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: sent_at
+        description: The client indicated time of when the event occurred.
+      - name: timestamp
+        description: '{{ doc("timestamp") }}'
+  - name: dataserver_prod_search_term_stage
+    description: Search terms combined into the final query and order by user
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: query
+        description: The search query.
+      - name: user_agent
+        description: The user agent of the client issuing the request.
+      - name: search_number
+        description: The sequential search number issue by the user.
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: timestamp
+        description: '{{ doc("timestamp") }}'
+  - name: dataserver_prod_user_playback_session_map
+    description: Create a unique lookup for each playback session that provides a user_id and the first played asset
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+      - name: played_asset_id
+        description: The asset that dataserver delivered in this playback session. It may differ from what the client requested.
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+  - name: saved_show_ranges_stage
+    description: Creates ranges for save+unsave events, allowing us to see if a user had a show saved at a given point in time and for how long a show is saved.
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: show_id
+        description: '{{ doc("show_id") }}'
+      - name: date_range_start_at
+        description: The beginning of the period for which the user saved this show.
+      - name: date_range_end_at 
+        description: The end of the period for which the user saved this show, or NULL if the show is still saved.
+  - name: dataserver_prod_experiment_viewed_stage
+    description: experiment viewed staged
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: experiment_name
+        description: The name of the experiment
+      - name: experiment_id
+        description: The id of the experiment
+      - name: variant_name
+        description: The variant of the experiment to which the user belongs
+      - name: variant_id
+        description: The variant id
+      - name: start_date
+        description: The start date of the experiment
+      - name: event_timestamp
+        description: the timestamp of the user being enrolled into the experiment
+  - name: dataserver_prod_errors_stage
+    description: Events for each time an error comes in from dataserver (for now, limited to createPlaybackSession and checkPlaybackSession errors). 
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: show_id
+        description: '{{ doc("show_id") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: sent_at
+        description: The client indicated time of when the event occurred.
+      - name: timestamp
+        description: '{{ doc("timestamp") }}'
+      - name: event_text
+        description: describes event sent 
+      - name: error_type
+        description: describes which dataserver error event is sending (createPlaybackSession vs checkPlaybackSession)
+        tests:
+          - accepted_values: 
+              values: [
+                'checkPlaybackSession',
+                'createPlaybackSession',
+                'createPlaybackSessionV2',
+                'joinSharedPlaybackSession'
+              ]
+      - name: error_description
+        description: dataserver error code description such as PLAYER_NOT_FOUND
+      - name: original_timestamp
+        description: When the event occurred according to dataserver down to the millisecond
+      - name: received_at
+        description: when the error event was received
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+      - name: error_code
+        description: specific dataserver error code in format ds-x.x.x
+      - name: requested_asset_id
+        description: id of requested asset 
+      - name: platform
+        description: client platform
+      - name: device_type
+        description: device_type
+      - name: context_user_agent
+        description: the browser user agent string
+      - name: loaded_at
+        description: '{{ doc("uuid_ts") }}'
+      - name: player_id
+        description: unique id for device and account profile 
+      - name: environment_analytics_version
+        description: analytics version

@@ -1,0 +1,41 @@
+version: 2
+
+sources:
+  - name: tvos_prod
+    database: warehouse
+    schema: tvos_prod
+    loader: segment
+    loaded_at_field: uuid_ts
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    freshness:
+      warn_after: {count: 8, period: hour}
+      error_after: {count: 24, period: hour}
+
+    tables:
+      - name: application_opened
+      - name: identifies
+      - name: interact
+      - name: message_clicked
+      - name: message_dismissed
+      - name: message_opened
+      - name: message_received
+      - name: player_state_changed
+      - name: poll_submit
+      - name: screens
+      - name: signup_auth_submit
+        freshness: # this is a rare event
+          warn_after: {count: 28, period: day}
+          error_after: {count: 90, period: day}
+      - name: stream_start
+      - name: stream_end
+      - name: stream_error
+      - name: rebuffering_start
+      - name: rebuffering_end
+      - name: payment_provider_purchase_error
+      - name: payment_provider_purchase_start
+      - name: payment_provider_purchase_success

@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: export
+    database: warehouse
+    schema: export
+    loader: rails/script/analytics_ott
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    tables:
+      - name: preferences
+      - name: collection_deployments_product_rules
+      - name: collection_deployments
+      - name: collection_versions
+      - name: experiments
+      - name: tile_group_ids

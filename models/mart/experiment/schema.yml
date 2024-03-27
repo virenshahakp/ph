@@ -1,0 +1,72 @@
+version: 2
+
+models:
+  - name: dim_experiments
+    description: Philo run experiments
+    columns:
+      - name: experiment_id
+        description: Rails assigned experiment id
+      - name: experiment_name
+        description: Experiment name used in experiment assignment and experiment viewed events
+      - name: experiment_concluded_at
+        description: The timestamp when the experiment was ended in rails.
+  - name: fct_anonymous_experiment_users
+    description: Records for experiments viewed where the user targeting is done on the anonymous id
+    columns:
+      - name: anonymous_id
+        description: '{{ doc("anonymous_id") }}'
+      - name: experiment_id
+        description: unique identifier for the experiment, currently the same as the experiment name
+      - name: experiment_name
+        description: name for the experiment
+      - name: variation_id
+        description: unique identifier for the variant within the experiment, currently the same as the variant name
+      - name: variation_name
+        description: name of the variant
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: event_timestamp
+        description: when the user encountered the experiment
+      - name: visit_platform
+        description: The platform to which we attribute the initial visit
+      - name: visit_platform_type
+        description: The type of platform used for the initial visit
+      - name: visit_platform_os
+        description: The Operating System of the visit platform
+      - name: visit_browser
+        description: The browser used on the initial visit (if applicable)
+      - name: signup_platform
+        description: The platform used for account signup
+      - name: subscriber_billing
+        description: The initial billing platform
+      - name: context_campaign_source
+        description: UTM parameter for the campaign source
+      - name: context_campaign_name
+        description: UTM parameter for the campaign name
+      - name: context_page_path
+        description: The initial visit page
+      - name: new_or_existing
+        description: Indicator of whether the user was new or existing at the time of encountering the experiment
+  - name: fct_braze_experiment_users
+    description: The users in braze experiments
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: user_shown_experiment_timestamp
+        description: When the user was shown the notification
+      - name: experiment_id
+        description: The id of the experiment
+      - name: experiment_name
+        description: The name of the experiment
+      - name: variant_id
+        description: The id of the  variant
+      - name: variant_name
+        description: The name of the  variant
+      - name: event
+        description: The name of the event
+      - name: new_or_existing
+        description: Is the user a new user or an existing user
+      - name: event_timestamp
+        description: When the event was recorded
+  - name: fct_logged_in_experiment_users
+    description: Logged in user experiments

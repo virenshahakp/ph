@@ -1,0 +1,47 @@
+version: 2
+
+models:
+    - name: uploads_ad_revenue_historic_stage
+      description: >
+        Uploaded daily revenue and impressions per provider for our DAI ads. 
+        This is a static set of data for historic performance that is combined with the
+        recent ad_revenue that is sync'd on a regular basis.
+      columns: 
+        - name: impression_date
+          description: The day on which the ads were served. Our Ads system reports this based upon Eastern Time.
+        - name: impressions
+          description: Total number of ads delivered for this provider.
+        - name: revenue
+          description: The total revenue for the day for this provider.
+        - name: provider
+          description: The ad network partner that bid on the audience and was provided with the impressions.
+    - name: uploads_daily_marketing_channel_performance_stage
+      description: Uploaded marketing performance data 
+      columns:
+        - name: ad
+          description: Name of campaign
+        - name: channel
+          description: Name of marketing partner
+        - name: conversions
+          description: The total number of interactions or conversion events for a given time period
+        - name: date
+          descritpion: The date the ad was displayed
+        - name: impressions
+          description: The number of times an ad was displayed
+        - name: spend
+          description: The total amount paid for the reporting time frame 
+    - name: uploads_daily_tv_performance_stage
+      description: Uploaded TV performance data from Simulmedia
+      columns:
+        - name: ad
+          description: Name of campaign
+        - name: channel
+          description: Name of marketing partner
+        - name: cost
+          description: The total amount paid for the reporting time frame 
+        - name: impressions
+          description:  The number of times an ad was aired
+        - name: reach
+          description: The size of the available audience
+        - name: spot_date
+          descritpion:  The date the ad was aired

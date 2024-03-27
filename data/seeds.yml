@@ -1,0 +1,48 @@
+version: 2
+
+seeds:
+  - name: bestbuy_sku_price_package
+    description: A mapping of best buy skus to list price and Philo package
+    columns:
+      - name: bby_sku
+        description: The stock keeping unit (SKU) that best buy uses to identify the product that is sold.
+        tests:
+          - unique
+          - not_null
+      - name: list_price
+        description: The full price of the product, prior to any discounts at the point of sale. 
+        tests:
+          - not_null
+      - name: packages
+        description: The philo package being sold.
+        tests:
+          - not_null
+      - name: description
+        description: Any notes or description of the product configuration being sold.
+  - name: dma_code_name
+    description: A mapping of DMA codes to names
+    columns:
+      - name: code
+        tests:
+          - unique
+          - not_null
+      - name: name
+        tests:
+          - unique
+          - not_null
+  - name: dim_publica_platform_map
+    description: A mapping of Publica platform IDs to platform
+    columns:
+      - name: bidrequest_site_id
+        description: The publica ID.  This is sourced from Publica.
+        tests:
+          - unique
+          - not_null
+      - name: publica_channel
+        description: The platform name, as supplied by publica. 
+        tests:
+          - not_null
+      - name: client_type
+        description: A roll up of the platform.  Internally derived, not supplied by publica.  
+        tests:
+          - not_null

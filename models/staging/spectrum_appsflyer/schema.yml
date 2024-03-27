@@ -1,0 +1,5 @@
+models:
+    - name: spectrum_appsflyer_appsflyer_to_mode_stage
+      description: install events tracked via appsflyer 
+      columns: 
+        - name: context_device_advertising_id

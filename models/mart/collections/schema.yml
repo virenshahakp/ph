@@ -1,0 +1,40 @@
+version: 2
+
+models:
+  - name: dim_collections
+    description: Collections and their attributes
+    columns:
+      - name: collection_id 
+        description: Id of the collection
+      - name: collection_name 
+        description: The name of the collection as recorded in the collections dashboard        
+      - name: show_id
+        description: '{{ doc("show_id") }}'        
+      - name: collection_display_name 
+        description: Collection title displayed on the user's screen
+      - name: channel_id
+        description: '{{ doc("channel_id") }}'    
+      - name: collection_target 
+        description: The view that the collection targets
+      - name: deployment_id 
+        description: Deployment id of the collection 
+      - name: experiment_id 
+        description: The id of the experiment
+      - name: deployment_environment 
+        description: The deploynent environment  
+      - name: collection_position_relative 
+        description: position of the collection as recorded in the collections dashboard
+      - name: variant 
+        description: The variant of the experiment to which the user belongs
+      - name: collection_version_id 
+        description: Id of the version of the collection
+      - name: collection_version_number 
+        description: Numerical number of the version of the collection
+      - name: product_rule_id 
+        description: Product rule id
+      - name: collection_product_rule 
+        description: Product including null indicating base product, and upsell like starz and epix
+      - name: experiment_name
+        description: The name of the experiment
+      - name: is_dynamic
+        description: Dynamic collections are collections that are set in collections dashboard. Static collections are always present for all users

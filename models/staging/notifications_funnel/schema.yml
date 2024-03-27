@@ -1,0 +1,302 @@
+version: 2
+
+models:
+  - name: all_platforms_message_sent_stage
+    description: notification events to platforms that include sent messages
+    columns:
+      - name: message_id
+        description: unique id of message event
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+        tests:
+          - not_null:
+              severity: error
+      - name: message_external_id
+        description: internally set message id (set on the backend and sent to segment)
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: loaded_at
+        tests:
+          - not_null:
+              severity: error
+      - name: event_timestamp
+        description: time of event set by client's internal clock 
+        tests:
+          - not_null:
+              severity: error
+      - name: message_event
+        description: The type of message that was recorded
+        tests:
+          - accepted_values:
+              values: [
+                'message_sent'
+              ]
+      - name: message_channel
+        description: channel message wast sent through
+        tests:
+          - not_null:
+              severity: warn
+      - name: message_type
+        description: type of message sent
+      - name: message_name
+        description: name of message
+      - name: answers
+        description: Answer from an inApp notifications such as the welcome survey
+      - name: braze_campaign_id
+        description: braze campaign id
+      - name: braze_canvas_id
+        description: braze canvas id
+      - name: braze_step_id
+        description: braze set id
+      - name: braze_variant_id
+        description: braze variant id 
+      - name: dbt_processed_at
+        description: '{{ doc("dbt_processed_at") }}'
+      - name: platform
+        description: '{{ doc("platform") }}'
+        tests:
+          - accepted_values:
+              values: [
+                  'android'
+                , 'androidtv'
+                , 'chromecast'
+                , 'fire'
+                , 'firetv'
+                , 'ios'
+                , 'roku'
+                , 'samsung'
+                , 'tvos'
+                , 'web'
+                , 'rails'
+                , 'dataserver'
+              ]
+  - name: all_platforms_message_sent_to_client_stage 
+    description: received message notification events from all platforms
+    columns:
+      - name: message_id
+      - name: loaded_at
+        tests:
+          - not_null:
+              severity: warn
+      - name: event_timestamp
+        description: time of event set by client's internal clock 
+        tests:
+          - not_null:
+              severity: warn
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: message_external_id
+        description: internally set message id (set on the backend and sent to segment)
+      - name: message_channel
+        description: channel the notification is delivered through
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: message_event
+        description: The type of message that was recorded
+        tests:
+          - accepted_values:
+              values: [
+                'message_sent_to_client'
+              ]
+      - name: platform
+        description: '{{ doc("platform") }}'
+        tests:
+          - accepted_values:
+              values: [
+                  'android'
+                , 'androidtv'
+                , 'chromecast'
+                , 'fire'
+                , 'firetv'
+                , 'ios'
+                , 'roku'
+                , 'samsung'
+                , 'tvos'
+                , 'web'
+                , 'rails'
+                , 'dataserver'
+              ]
+  - name: all_platforms_message_received_stage 
+    description: received message notification events from all platforms
+    columns:
+      - name: message_id
+      - name: loaded_at
+        tests:
+          - not_null:
+              severity: warn
+      - name: event_timestamp
+        description: time of event set by client's internal clock 
+        tests:
+          - not_null:
+              severity: warn
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: message_external_id
+        description: internally set message id (set on the backend and sent to segment)
+      - name: message_channel
+        description: channel the notification is delivered through
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: message_event
+        description: The type of message that was recorded
+        tests:
+          - accepted_values:
+              values: [
+                'message_received'
+              ]
+      - name: platform
+        description: '{{ doc("platform") }}'
+        tests:
+          - accepted_values:
+              values: [
+                  'android'
+                , 'androidtv'
+                , 'chromecast'
+                , 'fire'
+                , 'firetv'
+                , 'ios'
+                , 'roku'
+                , 'samsung'
+                , 'tvos'
+                , 'web'
+                , 'rails'
+                , 'dataserver'
+              ]
+  - name: all_platforms_message_opened_stage 
+    description: received message notification events from all platforms
+    columns:
+      - name: message_id
+      - name: loaded_at
+        tests:
+          - not_null:
+              severity: warn
+      - name: event_timestamp
+        description: time of event set by client's internal clock 
+        tests:
+          - not_null:
+              severity: warn
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: message_external_id
+        description: internally set message id (set on the backend and sent to segment)
+      - name: message_channel
+        description: channel the notification is delivered through
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: message_event
+        description: The type of message that was recorded
+        tests:
+          - accepted_values:
+              values: [
+                'message_opened'
+              ]
+      - name: platform
+        description: '{{ doc("platform") }}'
+        tests:
+          - accepted_values:
+              values: [
+                  'android'
+                , 'androidtv'
+                , 'chromecast'
+                , 'fire'
+                , 'firetv'
+                , 'ios'
+                , 'roku'
+                , 'samsung'
+                , 'tvos'
+                , 'web'
+                , 'rails'
+                , 'dataserver'
+              ]
+  - name: all_platforms_message_clicked_stage 
+    description: received message notification events from all platforms
+    columns:
+      - name: message_id
+      - name: loaded_at
+        tests:
+          - not_null:
+              severity: warn
+      - name: event_timestamp
+        description: time of event set by client's internal clock 
+        tests:
+          - not_null:
+              severity: warn
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: message_external_id
+        description: internally set message id (set on the backend and sent to segment)
+      - name: message_channel
+        description: channel the notification is delivered through
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: message_event
+        description: The type of message that was recorded
+        tests:
+          - accepted_values:
+              values: [
+                'message_clicked'
+              ]
+      - name: platform
+        description: '{{ doc("platform") }}'
+        tests:
+          - accepted_values:
+              values: [
+                  'android'
+                , 'androidtv'
+                , 'chromecast'
+                , 'fire'
+                , 'firetv'
+                , 'ios'
+                , 'roku'
+                , 'samsung'
+                , 'tvos'
+                , 'web'
+                , 'rails'
+                , 'dataserver'
+              ]              
+  - name: all_platforms_message_dismissed_stage 
+    description: received message notification events from all platforms
+    columns:
+      - name: message_id
+      - name: loaded_at
+        tests:
+          - not_null:
+              severity: warn
+      - name: event_timestamp
+        description: time of event set by client's internal clock 
+        tests:
+          - not_null:
+              severity: warn
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: message_external_id
+        description: internally set message id (set on the backend and sent to segment)
+      - name: message_channel
+        description: channel the notification is delivered through
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: message_event
+        description: The type of message that was recorded
+        tests:
+          - accepted_values:
+              values: [
+                'message_dismissed'
+              ]
+      - name: platform
+        description: '{{ doc("platform") }}'
+        tests:
+          - accepted_values:
+              values: [
+                  'android'
+                , 'androidtv'
+                , 'chromecast'
+                , 'fire'
+                , 'firetv'
+                , 'ios'
+                , 'roku'
+                , 'samsung'
+                , 'tvos'
+                , 'web'
+                , 'rails'
+                , 'dataserver'
+              ]

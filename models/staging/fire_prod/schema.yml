@@ -1,0 +1,215 @@
+version: 2
+
+models:
+  - name: fire_prod_application_opened_stage
+    description: Launch events tracked via segment on fire prod
+    columns:
+      - name: anonymous_id
+        tests:
+          - not_null
+      - name: visited_at
+        tests:
+          - not_null
+  - name: fire_prod_identifies_stage
+    description: See fire_prod sources
+  - name: fire_prod_notifications_stage
+    description: message notification events from fire
+    columns:
+      - name: message_id
+      - name: loaded_at
+        tests:
+          - not_null:
+              severity: error
+      - name: event_timestamp
+        description: time of event set by client's internal clock 
+        tests:
+          - not_null:
+              severity: error
+      - name: dbt_processed_at
+        description: '{{ doc("dbt_processed_at") }}'
+        tests:
+          - not_null:
+              severity: error
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+        tests:
+          - not_null:
+              severity: error
+      - name: message_external_id
+        description: internally set message id (set on the backend and sent to segment)
+      - name: message_channel
+        description: channel the notification is delivered through
+        tests:
+          - not_null:
+              severity: warn
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: message_event
+        description: The type of message event that was recorded
+        tests:
+          - not_null:
+              severity: error
+  - name: fire_prod_player_state_changed_boundaries_stage
+    description: Player state changed records annotated with boundary flags and validation attributes
+    columns:
+      - name: event_id
+        description: Segment generated event id
+      - name: user_id
+        description: >
+          {{ doc("user_id") }}
+          The user (profile) that watched this asset.
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+      - name: asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: timestamp
+        description: '{{ doc("timestamp") }}'
+      - name: delay
+        description: >
+          The number of seconds the user is watching behind live; this should be
+          null when the asset is not live.
+      - name: hashed_session_id
+        description: '{{ doc("hashed_session_id") }}'
+      - name: context_ip
+        description: '{{ doc("context_ip") }}'
+      - name: bitrate
+        description: Always null as derived tables did not send this information.
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+      - name: position_start
+        description: '{{ doc("position_start") }}'
+      - name: position_stop
+        description: '{{ doc("position_stop") }}'
+      - name: action
+        description: Player action for this event (start, stop, sync)
+      - name: position_duration_seconds
+        description: The elapsed duration from the playback positions
+      - name: watched_range_timestamp_duration_seconds
+        description: The elapsed duration from the timestamps of the start and end of this range
+      - name: is_starting_event
+        description: Indicator for the starting event of a watched range
+      - name: is_ending_event
+        description: Indicator for the ending event of a watched range
+      - name: previous_action
+        description: The action for the previous event in this range
+      - name: previous_timestamp
+        description: The timestamp for the previous event in this range
+      - name: next_action
+        description: The action for the next event in this range
+      - name: next_timestamp
+        description: The timestamp for the next event in this range
+      - name: watched_range_start_at
+        description: Client timestamp for the first event in this range
+      - name: watched_range_end_at
+        description: Client timestamp for the last event in this range      
+      - name: has_reporting_delay
+        description: Did this event come more than 310 seconds after the last event?
+      - name: has_position_start_jump
+        description: Is this position start different than the previous value by more than 10 seconds?
+      - name: has_position_stop_jump
+        description: Is this position stop more than 310 seconds after the last position stop event?
+      - name: played_asset_reporting_delay_count
+        description: The number of events in this range with a reporting delay
+      - name: played_asset_position_start_jump_count
+        description: The number of events in this range with a start jump
+      - name: played_asset_position_stop_jump_count
+        description: The number of events in this range with a stop jump      
+      - name: played_asset_total_event_count
+        description: The total number of events in this range
+      - name: dbt_processed_at 
+        description: '{{ doc("dbt_processed_at") }}'
+  - name: fire_prod_player_state_changed_stage
+    description: See fire_prod sources
+  - name: fire_prod_poll_submit_stage
+    description: Answers to a Philo in-app poll
+    columns:
+      - name: event_id
+        description: '{{ doc("event_id") }}'
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: poll_name
+        description: The name of the Philo poll answered
+      - name: question
+        description: The question that was displayed to the user
+      - name: answer
+        description: The poll answer selected
+      - name: environment_analytics_version
+        description: Analytics version which indicates what possible answers were available
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'    
+  - name: fire_prod_screens_stage
+    description: Event fired when a screen loads in the fire app
+    columns: 
+      - name: anonymous_id
+        description: '{{ doc("anonymous_id") }}'
+        tests:
+          - not_null
+      - name: device_id
+        description: A unique identifier for the device the screen was requested from 
+      - name: environment_analytics_version
+        description: '{{ doc("environment_analytics_version") }}'
+      - name: event_id
+        description: '{{ doc("event_id") }}'
+      - name: event_timestamp 
+        description: '{{ doc("event_timestamp") }}'
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: screen_name
+        description: A name, typically descriptive, for the screen loaded
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+  - name: fire_prod_watched_ranges_stage
+    description: Continuous ranges of watching an asset
+    columns:
+      - name: event_id
+        description: Segment generated event id
+      - name: user_id
+        description: >
+          {{ doc("user_id") }}
+          The user (profile) that watched this asset.
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+      - name: asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: requested_asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: played_asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: timestamp_start
+        description: The timestamp, from the client, the user first started watching the range.
+      - name: timestamp
+        description: The timestamp, from the client, indicating the end of the watched range.
+      - name: delay
+        description: >
+          The number of seconds the user is watching behind live; this should be
+          null when the asset is not live.
+      - name: hashed_session_id
+        description: '{{ doc("hashed_session_id") }}'
+      - name: context_ip
+        description: '{{ doc("context_ip") }}'
+      - name: bitrate
+        description: Always null as derived tables did not send this information.
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+      - name: position_start
+        description: '{{ doc("position_start") }}'
+      - name: position_stop
+        description: '{{ doc("position_stop") }}'
+      - name: action
+        description: Player action that ended the event range
+      - name: position_duration_seconds
+        description: The elapsed duration from the playback positions
+      - name: watched_range_timestamp_duration_seconds
+        description: The elapsed duration from the timestamps of the start and end of this range
+      - name: watched_seconds
+        description: The minimum of position changes and timestamp differences
+      - name: dbt_processed_at 
+        description: '{{ doc("dbt_processed_at") }}'              

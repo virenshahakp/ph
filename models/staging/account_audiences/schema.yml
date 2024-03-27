@@ -1,0 +1,313 @@
+version: 2
+
+models:
+  - name: account_audience_active_paid_months
+    description: >
+      User audiences for accounts that are currently active and have 
+      1, 2, 3, 4, 5, or 6+ months paid. These are not required to be
+      consecutive months of payments for this audience.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_active_payers
+    description: >
+      User audience for all accounts that are currently in an active paid status.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_addons_active_payers
+    description: >
+      User audience for all accounts that are currently paying for addons.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_addons_after_launch_offer
+    description: >
+      User audience for all accounts that subscribed to addons at some point 
+      after the initial launch offer (which ended 2020-07-15).
+      
+      Consider deprecating this audience in 2021.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_addons_ever_paid
+    description: > 
+      User audience for all accounts that have ever paid for an addon package.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_addons_initial_launch_offer
+    description: >
+      User audience for all accounts that responded to the initial addons launch offer.
+
+      Consider deprecating this in 2021.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_addons_trialers
+    description: >
+      User audience for all accounts that have trialed an addon package.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_all_accounts_including_supers
+    description: > 
+      User audience for all accounts that exist. This includes philo employees, gratis accounts etc.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_all_payers
+    description: >
+      User audience for all accounts that have ever paid. 
+      This excludes accounts that immediately received a refund for their
+      first (and only) payment.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_all_subscribers
+    description: >
+      User audience for all accounts that have completed the subscription process.
+      That is they have successfully provided payment details.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_all_trialers
+    description: > 
+      User audience for all accounts that contained a trial.
+      This trial could be of varying durations, but excludes accounts that
+      signed up/subscribed without a trial.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_all_visitors
+    description: >
+      User audience for all accounts that visited Philo.
+      The account_id may be an anonymous id if they never reached the point
+      of creating a Philo account.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_cancelled_paid_months
+    description: >
+      User audiences for accounts that have paid for
+      1, 2, 3, 4, 5, or 6+ months and are currently cancelled accounts.
+
+      The payments are not required to be consecutive, but are cumulative.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_cancelled_paid_refunded
+    description: >
+      User audience for the special case of accounts with a single
+      payment, have cancelled, and have been refunded. 
+
+      This logic is only valid for confirmed payment billers
+      for an inferred payment biller (e.g. bestbuy) we don't
+      get the refunded event we are simply told of a cancellation.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_cancelled_users
+    description: >
+      User audience for all accounts that have paid at some point
+      but are currently cancelled. This is the union of the 
+      audience_cancelled_paid_months audiences and the 
+      audience_cancelled_paid_refunded model.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_coupons_active_payers
+    description: >
+      User audience for all accounts that are currently in an active paid status 
+      and have used a coupon. This is dynamically built off of all coupon codes that have been applied.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_coupons_all_payers
+    description: >
+      User audience for all accounts that ever paid and have used a coupon.
+      This is dynamically built off of all coupon codes that have been applied.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_coupons_all_redeemers
+    description: >
+      User audience for all accounts that ever redeemed a coupon.
+      This is dynamically built off of all coupon codes that have been applied.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_currently_scheduled_cancellations
+    description: >
+      User audience for accounts that are currently active but scheduled to be cancelled.
+
+      This will not reflect some scheduled cancellations in external billers.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_days_active
+    description: >
+      User audiences for accounts that have been active, meaning at least one stream start
+      from at least one profile on the account in the last 1, 7, 14, or 28 days.
+      For each date range two audiences are created:
+      1. for activity in at least one of the last n days 
+      2. for activity in every day of the last n days. 
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_list_roku_national_offer_2020
+    description: >
+      User audience for all accounts that participated in the Roku National Offer in 2020.
+      This was a promotion with multiple months of Philo and a Roku device.
+
+      Consider deprecating in 2021 and/or consolidating this list with other marketing or
+      promotional audiences in some fashion.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_subscribed_never_paid
+    description: >
+      User audience for all accounts that have completed the subscription process
+      but have not ever paid. This also requires the user to have started a trial
+      to be included.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_trialed_never_subscribed
+    description: >
+      User audience for all accounts that have started a trial, but never 
+      completed the subscription process. We exclude any trials that were started
+      within the last 14 days as those accounts still have a reasonable likelihood
+      to subscribe.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: account_audience_visited_never_trialed
+    description: >
+      User audience for all accounts that have visited but never started a trial.
+      The account_id in this case is likely to be an anonymous id.
+      We exclude any visits from the last 7 days as they are still likely to start
+      a trial.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+  - name: all_account_audiences
+    description: >
+      A view to union all the models in the data warehouse that start with the words "account_audience_".
+
+      The account_audience_* models need to be run and exist in the database before this model will incorporate them.
+
+      That is, we don't have ref() commands in this file and as such the model is assumed to be independent of the DAG.
+      Unfortunately that is a side-effect of programmatically building the account_audiences at this time with the dbt_util
+      get_relations_by_pattern() method.
+
+      Fortunately the all_account_audiences view will only ever be behind by one run. So it can either be configured to
+      run after the account_audiences are built or it will simply lag one run behind in terms of incorporating new account
+      audiences. Since it is a view any changed logic from existing audiences will be immediately incorporated.
+
+      Unfortunately, it also means to deprecate an account_audience we need to explicitly drop the view from redshift.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: audience
+        description: '{{ doc("audience") }}'
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+      - name: _dbt_source_relations
+        description: The name of the model that generated this audience.

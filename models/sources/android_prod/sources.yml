@@ -1,0 +1,38 @@
+version: 2
+
+sources:
+  - name: android_prod
+    database: warehouse
+    schema: android_prod
+    loader: segment
+    loaded_at_field: uuid_ts
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    freshness:
+      warn_after: {count: 8, period: hour}
+      error_after: {count: 24, period: hour}
+
+    tables:
+      - name: application_installed
+      - name: application_opened
+      - name: identifies
+      - name: interact
+      - name: message_clicked
+      - name: message_dismissed
+      - name: message_opened
+      - name: message_received
+      - name: payment_provider_purchase_start
+        freshness: null # do not check freshness for this table
+      - name: player_state_changed
+      - name: poll_submit
+      - name: rebuffering_start
+      - name: rebuffering_end
+      - name: screens
+      - name: stream_start
+      - name: stream_end
+      - name: stream_error
+

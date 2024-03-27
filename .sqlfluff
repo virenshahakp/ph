@@ -1,0 +1,218 @@
+[sqlfluff]
+
+
+# Supported dialects https://docs.sqlfluff.com/en/stable/dialects.html
+# Or run 'sqlfluff dialects'
+dialect = redshift
+
+# One of [raw|jinja|python|placeholder]
+templater = dbt
+
+# Comma separated list of rules to exclude, or None
+
+# Exclude layout.spacing (L001) (unnecessary trailing whitespace)
+# Exclude layout.spacing (L005) (comma should not have whitespace directly before them)
+# Exclude layout.end_of_file (L009) (files must end with a trailing newline)
+# Exclude layout.spacing L039 as we want extra blank spaces in some scenarios
+# Excluding L051 as we don't feel the need to say "inner"
+# Excluding layout.end_of_file (L048 & L071) to allow for vertical alignment of keywords rather than restricing to single space gaps
+
+exclude_rules = ambiguous.column_count, ambiguous.join, layout.end_of_file 
+
+# The standard max_line_length is 80 in line with the convention of
+# other tools and several style guides. Many projects however prefer
+# something a little longer.
+# Set to zero or negative to disable checks.
+
+#set line length to warn (LT05)
+warnings = LT05 
+max_line_length = 130
+
+large_file_skip_byte_limit = 0
+
+# CPU processes to use while linting.
+# The default is "single threaded" to allow easy debugging, but this
+# is often undesirable at scale.
+# If positive, just implies number of processes.
+# If negative or zero, implies number_of_cpus - specified_number.
+# e.g. -1 means use all processors but one. 0 means all cpus.
+# as of 2023-07-14 gitlab throws a warning with any value other than 1
+processes = 1
+
+# If using the dbt templater, we recommend setting the project dir.
+[sqlfluff:templater]
+unwrap_wrapped_queries = True
+
+[sqlfluff:templater:dbt]
+project_dir = ./
+unwrap_wrapped_queries = True
+
+[sqlfluff:templater:jinja]
+apply_dbt_builtins = True
+
+
+[sqlfluff:indentation]
+# While implicit indents are not enabled by default. Many of the
+# SQLFluff maintainers do use them in their projects.
+# https://docs.sqlfluff.com/en/stable/layout.html#implicitindents
+allow_implicit_indents = True
+indented_joins = False
+indented_ctes = False
+indented_using_on = True
+indented_on_contents = True
+template_blocks_indent = True
+indent_unit = space
+tab_space_size = 2
+
+
+# Some rules can be configured directly from the config common to other rules.
+[sqlfluff:rules]
+allow_scalar = True
+single_table_references = consistent
+unquoted_identifiers_policy = all
+
+########################aliasing######################################
+
+[sqlfluff:rules:aliasing.table] #L011
+# Aliasing preference for tables
+aliasing = explicit
+
+[sqlfluff:rules:aliasing.column] #L012
+# Aliasing preference for columns
+aliasing = explicit
+
+
+[sqlfluff:rules:aliasing.length]
+max_alias_length = 100
+min_alias_length = 4
+
+[sqlfluff:rules:aliasing.forbid] #L031 replaces #L066
+# Avoid table aliases in from clauses and join conditions.
+# Disabled by default for all dialects unless explicitly enabled.
+# We suggest instead using aliasing.length (AL06) in most cases.
+force_enable = False
+
+[sqlfluff:rules:aliasing.expression]
+allow_scalar = false
+
+########################capitalisation################################
+[sqlfluff:rules:capitalisation.identifiers] #L014
+capitalisation_policy = lower
+ignore_words = None
+
+[sqlfluff:rules:capitalisation.keywords] #L010
+capitalisation_policy = lower
+ignore_words = None
+
+[sqlfluff:rules:capitalisation.functions] #L030
+extended_capitalisation_policy = lower
+ignore_words = None
+
+[sqlfluff:rules:capitalisation.literals] #L040
+capitalisation_policy = lower
+ignore_words = None
+
+[sqlfluff:rules:capitalisation.types] #L063
+# Capitalisation of datatypes
+extended_capitalisation_policy = lower
+
+
+########################references####################################
+
+[sqlfluff:rules:references.from] #L026
+# References must be in FROM clause
+# Disabled for some dialects (e.g. bigquery)
+force_enable = False
+
+[sqlfluff:rules:references.consistent] #L028
+# References must be consistently used
+# Disabled for some dialects (e.g. bigquery)
+force_enable = False
+
+[sqlfluff:rules:references.keywords] #L029
+# Keywords should not be used as identifiers.
+unquoted_identifiers_policy = aliases
+quoted_identifiers_policy = none
+# Comma separated list of words to ignore for this rule
+ignore_words = id,action,source,schema_name
+
+[sqlfluff:rules:references.special_chars] #L057
+# Special characters in identifiers
+unquoted_identifiers_policy = all
+quoted_identifiers_policy = all
+allow_space_in_identifier = False
+additional_allowed_characters = ""
+
+[sqlfluff:rules:references.quoting] #L059
+# Policy on quoted and unquoted identifiers
+prefer_quoted_identifiers = False
+
+########################convention####################################
+
+[sqlfluff:rules:convention.select_trailing_comma] #L038
+ # Trailing commas
+select_clause_trailing_comma = forbid
+
+[sqlfluff:rules:convention.count_rows] #L047
+# Consistent syntax to count all rows
+prefer_count_1 = True
+prefer_count_0 = False
+
+[sqlfluff:rules:convention.terminator] #L052
+multiline_newline = False
+require_final_semicolon = False
+
+[sqlfluff:rules:convention.blocked_words] #L062
+# Comma separated list of blocked words that should not be used
+blocked_words = None
+
+[sqlfluff:rules:convention.quoted_literals] #L064
+# Consistent usage of preferred quotes for quoted literals
+preferred_quoted_literal_style = consistent
+# Disabled for dialects that do not support single and double quotes for quoted literals (e.g. Postgres)
+force_enable = False
+
+[sqlfluff:rules:convention.casting_style] #L067
+# SQL type casting
+preferred_type_casting_style = shorthand
+
+########################structure#####################################
+
+[sqlfluff:rules:structure.subquery] #L042
+# By default, allow subqueries in from clauses, but not join clauses
+forbid_subquery_in = join
+
+########################ambiguous#####################################
+
+[sqlfluff:rules:ambiguous.column_references] #L054
+# GROUP BY/ORDER BY column references
+group_by_and_order_by_style = consistent
+
+########################layout#######################################
+
+
+[sqlfluff:rules:layout.long_lines] #L016
+ignore_comment_lines = False
+ignore_comment_clauses = False
+
+[sqlfluff:layout:type:comma]
+line_position = leading
+
+[sqlfluff:layout:type:binary_operator]
+spacing_within = touch
+line_position = leading
+
+[sqlfluff:layout:type:alias_expression]
+# We want non-default spacing _before_ the alias expressions.
+spacing_before = align
+# We want to align them within the next outer select clause.
+# This means for example that alias expressions within the FROM
+# or JOIN clause would _not_ be aligned with them.
+align_within = select_clause
+# The point at which to stop searching outward for siblings, which
+# in this example would likely be the boundary of a CTE. Stopping
+# when we hit brackets is usually a good rule of thumb for this
+# configuration.
+align_scope = bracketed
+
+

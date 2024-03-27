@@ -1,0 +1,75 @@
+version: 2
+
+models:
+    - name: account_demographics_stage
+      description: Philo accounts with associated demographic and account level attributes
+      columns:
+        - name: account_id
+          description: '{{ doc("account_id") }}'
+          tests:
+            - not_null
+        - name: roles
+          description: Different roles associated with this account
+        - name: subscriber_billing
+          description: The billing platform for the account for the first billing period.
+        - name: subscriber_state
+          description: The current billing state of the account such as, deactivated, regular, departing, or unknown
+        - name: created_at
+          description: timestamp when the account was created
+        - name: labels
+          description: None
+        - name: packages
+          description: The content package that the account has subscribed to.
+        - name: zip
+          description: The zip code associated with the account.
+        - name: dma_code
+          description: DMA code for the account.
+        - name: dma_name
+          description: DMA name for the account.
+        - name: dma_region
+          description: DMA region for the account.
+        - name: income
+          description: The income for the user obtained from rails prod
+        - name: age_range
+          description: The age_range for the user obtained from rails prod
+        - name: gender
+          description: The gender for the user obtained from rails prod
+        - name: referrer_id
+          description: none
+        - name: referral_type
+          description: none
+        - name: has_email
+          description: >
+            If the user has an email on file. We let users sign in with phone
+            number only so not all users have emails.
+          tests:
+            - accepted_values:
+                values: [true, false]
+        - name: has_phone
+          description: >
+            If the user has a phone number on file.
+          tests:
+            - accepted_values:
+                values: [true, false]
+        - name: direct_billed
+          description: If the user is directly billed or not
+        - name: signup_source
+          description: Source where the user signed up from, such as, googlefiber, roku_isu, amc, gift, etc.
+        - name: demographic_gender
+          description: Gender of the user associated with this account from Neustar data.
+        - name: demographic_homeowner
+          description: Homeowner information of the user associated with this account from Neustar data..
+        - name: demographic_age_range
+          description: Age range of the user associated with this account from Neustar data.
+        - name: demographic_people_in_household
+          description: Number of people in the household asscoiated with this account from Neustar data.
+        - name: demographic_household_composition
+          description: Composition of people in the household asscoiated with this account from Neustar data
+        - name: demographic_education_level
+          description: Education level of the household that is associated with this account from Neustar data.
+        - name: demographic_income
+          description: Income for the user asscoiated with the account from Neustar data.
+        - name: is_billable
+          description: >
+            Indicates this user is a billable subscriber as opposed to a Philo
+            employee or VIP, gratis, or loadgen user.

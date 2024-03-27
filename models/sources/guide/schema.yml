@@ -1,0 +1,11 @@
+version: 2
+
+models:
+    - name: guide_broadcasts_source
+    - name: guide_channels_source
+    - name: guide_episodes_source
+    - name: guide_genres_source
+    - name: guide_genres_shows_source
+    - name: guide_recordings_source
+    - name: guide_shows_source
+    - name: guide_vod_assets_source

@@ -1,0 +1,22 @@
+version: 2
+
+models:
+    - name: appsflyer_amazon_installs_stage
+      description: Amazon install events tracked via appsflyer
+      columns:
+        - name: context_device_advertising_id
+    - name: appsflyer_google_installs_stage
+      description: Google install events tracked via appsflyer
+      columns:
+        - name: context_device_advertising_id
+    - name: appsflyer_ios_installs_stage
+      description: Apple IOS install events tracked via appsflyer
+      columns:
+        - name: context_device_advertising_id
+    - name: spectrum_appsflyer_stage
+      description: >
+        All events delivered via appsflyer's data locker service.
+        This includes clicks, installs, and a variety of payment events that 
+        are collected by appsflyer or sent to appsflyer by our services.
+    - name: spectrum_appsflyer_installs_stage
+      description: The install events from spectrum_appsflyer_stage, excluding re-install events.

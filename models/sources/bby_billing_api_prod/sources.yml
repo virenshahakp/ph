@@ -1,0 +1,20 @@
+version: 2
+
+sources:
+  - name: bby_billing_api_prod
+    database: warehouse
+    schema: bby_billing_api_prod
+    loader: segment
+    loaded_at_field: uuid_ts
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    tables:
+      - name: activated
+      - name: canceled
+      - name: identifies
+      - name: modified
+      - name: redeemed

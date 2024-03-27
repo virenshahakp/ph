@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: chromecast_prod_identifies_source
+    description: Identify events that connect an anonymous id to a Philo user_id
+    columns:
+      - name: anonymous_id
+        description: Segment generated anonymous id
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: received_at
+        description: When the identify event was received
+      - name: context_device_id
+        description: A unique device id for this chromecast device
+      - name: timestamp
+        description: When the identify event occurred according to the browser
+  - name: chromecast_prod_launch_source
+    description: Launch events tracked via segment on chromecast prod
+    columns:
+      - name: launch_id
+        description: Segment generated unique event id
+      - name: anonymous_id
+        tests:
+          - not_null
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: received_at
+        description: When the launch event was received
+      - name: context_device_id
+        description: A unique device id for this chromecast device
+      - name: timestamp
+        description: When the launch event occurred according to the chromecast     
+  - name: chromecast_prod_player_state_changed_source
+    description: Video playback events that tracked what users watched via segment on chromecast prod

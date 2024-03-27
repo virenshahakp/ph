@@ -1,0 +1,31 @@
+version: 2
+
+models:
+    - name: derived_android_prod_watched_range_source
+      description: >
+        Continuous range of playback over an asset by a user. Pausing or seeking
+        will create a new range. This data is derived from the now deprecated
+        watched_seconds event. We have a regular job that takes watched_seconds
+        events and aggregates them into these ranges. This data is now only
+        historic. We do see some watched_seconds events but they are from very
+        old clients.
+    - name: derived_androidtv_prod_watched_range_source
+      description: See derived_android_prod_watched_range_source.
+    - name: derived_fire_prod_watched_range_source
+      description: See derived_android_prod_watched_range_source.
+    - name: derived_fire_tv_prod_watched_range_source
+      description: See derived_android_prod_watched_range_source.
+    - name: derived_ios_prod_watched_range_source
+      description: >
+        See derived_android_prod_watched_range_source. We have not yet switched
+        iOS away from this method so there is new data flowing in addition to
+        historic data.
+    - name: derived_roku_prod_watched_range_source
+      description: See derived_android_prod_watched_range_source.
+    - name: derived_tvos_prod_watched_range_source
+      description: >
+        See derived_android_prod_watched_range_source. We have not yet switched
+        iOS away from this method so there is new data flowing in addition to
+        historic data.
+    - name: derived_web_prod_watched_range_source
+      description: See derived_android_prod_watched_range_source.

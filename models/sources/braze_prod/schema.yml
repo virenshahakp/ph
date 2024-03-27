@@ -1,0 +1,61 @@
+version: 2
+
+models:
+  - name: braze_prod_canvas_entered_source
+    description: A user entering a braze canvas
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: event_timestamp
+        description: When the canvas was entered in the braze system
+      - name: canvas_name
+        description: The name of the canvas
+      - name: canvas_variant_name
+        description: The name of the canvas variant
+      - name: event
+        description: The name of the event
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+  - name: braze_prod_campaign_converted_source
+    description: A user converted in a campaign
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: event_timestamp
+        description: When the canvas was entered in the braze system
+      - name: canvas_name
+        description: The name of the canvas
+      - name: canvas_variant_name
+        description: The name of the canvas variant
+      - name: event
+        description: The name of the event
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+  - name: braze_prod_email_sent_source
+    description: Braze sent an email to a user
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: event_timestamp
+        description: When the canvas was entered in the braze system
+      - name: canvas_name
+        description: The name of the canvas
+      - name: canvas_variant_name
+        description: The name of the canvas variant
+      - name: event
+        description: The name of the event
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+  - name: braze_prod_campaign_control_group_entered_source
+    description: A user entered a campaign control group
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: event_timestamp
+        description: When the canvas was entered in the braze system
+      - name: canvas_name
+        description: The name of the canvas
+      - name: event
+        description: The name of the event
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'

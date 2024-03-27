@@ -1,0 +1,12 @@
+[sqlfluff]
+
+warnings = RF04, LT05 
+
+#RF04: change reserved keywors to warn.  This is nessesary as we can't change the schema of the events. 
+# In the future, we should alias these columns as part of the source files
+# LT05: Line Length. This is consistent with root rules.
+
+[sqlfluff:rules:references.special_chars]
+additional_allowed_characters = ",?,&,.
+allow_space_in_identifier = true
+

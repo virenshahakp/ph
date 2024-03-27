@@ -1,0 +1,363 @@
+version: 2
+
+models:
+  - name: dim_accounts
+    description: Accounts information such as created time, subscriber state, demographic information, dma information, etc.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+          - unique
+      - name: roles
+        description: Different roles associated with this account
+      - name: subscriber_billing
+        description: The billing platform for the account for the first billing period.
+      - name: subscriber_state
+        description: The current billing state of the account such as, deactivated, regular, departing, or unknown
+      - name: created_at
+        description: timestamp when the account was created
+      - name: labels
+        description: None
+      - name: packages
+        description: The content package that the account has subscribed to.
+      - name: zip
+        description: The zip code associated with the account.
+      - name: dma_code
+        description: DMA code for the account.
+      - name: dma_name
+        description: DMA name for the account.
+      - name: dma_region
+        description: DMA region for the account.
+      - name: income
+        description: The income for the user obtained from rails prod
+      - name: age_range
+        description: The age_range for the user obtained from rails prod
+      - name: gender
+        description: The gender for the user obtained from rails prod
+      - name: referrer_id
+        description: none
+      - name: referral_type
+        description: none
+      - name: has_email
+        description: >
+          If the user has an email on file. We let users sign in with phone
+          number only so not all users have emails. NULL values are possible.
+        tests:
+          - accepted_values:
+              values: [true, false]
+      - name: has_phone
+        description: >
+          If the user has a phone number on file. NULL values are possible.
+        tests:
+          - accepted_values:
+              values: [true, false]
+      - name: direct_billed
+        description: If the user is directly billed or not
+      - name: signup_source
+        description: Source where the user signed up from, such as, googlefiber, roku_isu, amc, gift, etc.
+      - name: demographic_gender
+        description: Gender of the user associated with this account from Neustar data.
+      - name: demographic_homeowner
+        description: Homeowner information of the user associated with this account from Neustar data..
+      - name: demographic_age_range
+        description: Age range of the user associated with this account from Neustar data.
+      - name: demographic_people_in_household
+        description: Number of people in the household asscoiated with this account from Neustar data.
+      - name: demographic_household_composition
+        description: Composition of people in the household asscoiated with this account from Neustar data
+      - name: demographic_education_level
+        description: Education level of the household that is associated with this account from Neustar data.
+      - name: demographic_income
+        description: Income for the user asscoiated with the account from Neustar data.
+      - name: is_billable
+        description: >
+          Indicates this user is a billable subscriber as opposed to a Philo
+          employee or VIP, gratis, or loadgen user.
+      - name: first_gift
+        description: Was the first month a gift.
+        tests:
+          - accepted_values:
+              values: [true, false]
+      - name: last_gift
+        description: Was the last month a gift
+        tests:
+          - accepted_values:
+              values: [true, false]
+      - name: first_promotion
+        description: The promotion, if any, associated with the first payment on this account.
+      - name: last_promotion
+        description: The promotion, if any, associated with the last payment on this account.
+      - name: total_payments
+        description: Total number of payments made on this account, excluding refunds
+      - name: total_paid
+        description: total amount paid by this account, excluding refunds
+      - name: total_refunds
+        description: total number of refunds issues to this account
+      - name: total_refunded
+        description: total amount refunded to this account
+      - name: net_paid
+        description: net amount paid by this account, included for legacy chart support, is the same as total_paid
+      - name: trial_started_at
+        description: When the free trial started
+      - name: trial_ended_at
+        description: When the free trial ended (could be in the future)
+  - name: dim_audiences
+    description: A list of audiences and the number of accounts, this is for a convenient way to build parameters in mode.
+    columns:
+      - name: audience
+        description: A unique string to identify the audience
+      - name: audience_name
+        description: A human friendly name for the audience in reports
+      - name: audience_size
+        description: The count of accounts that are in this audience
+  - name: dim_user_agents
+    description: A lookup table of user agents we have seen and attributes of those user agents
+    columns:
+      - name: context_user_agent_id
+        description: MD5 hash of the context user agent value as a unique identifier
+        tests:
+          - not_null
+          - unique
+      - name: context_user_agent
+        description: The user agent string that we are summarizing
+        tests:
+          - not_null
+      - name: device_family
+        description: The family of the device used which can be broad, 'Mac' or more specific 'Samsung SM-T837T'
+      - name: device_brand
+        description: The corporate brand of the device (e.g. Samsung, Apple, Generic_Android) when known.
+      - name: device_model
+        description: The specific device model used.
+      - name: os_family
+        description: The family of the operating system (Windows, Android, iOS, etc)
+      - name: os_version_major
+        description: The major version number of the operating system.
+      - name: os_version_minor
+        description: The minor version number of the operating system.
+      - name: os_version_patch
+        description: The patch version number of the operating system.
+      - name: browser_family
+        description: The family of the browser (Chrome, Firefox, Facebook, Chrome Mobile, etc)
+      - name: browser_version_major
+        description: The major version number of the browser.
+      - name: browser_version_minor
+        description: The minor version number of the browser.
+      - name: browser_version_patch
+        description: The patch version number of the browser.
+  - name: dim_users
+    description: User profile attributes '{{ doc("dim_users") }}'
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+        tests:
+          - not_null
+          - unique
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: is_account_owner
+        description: A flag to indicate whether this user is the payer on the account.
+      - name: has_email
+        description: >
+          If the user has an email on file. We let users sign in with phone
+          number only so not all users have emails.
+        tests:
+          - accepted_values:
+              values: [true, false]
+      - name: has_phone
+        description: >
+          If the user has a phone on file. 
+        tests:
+          - accepted_values:
+              values: [true, false]
+      - name: created_at
+        description: timestamp when the user was created
+      - name: roles
+        description: Different roles associated with this account
+      - name: subscriber_billing
+        description: The billing platform for the account for the first billing period.
+      - name: subscriber_state
+        description: The current billing state of the account such as, deactivated, regular, departing, or unknown
+      - name: labels
+      - name: packages
+        description: The content package that the account has subscribed to.
+      - name: zip
+        description: The zip code associated with the account.
+      - name: dma_code
+        description: DMA code for the account.
+      - name: dma_name
+        description: DMA name for the account.
+      - name: dma_region
+        description: DMA region for the account.
+      - name: is_direct_billed
+        description: If the user is directly billed or not
+      - name: signup_source
+        description: Source where the user signed up from, such as, googlefiber, roku_isu, amc, gift, etc.
+      - name: loaded_at
+        description: when this record was last updated
+  - name: fct_account_audiences
+    description: all the audiences
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: audience
+        description: '{{ doc("audience") }}'
+        tests:
+          - not_null
+      - name: audience_name
+        description: '{{ doc("audience_name") }}'
+        tests:
+          - not_null
+  - name: fct_favorited_channels
+    description: >
+      An entry tracking when a user favorites a channel and if they also unfavorite a
+      channel. There can be multiple entries per user show pair as a users favorites,
+      unfavorites, and favorites a channel again.
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+        tests:
+          - not_null
+      - name: channel_id
+        description: Rails database id for the channel record.
+        tests:
+          - not_null
+      - name: favorited_at
+        description: Timestamp user favorited the channel.
+        tests:
+          - not_null
+      - name: unfavorited_at
+        description: Timestamp user unfavorited the channel.
+  - name: fct_paid_account_cohorts
+    description: >
+      Cohorting for retention and churn, for each account this table contains records
+      to identify the initial cohort (when they first paid) and each subsequent cohort
+      and paid month that they were a customer. 
+
+      The initial biller (acquisition_biller) is included as well as the biller used
+      for each specific paid subscription period (subscriber_billing). Similarly the
+      signup platform and the primary consumption platform are recorded against each
+      account record. These will not vary for the account. 
+
+      An account can be in an observed month multiple times because of switching billers
+      or account resurrection. So a consumer of this table will have to handle this
+      occassional duplication. 
+
+      Lastly billing periods and bill numbers will be calculated. For resurrected 
+      accounts and accounts switching billers the number of bills may be higher than
+      the number of billing periods.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: initial_cohort
+        description: The first month this account paid for Philo
+      - name: observed_month
+        description: The month this record is summarizing (not necessarily unique)
+      - name: max_billing_periods
+        description: >
+          The number of months that have passed since the initial cohort month. 
+          This is the maximum possible lifetime in months of this account.
+      - name: resurrected_cohort
+        description: >
+          When this does not equal the initial cohort the resurrected_cohort is the 
+          month that this account returned to be a subscriber and started this subscription
+          period.
+      - name: date_range_start
+        description: The timestamp indicating the precise start of this subscription period.
+      - name: date_range_end
+        description: >
+          The timestamp indicating the precise end of this subscription period. For a currently
+          active account this will be the time when the last dbt run occurred calculating subscription ranges. 
+      - name: is_current_period
+        description: Is this the latest, current month? Used to identify the month in progress.
+      - name: subscriber_billing
+        description: The biller being used for this subscription period.
+      - name: acquisition_biller
+        description: The first biller that the account paid through.
+      - name: primary_platform
+        description: The primary consumption platform the account has used.
+      - name: signup_platform
+        description: The platform used for account signup.
+      - name: elapsed_billing_periods
+        description: How many months have elapsed from the initial cohort month.
+      - name: resurrected_elapsed_billing_periods
+        description: How many months have elapsed in this subscription period.
+      - name: bill_number
+        description: The payment number for the account.
+      - name: resurrected_bill_number
+        description: The payment number for this subscription period.
+  - name: fct_saved_shows
+    description: >
+      An entry tracking when a user saves a show and if they also unsave a
+      show. There can be multiple entries per user show pair as a users saves,
+      unsaves, and saves a show again.
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+        tests:
+          - not_null
+      - name: show_id
+        description: Rails database id for the show record.
+        tests:
+          - not_null
+      - name: save_at
+        description: Timestamp user saved the show.
+        tests:
+          - not_null
+      - name: unsave_at
+        description: Timestamp user unsaved the show.
+  - name: fct_search_terms
+    description: >
+      Search queries entered by users.  Since clients send intermediate search terms,
+      this table only inclues the last query in the sequence.
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+        tests:
+          - not_null
+      - name: query
+        description: The search term.
+        tests:
+          - not_null
+      - name: user_agent
+        description: The user agent sending the query.
+      - name: search_number
+        description: The sequential number of search this user has issued.
+      - name: revieved_at
+        description: The timestamp of the search query.
+  - name: fct_user_identifies
+    description: >
+      Details to describe each identify event in our system to tie anonymous_ids to user_ids, 
+      including available device_id for approximating household level data
+    columns:
+      - name: anonymous_id
+        description: Segment generated anonymous_id. Null values exist from historical events where only the user_id was recorded.
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: device_id 
+        description: The device id available for a given record. Default hardware id, advertising id if not available. May be reset on some platforms.
+      - name: platform
+        description: The client platform sending the event.
+        tests:
+          - accepted_values:
+              values: [
+                  'android'
+                , 'androidtv'
+                , 'chromecast'
+                , 'fire'
+                , 'firetv'
+                , 'ios'
+                , 'roku'
+                , 'samsung'
+                , 'tvos'
+                , 'viziotv'
+                , 'web'
+              ]
+      - name: timestamp
+        description: The time when the identify took place.
+        tests:
+          - not_null

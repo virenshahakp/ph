@@ -1,0 +1,5 @@
+[sqlfluff]
+warnings = LT05, ST06
+
+#LT05: Line length
+#ST06: Column ordering, simpile targets first.

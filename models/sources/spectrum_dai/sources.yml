@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: spectrum_dai
+    database: warehouse
+    schema: spectrum_dai
+    loader: s3
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    tables:
+      - name: ad_pods
+      - name: beacons
+      - name: vast_ads
+      - name: event_bid_requested
+      - name: event_bid_response
+      - name: event_bid_won
+      - name: event_bidder_impression
+      - name: ad_breaks

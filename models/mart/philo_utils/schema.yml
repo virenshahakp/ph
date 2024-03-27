@@ -1,0 +1,31 @@
+version: 2
+
+models:
+  - name: dim_dates
+    description: >
+      A date lookup utility table to get intervals, quarter, month so that we can 
+      query for billing events, or evaluate user activities without gaps. The table
+      starts at 2017-11-14 the "philo epoch" and has a day_of_philo incrementing int
+      from that day forward.
+    columns:
+      - name: observation_date
+        description: The yyyy-mm-dd date we are looking up.
+        tests:
+          - not_null
+          - unique
+      - name: day_of_week
+        description: An integer representing the day of the week, from 0 to 6, with 0 being Sunday. 
+      - name: day_of_month
+        description: The calendar day in the month the "dd" of the date.
+      - name: day_of_year
+        description: An incrementing integer that resets at the start of each calendar year.
+      - name: week_of_year
+        description: An incrementing integer referencing the week of the year. Starting at 1 on the first Sunday of the year.
+      - name: month_of_year
+        description: The month value from the date string the "mm" of the date.
+      - name: year
+        description: The four-digit year value from the date string the "yyyy" of the date.
+      - name: quarter
+        description: An integer representing which calendar quarter the date is in, 1, 2, 3, or 4.
+      - name: day_of_philo
+        description: An incrementing integer counting the number of days since 2017-11-14, the Philo "epoch"

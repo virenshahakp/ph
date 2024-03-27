@@ -1,0 +1,63 @@
+version: 2
+
+models:
+  - name: export_collection_deployments_product_rules_stage
+    description: Product rules that apply to a deployed collection. This is for targeting a collection to include content from specific packages. Examples are Starz and MGM+ (formerly Epix). Null value means it is targeting base product without add-ons.
+    columns:
+      - name: product_rule_id
+        description: Product rule id
+      - name: deployment_id 
+        description: Deployment id of the collection
+      - name: collection_product_rule
+        description: Product including null indicating base product, otherwise product rule indicates upsell
+  - name: export_collection_deployments_stage
+    description: Deployment information about the collection 
+    columns:
+      - name: deployment_id
+        description: Deployment id of the collection
+      - name: channel_id
+        description: Channel id of the collection
+      - name: collection_display_name
+        description: Collection title displayed on the user's screen
+      - name: collection_version_id
+        description: Id of the version of the collection
+      - name: experiment_id
+        description: The id of the experiment
+      - name: variant
+        description: The variant of the experiment to which the user belongs
+      - name: collection_position_relative
+        description: position of the collection as recorded in the collections dashboard
+      - name: collection_target
+        description: The view that the collection targets
+      - name: deployment_environment
+        description: The deployment environment  
+  - name: export_collection_versions_stage
+    description: Version information about the collection 
+    columns:
+      - name: collection_version_id
+        description: Id of the version of the collection
+      - name: collection_id
+        description: Id of the collection
+      - name: collection_version_number
+        description: Numerical number of the version of the collection
+  - name: export_experiments_stage
+    description: Experiment table for collections
+    columns:
+      - name: experiment_id
+        description: The id of the experiment
+      - name: experiment_name
+        description: The name of the experiment
+      - name: experiment_active_status
+        description: The status of the experiment
+      - name: experiment_concluded_at
+        description: Date time of when the experiment was concluded
+      - name: collection_id
+        description: Id of the collection
+      - name: collection_name
+        description: The name of the collection as recorded in the collections dashboard
+      - name: deployment_id
+        description: Deployment id of the collection
+      - name: show_id
+        description: Show id of the shows included in the collection
+      - name: channel_id
+        description: Channel id of the collection

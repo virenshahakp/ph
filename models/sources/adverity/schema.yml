@@ -1,0 +1,123 @@
+version: 2
+
+models:
+  - name: amazon_ads_source
+    description: Adverity connector that imports marketing performance data from Amazon firetv
+    columns:
+      - name: ad_date
+        description: The date an ad was run on the advertising platform.
+      - name: ad
+        description: The campaign name or description of the ad that was shown.
+      - name: spend
+        description: The total daily amount spend to run the ad on the advertising platform.
+      - name: channel
+        description: The name of marketing partner Philo ads ran on.
+      - name: conversions
+        description: The total number of conversions-per-day.
+      - name: impressions
+        descriptions: The total number of times an ad was available to be seen on page for every user visit.
+  - name: apple_ads_source
+    description: Adverity connector that imports marketing performance data from apple ads
+    columns:
+      - name: ad_date
+        description: The date an ad was run on the advertising platform.
+      - name: ad
+        description: The campaign name or description of the ad that was shown.
+      - name: spend
+        description: The total daily amount spend to run the ad on the advertising platform.
+      - name: channel
+        description: The name of marketing partner Philo ads ran on.
+      - name: conversions
+        description: The total number of conversions-per-day.
+      - name: impressions
+        descriptions: The total number of times an ad was available to be seen on page for every user visit.
+  - name: bing_ads_source
+    description: Adverity connector that imports marketing performance data from bing ads
+    columns:
+      - name: ad_date
+        description: The date an ad was run on the advertising platform.
+      - name: ad
+        description: The campaign name or description of the ad that was shown.
+      - name: spend
+        description: The total daily amount spend to run the ad on the advertising platform.
+      - name: channel
+        description: The name of marketing partner Philo ads ran on.
+      - name: conversions
+        description: The total number of conversions-per-day.
+      - name: impressions
+        descriptions: The total number of times an ad was available to be seen on page for every user visit.
+  - name: cj_ads_source
+    description: Adverity connector that imports marketing performance data from cj ads
+    columns:
+      - name: ad_date
+        description: The date an ad was run on the advertising platform.
+      - name: ad
+        description: The campaign name or description of the ad that was shown.
+      - name: spend
+        description: The total daily amount spend to run the ad on the advertising platform.
+      - name: channel
+        description: The name of marketing partner Philo ads ran on.
+      - name: conversions
+        description: The total number of conversions-per-day.
+      - name: impressions
+        descriptions: The total number of times an ad was available to be seen on page for every user visit.
+  - name: liftoff_ads_source
+    description: Adverity connector that imports marketing performance data from lift off ads
+    columns:
+      - name: ad_date
+        description: The date an ad was run on the advertising platform.
+      - name: ad
+        description: The campaign name or description of the ad that was shown.
+      - name: spend
+        description: The total daily amount spend to run the ad on the advertising platform.
+      - name: channel
+        description: The name of marketing partner Philo ads ran on.
+      - name: conversions
+        description: The total number of conversions-per-day.
+      - name: impressions
+        descriptions: The total number of times an ad was available to be seen on page for every user visit.
+  - name: pinterest_ads_source
+    description: Adverity connector that imports marketing performance data from pinterest ads
+    columns:
+      - name: ad_date
+        description: The date an ad was run on the advertising platform.
+      - name: ad
+        description: The campaign name or description of the ad that was shown.
+      - name: spend
+        description: The total daily amount spend to run the ad on the advertising platform.
+      - name: channel
+        description: The name of marketing partner Philo ads ran on.
+      - name: conversions
+        description: The total number of conversions-per-day.
+      - name: impressions
+        descriptions: The total number of times an ad was available to be seen on page for every user visit.
+  - name: snapchat_ads_source
+    description: Adverity connector that imports marketing performance data from snapchat ads
+    columns:
+      - name: ad_date
+        description: The date an ad was run on the advertising platform.
+      - name: ad
+        description: The campaign name or description of the ad that was shown.
+      - name: spend
+        description: The total daily amount spend to run the ad on the advertising platform.
+      - name: channel
+        description: The name of marketing partner Philo ads ran on.
+      - name: conversions
+        description: The total number of conversions-per-day.
+      - name: impressions
+        descriptions: The total number of times an ad was available to be seen on page for every user visit.
+  - name: tiktok_ads_source
+    description: Adverity connector that imports marketing performance data from tiktok ads
+    columns:
+      - name: ad_date
+        description: The date an ad was run on the advertising platform.
+      - name: ad
+        description: The campaign name or description of the ad that was shown.
+      - name: spend
+        description: The total daily amount spend to run the ad on the advertising platform.
+      - name: channel
+        description: The name of marketing partner Philo ads ran on.
+      - name: conversions
+        description: The total number of conversions-per-day.
+      - name: impressions
+        descriptions: The total number of times an ad was available to be seen on page for every user visit.

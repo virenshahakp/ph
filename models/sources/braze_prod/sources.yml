@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: braze_prod
+    database: warehouse
+    schema: braze_prod
+    loader: segment
+    loaded_at_field: uuid_ts
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    tables:
+      - name: canvas_entered
+      - name: campaign_converted
+      - name: email_sent
+      - name: campaign_control_group_entered

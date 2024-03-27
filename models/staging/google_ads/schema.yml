@@ -1,0 +1,125 @@
+version: 2
+
+models:
+    - name: google_ads_campaign_performance_reports_stage
+      description: Campaign performance date from the Google reporting API
+      columns:
+        - name: ad_group_id
+          description: id assigned to ad group
+        - name: received_at
+          description: Date segment received data
+        - name: uuid
+          description: Segment's universally unique identifier is a 128-bit label for data events
+        - name: campaign_trial_type
+          description: Idenify is a campaign is type base or trial
+        - name: ad_date
+          description: Date the campaign was run
+        - name: interactions
+          description: The number of interactions. 
+        - name: is_budget_explicitly_shared
+          description: Flag to identify is ad budget is shared
+        - name: video_quartile_25_rate
+          description: Percentage of impressions where the viewer watched 25pct of your video.
+        - name: adwords_customer_id
+          description: A three-part unique identifier that is assigned to your Google Ads account. 
+        - name: all_conversion_rate
+          description: AllConversions divided by total clicks that can be conversion-tracked. This is how often a click on your ad resulted in a conversion. 
+        - name: all_conversion_value
+          description: The total value of all of your conversions, including those that are estimated. This field is formatted with dot for decimal separator, precision of two decimal positions and no thousands separator 
+        - name: bounce_rate
+          description: Percentage of clicks where the user only visited a single page on your site
+        - name: campaign_status
+          description: Status of a campaign such as active or paused.
+        - name: conversions
+          description: The number of conversions. This only includes conversion actions which include_in_conversions_metric attribute is set to true. If you use conversion-based bidding, your bid strategies will optimize for these conversions.
+        - name: active_view_impressions
+          description: Number of impressions on the site that were viewable out of all measurable impressions
+        - name: amount
+          desciption: The daily budget. On the Campaign Performance Report this column reflects the entire shared budget if the campaign draws from a shared budget.
+        - name: base_campaign_id
+          description: The ID of base campaign of trial campaigns. For regular campaigns, this is equal to CampaignId.
+        - name: gmail_forwards
+          description: The number of times users forward your ads through Gmail.
+        - name: active_view_measurable_cost
+          description: The cost of the impressions you received that were measurable by Active View.
+        - name: average_cost
+          description: The average amount you pay per interaction. This amount is the total cost of your ads divided by the total number of interactions.
+        - name: gmail_saves
+          description: The number of times someone has saved your Gmail ad to their inbox as a message.
+        - name: gmail_secondary_clicks
+          description: The number of clicks to the landing page on the expanded state of Gmail ads.
+        - name: interaction_types
+          description: The types of payable and free interactions.
+        - name: uuid_ts
+          description: Segment's universally unique identifier and the epoch timestamp when the event was created, in milliseconds - events must be sent as soon as possible, as events created more than 3 hours before the current time are rejected.
+        - name: video_quartile_75_rate
+          description: Percentage of impressions where the viewer watched 75% of your video.
+        - name: video_views
+          description: The number of times your video ads were viewed.
+        - name: advertising_channel_sub_type
+          description: Optional refinement of the campaign's AdvertisingChannelType
+        - name: view_through_conversions
+          description: The total number of view-through conversions. These happen when a customer sees a Display network ad, then later completes a conversion on your site without interacting with another ad.
+        - name: invalid_clicks 
+          description: Number of clicks Google considers illegitimate and doesn't charge you for.
+        - name: video_quartile_100_rate
+          description: Percentage of impressions where the viewer watched all of your video.
+        - name: video_quartile_50_rate
+          description: Percentage of impressions where the viewer watched 50% of your video.
+        - name: video_view_rate
+          description: The number of views your TrueView video ad receives divided by its number of impressions, including thumbnail impressions for TrueView in-display ads. 
+        - name: date_stop
+          description: Date campaign was last active.
+        - name: budget_id
+          description: The ID of the campaign budget.
+        - name: clicks
+          description: The number of clicks.
+        - name: engagements
+          descriptions: The number of engagements. An engagement occurs when a viewer expands your Lightbox ad. 
+        - name: value_per_all_conversion
+          descriptions: The value of all conversions divided by the number of all conversions.
+        - name: all_conversions
+          descriptions: The total number of conversions. This includes all conversions regardless of the value of include_in_conversions_metric.
+        - name: active_view_viewability
+          description: The percentage of time when your ad appeared on an Active View enabled site and was viewable.
+        - name: average_time_on_site
+          description: Displays the average amount of time that visitors spend on a page of your site during Google Analytics sessions that are attributed to clicks on search or social objects
+        - name: campaign_id
+          description: ID of ad campaign
+        - name: conversion_value
+          desciption: The value of conversions. This only includes conversion actions which include_in_conversions_metric attribute is set to true.
+        - name: cost
+          description: The sum of your cost-per-click (CPC) and cost-per-thousand impressions (CPM) costs during this period.
+        - name: impression_assisted_conversions
+          description: Impression assisted conversions' are those conversion actions that were assisted by ad impressions (excluding the last ad impression). 
+        - name: active_view_measurability
+          description: The number of times your ads are appearing on placements in positions where they can be seen.
+        - name: impressions
+          description: An impression is counted each time your ad is shown on a search result page or other site on the Google Network
+        - name: click_assisted_conversions
+          description: Assisted conversions are those conversion actions which were assisted by ad clicks
+        - name: active_view_measurable_impressions
+          description: The number of times your ads are appearing on placements in positions where they can be seen.
+    - name: google_ads_campaigns_stage
+      description: Campaign specific data from Google reporting API
+      columns:
+        - name: campaign_id
+          description: Campaign id assigned to each paid campaign
+        - name: received_at
+          description: Date Segment recieved data
+        - name: uuid
+          description: Segment's universally unique identifier is a 128-bit label for data events
+        - name: name
+          description: The name of the Campaign.
+        - name: end_date
+          description: The last day of the campaign in serving customer's timezone in YYYY-MM-DD format.
+        - name: serving_status
+          description: Serving status of the criterion.
+        - name: start_date
+          description: The date when campaign started in serving customer's timezone in YYYY-MM-DD format.
+        - name: status
+          description: The status of the campaign. When a new campaign is added, the status defaults to ENABLED.
+        - name: uuid_ts
+          description: Segment's universally unique identifier and the epoch timestamp when the event was created, in milliseconds - events must be sent as soon as possible, as events created more than 3 hours before the current time are rejected.
+        - name: adwords_customer_id
+          description: A three-part unique identifier that is assigned to your Google Ads account. 

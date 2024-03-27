@@ -1,0 +1,14 @@
+packages:
+  - package: calogica/dbt_expectations
+    version: [">=0.10.0", "<0.11.0"]
+  - package: dbt-labs/codegen
+    version: [">=0.12.0", "<0.13.0"]
+  - package: dbt-labs/redshift
+    version: [">=0.9.0", "<0.10.0"]
+  - package: elementary-data/elementary
+    version: 0.12.2
+    ## Docs: https://docs.elementary-data.com
+##  - package: re-data/re_data
+##    version: [">=0.10.0", "<0.11.0"]
+    ## Docs: https://docs.getre.io/latest/docs/re_data
+ 

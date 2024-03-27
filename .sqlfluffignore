@@ -1,0 +1,16 @@
+dbt_modules/
+dbt_packages/
+macros/
+migrations/
+target/
+tests/
+user_defined_functions/
+
+# these files cause the linting to hang
+models/staging/visit_attribution/all_users_first_platform.sql
+models/staging/qoe/playback_session_error_attributes.sql
+# parsing error in linting
+
+# parsing errors due to incremental for loops over dictionaries
+# https://github.com/sqlfluff/sqlfluff/issues/4013 resolved in 2.0.2 sqlfluff
+# models/staging/qoe/all_platforms_stream_starts.sql

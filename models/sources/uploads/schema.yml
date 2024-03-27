@@ -1,0 +1,37 @@
+version: 2
+
+models:
+    - name: uploads_daily_marketing_channel_performance_source
+      description: Uploaded marketing performance data 
+      columns:
+        - name: ad
+          description: Name of campaign
+        - name: ad_date
+          descritpion: The date the ad was displayed
+        - name: channel
+          description: Name of marketing partner
+          tests:
+            - not_null
+        - name: conversions
+          description: The total number of interactions or conversion events for a given time period
+        - name: impressions
+          description: The number of times an ad was displayed
+        - name: spend
+          description: The total amount paid for the reporting time frame 
+    - name: uploads_daily_tv_performance_source
+      description: Uploaded TV performance data from Simulmedia
+      columns:
+        - name: ad
+          description: Name of campaign
+        - name: ad_date
+          descritpion:  The date the ad was aired
+        - name: channel
+          description: Name of marketing partner
+          tests:
+            - not_null
+        - name: spend
+          description: The total amount paid for the reporting time frame 
+        - name: impressions
+          description:  The number of times an ad was aired
+        - name: reach
+          description: The size of the available audience

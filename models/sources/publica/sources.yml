@@ -1,0 +1,77 @@
+version: 2
+
+sources:
+  - name: publica
+    database: warehouse
+    schema: publica
+    loader: glue
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    tables:
+      - name: bid_requested_dyn
+      - name: bid_response_dyn
+      - name: bid_won_dyn
+      - name: bidder_impression_dyn
+      - name: bidder_map
+      - name: no_bid_dyn
+      - name: bid_error_dyn
+
+models:
+  - name: publica_bid_requested_dyn_source
+    description: placeholder description
+    columns:
+      - name: partition_hour
+        tests :
+            - dbt_expectations.expect_column_distinct_count_to_equal:
+                value: 24
+                row_condition: dateadd('hour', partition_hour::int,partition_date::timestamp) between (date_trunc('hour',getdate() - interval '25 hours')) and  (date_trunc('hour',getdate() - interval '1 hours'))
+                severity: warn  
+  - name: publica_bid_response_dyn_source
+    description: placeholder description
+    columns:
+      - name: partition_hour
+        tests :
+            - dbt_expectations.expect_column_distinct_count_to_equal:
+                value: 24
+                row_condition: dateadd('hour', partition_hour::int,partition_date::timestamp) between (date_trunc('hour',getdate() - interval '25 hours')) and  (date_trunc('hour',getdate() - interval '1 hours'))
+                severity: warn    
+  - name: publica_bid_won_dyn_source
+    description: placeholder description
+    columns:
+      - name: partition_hour
+        tests :
+            - dbt_expectations.expect_column_distinct_count_to_equal:
+                value: 24
+                row_condition: dateadd('hour', partition_hour::int,partition_date::timestamp) between (date_trunc('hour',getdate() - interval '25 hours')) and  (date_trunc('hour',getdate() - interval '1 hours'))
+                severity: warn                  
+  - name: publica_bidder_impression_dyn_source
+    description: placeholder description
+    columns:
+      - name: partition_hour
+        tests :
+            - dbt_expectations.expect_column_distinct_count_to_equal:
+                value: 24
+                row_condition: dateadd('hour', partition_hour::int,partition_date::timestamp) between (date_trunc('hour',getdate() - interval '25 hours')) and  (date_trunc('hour',getdate() - interval '1 hours'))
+                severity: warn 
+  - name: publica_bid_error_dyn_source
+    description: placeholder description
+    columns:
+      - name: partition_hour
+        tests :
+            - dbt_expectations.expect_column_distinct_count_to_equal:
+                value: 24
+                row_condition: dateadd('hour', partition_hour::int,partition_date::timestamp) between (date_trunc('hour',getdate() - interval '25 hours')) and  (date_trunc('hour',getdate() - interval '1 hours'))
+                severity: warn 
+  - name: publica_no_bid_dyn_source
+    description: placeholder description
+    columns:
+      - name: partition_hour
+        tests :
+            - dbt_expectations.expect_column_distinct_count_to_equal:
+                value: 24
+                row_condition: dateadd('hour', partition_hour::int,partition_date::timestamp) between (date_trunc('hour',getdate() - interval '25 hours')) and  (date_trunc('hour',getdate() - interval '1 hours'))
+                severity: warn 

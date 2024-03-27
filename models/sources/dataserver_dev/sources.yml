@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: dataserver_dev
+    database: warehouse
+    schema: dataserver_dev
+    loader: segment
+    loaded_at_field: received_at
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    tables:
+      - name: show_save
+      - name: show_unsave

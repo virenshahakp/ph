@@ -1,0 +1,94 @@
+version: 2
+
+models:
+
+  - name: all_platforms_dialog_approved_stage
+    description: dialogs that are approved from all platforms
+    columns:
+      - name: event_id
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+        tests:
+          - not_null:
+              severity: error
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+        tests:
+          - not_null:
+              severity: error
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: context_instance_id
+        description: internally set dialog instance id
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: view
+        description: the screen view that the dialog was shown on
+      - name: type
+        description: the type of the dialog displayed
+      - name: dialog_event
+        description: the event type
+      - name: dbt_processed_at 
+        description: '{{ doc("dbt_processed_at") }}'
+      - name: platform
+        description: '{{ doc("platform") }}'
+  - name: all_platforms_dialog_dismissed_stage
+    description: dialogs that are dismissed from all platforms
+    columns:
+      - name: event_id
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+        tests:
+          - not_null:
+              severity: error
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+        tests:
+          - not_null:
+              severity: error
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: context_instance_id
+        description: internally set dialog instance id
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: view
+        description: the screen view that the dialog was shown on
+      - name: type
+        description: the type of the dialog displayed
+      - name: dialog_event
+        description: the event type
+      - name: dbt_processed_at 
+        description: '{{ doc("dbt_processed_at") }}'
+      - name: platform
+        description: '{{ doc("platform") }}'
+  - name: all_platforms_dialog_displayed_stage
+    description: dialogs that are displayed from all platforms
+    columns:
+      - name: event_id
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+        tests:
+          - not_null:
+              severity: error
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+        tests:
+          - not_null:
+              severity: error
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: context_instance_id
+        description: internally set dialog instance id
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: view
+        description: the screen view that the dialog was shown on
+      - name: type
+        description: the type of the dialog displayed
+      - name: dialog_event
+        description: the event type
+      - name: dbt_processed_at 
+        description: '{{ doc("dbt_processed_at") }}'
+      - name: platform
+        description: '{{ doc("platform") }}'

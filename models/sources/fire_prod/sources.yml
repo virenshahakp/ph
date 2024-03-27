@@ -1,0 +1,45 @@
+version: 2
+
+sources:
+  - name: fire_prod
+    database: warehouse
+    schema: fire_prod
+    loader: segment
+    loaded_at_field: uuid_ts
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    freshness:
+      warn_after: {count: 8, period: hour}
+      error_after: {count: 24, period: hour}
+
+    tables:
+      - name: application_opened
+      - name: identifies
+      - name: interact
+      - name: message_clicked
+        freshness: null # do not check freshness for this table, rare event
+      - name: message_dismissed
+        freshness: null # do not check freshness for this table, rare event
+      - name: message_opened
+        freshness: null # do not check freshness for this table, rare event
+      - name: message_received
+        freshness: null # do not check freshness for this table, rare event
+      - name: player_state_changed
+      - name: poll_submit
+        freshness: null # do not check freshness for this table, rare event
+      - name: screens
+      - name: stream_start
+      - name: stream_end
+      - name: stream_error
+      - name: rebuffering_start
+      - name: rebuffering_end
+      - name: payment_provider_purchase_error
+        freshness: null # do not check freshness for this table
+      - name: payment_provider_purchase_start
+        freshness: null # do not check freshness for this table
+      - name: payment_provider_purchase_success
+        freshness: null # do not check freshness for this table

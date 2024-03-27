@@ -1,0 +1,27 @@
+version: 2
+
+models:
+    - name: acquisition_funnel_paid_layer_stage
+      description: We track the user through their journey from initial visit to when they become a paid customer. In this layer, we are tracking users paid event details which are tracked via segment in rails prod. Some of the information we track are details such as ip, timestamp, campaign details, coupon codes, url, traffic type etc.
+      columns:
+        - name: account_id
+          tests:
+            - not_null
+    - name: acquisition_funnel_signed_up_layer_stage
+      description: We track the user through their journey from initial visit to when they become a paid customer. In this layer, we are tracking users sing up event details which are tracked via segment in rails prod. Some of the information we track are details such as ip, timestamp, campaign details, coupon codes, url, traffic type etc.
+      columns:
+        - name: account_id
+          tests:
+            - not_null
+    - name: acquisition_funnel_subscribed_layer_stage
+      description:  We track the user through their journey from initial visit to when they become a paid customer. In this layer, we are tracking users subscribe event details which are tracked via segment in rails prod. Some of the information we track are details such as ip, timestamp, campaign details, coupon codes, url, traffic type etc.
+      columns:
+        - name: account_id
+          tests:
+            - not_null
+    - name: acquisition_funnel_visit_layer_stage
+      description: We track the user through their journey from initial visit to when they become a paid customer. In this layer, we are tracking users visit events details which are tracked via segment in rails prod. Some of the information we track are details such as ip, timestamp, campaign details, coupon codes, url, traffic type etc.
+      columns:
+        - name: account_id
+          tests:
+            - not_null

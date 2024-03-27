@@ -1,0 +1,255 @@
+version: 2
+
+models:
+    - name: tbl_ad_pods
+      description: >
+        Ad pods inserted into the player feed. Is 
+        inclusive of all inserted pods regardless if the
+        player reached and rendered them. This is 
+        particularly important if working with VOD data 
+        as pods are inserted at stream start rather than 
+        just prior to the pod's position in the feed. 
+        For viewed ad pods, see beacons.
+      columns:
+        - name: partition_date
+          description: date of the partition
+        - name: partition_hour
+          tests :
+            - dbt_expectations.expect_column_distinct_count_to_equal:
+                value: 24
+                row_condition: dateadd('hour', partition_hour::int,partition_date::timestamp) between (date_trunc('hour',getdate() - interval '25 hours')) and  (date_trunc('hour',getdate() - interval '1 hours'))
+                severity: warn  
+        - name: asset_type
+          description: vod, dvr, live
+        - name: channel_name
+          description: > 
+            e.g. MTV, animalplanet, cartoonnetwork
+        - name: client_type
+          description: device platform rendering the feed
+        - name: duplicate_ads_count
+          description: count of duplicate ads
+        - name: duration
+          description: pod length in seconds 
+        - name: fill_duration
+          description: >
+            seconds of the pod duration that were filled 
+            with paid ads
+        - name: fingerprint_dup_ads_count
+          description: >
+            count of duplicate ads by their transcode 
+            fingerprint
+        - name: house_ads_count
+          description: >
+            count of UNPAID ads inserted into the pod
+        - name: house_duration
+          description:  >
+            seconds of the pod duration that were filled 
+            with UNPAID ads
+        - name: inactive_ads_count
+          description: count of inactive ads
+        - name: inserted_ads_count
+          description: >
+            count of paid ads inserted into the pod
+        - name: latency_ms
+          description: >
+            time elapsed to fill and insert the pod
+        - name: network
+          description: > 
+            programming group that owns the channel
+        - name: owner
+          description: >
+            owner of the ad pod. distributor = Philo, 
+            provider = the network. Philo currently only 
+            makes revenue on distributor records.
+        - name: player_id
+          description: >
+            unique id for device and account profile. New 
+            id created after 6 haved since the last 
+            viewed content.
+        - name: pod_id
+          description: >
+            id of the ad break in the content. NOT unique 
+            to the user
+        - name: request_id
+          description: >
+            vast request id
+        - name: sent_at
+          description: >
+            timestamp that the pod was inserted into the 
+            feed. For VOD this will be at the start of 
+            the stream, for live and dvr it will be right 
+            before the pod break
+        - name: status
+          description: >
+            did the pod get inserted into the feed and 
+            reason it did not if it did not. ok = inserted
+        - name: track
+          description: Version of Philo
+        - name: uningested_ads_count
+          description: >
+            count of ads that the Philo system had seen 
+            for the first time and required to transcode
+        - name: extra_ads
+          description: Count of extra ads considered in the pod
+        - name: inserted_extra_ads
+          description: Count of extra ads inserted in the pod (also included in inserted_paid_ads)            
+        - name: inserted_extra_ads_duration
+          description: Duration of extra ads inserted in the pod (also included in inserted_paid_ads_duration)
+
+    - name: tbl_ad_beacons
+      description: >
+        all ads that were rendered in the player 
+        feed. This is a proxy for ad viewed as we cannot 
+        be sure that the user was in front of the device 
+        when the ad was displayed. 
+      columns:
+        - name: partition_date
+          description: date of the partition
+        - name: partition_hour
+          tests :
+            - dbt_expectations.expect_column_distinct_count_to_equal:
+                value: 24
+                row_condition: dateadd('hour', partition_hour::int,partition_date::timestamp) between (date_trunc('hour',getdate() - interval '25 hours')) and  (date_trunc('hour',getdate() - interval '1 hours'))
+                severity: warn
+        - name: ad_duration
+          description: duration of the ad in seconds
+        - name: ad_ident
+          description: >
+            id of the ad. comes from the vast response
+        - name: ad_provider
+          description: provider of the ad
+        - name: ad_reseller
+          description: >
+            company that the ad was resold through
+        - name: asset_type
+          description: vod, dvr, live
+        - name: channel_name
+          description: >
+            e.g. MTV, animalplanet, cartoonnetwork
+        - name: dup_ident
+          description: transcoded ad fingerprint id
+        - name: owner
+          description: >
+            owner of the ad. distributor = Philo = 0, 
+            provider = the network = 1. Philo currently only makes revenue on distributor records.
+        - name: player_id
+          description: >
+            unique id for device and account profile. New 
+            id created after 6 hours since the last 
+            viewed content.
+        - name: pod_id
+          description: >
+            id of the ad break in the content. NOT unique 
+            to the user
+        - name: provider_ident
+          description: id for the provider of the ad
+        - name: received_at
+          description: >
+            timestamp the ad was rendered in the feed
+
+    - name: tbl_vast_ads
+      description: >
+        Ad events processed by sutured. To fill an Ad pod sutured send VAST requests to
+        predefined ad servers. The responses returned include two types of instances:
+        inline and wrapper. Inline instances can directly used to fill the ad pod.
+        Wrapper instances redirect sutured to other ad servers. This is a recursive 
+        process. After a list of ads are gathered sutured runs a placement algorithm
+        to fill the ad pod with a set of selected ads. 
+      columns:
+        - name: partition_date
+          description: date of the partition
+        - name: partition_hour
+          tests :
+            - dbt_expectations.expect_column_distinct_count_to_equal:
+                value: 24
+                row_condition: dateadd('hour', partition_hour::int,partition_date::timestamp) between (date_trunc('hour',getdate() - interval '25 hours')) and  (date_trunc('hour',getdate() - interval '1 hours'))
+                severity: warn  
+        - name: ad_ident
+          description: The id of the ad in metadb.
+        - name: ad_position
+          description: The position where this ad is inserted into the ad pod.
+        - name: ad_reseller
+          description: The domain name of the ad reseller.
+        - name: dup_ident
+          description: The id used for ad dedupe.
+        - name: duration
+          description: The duration of the ad.
+        - name: invalid_beacon_count
+          description: The number of invalid beacons in this ad.
+        - name: is_dup
+          description: Is there already an existing ad that has the same id as this ad?
+        - name: is_empty
+          description: Is the ad empty or not.
+        - name: is_evergreen
+          description: Is this an evergreen ad or not?
+        - name: is_fallback
+          description: Is this a fallback ad or not?
+        - name: is_filled
+          description: Are there any creatives in the ad.
+        - name: is_fingerprint_dup
+          description: Is there already an existing ad that has the same audio fingerprint as this ad?
+        - name: is_ingested
+          description: >
+            Has this ad been processed or not. An ad can only be inserted into ad pods 
+            after it goes through processes like transcoding etc.
+        - name: is_inserted
+          description: Is this ad inserted into the ad pod or not.
+        - name: is_url_dup
+          description: Is there already an existing ad that has the same URL as this ad?
+        - name: is_wrapper
+          description: Is this a wrapper instance or not?
+        - name: sutured_pid
+          description: The id of the frontend player.
+        - name: pod_id
+          description: The id of the ad pod.
+        - name: provider_ident
+          description: The id of the ad provider.
+        - name: vast_depth
+          description: The depth of this ad in the VAST tree.
+        - name: vast_position
+          description: The position of this ad in the VAST tree.
+        - name: vast_status
+          description: The status of this VAST request.
+        - name: vast_version
+          description: The version of this VAST request.
+        - name: vast_latency_ms
+          description: The latency in milliseconds of this VAST request.
+        - name: sent_at
+          description: timestamp the vast request was sent
+        - name: is_extra
+          description: Extra ads stored for reuse via admitt from previous pods that were overfilled or from pods that were dropped due to underfill  
+        - name: is_expired
+          description: ad is in state that it can not be inserted before it is re-ingested, but can not be re-ingested yet to avoid conflict with active sessions that may still be referencing it. The current window for this state is 12h since ad was expired. It is based on the max session duration.
+
+    - name: tbl_ad_breaks
+      description: >
+        Ad breaks from the provider (feed data).  These can map to pods through pod_id = ad_break_id
+      columns:     
+        - name: partition_date
+          description: the date the event was recorded at
+        - name: partition_hour
+          description: the hour the event was recorded at
+        - name: ad_break_id
+          description: unique identifer for the ad_break.  Maps to the pod_id of pods
+        - name: asset_type
+          description: only live is recorded in this table
+        - name: network
+          description: the business group which owns the channel
+        - name: channel
+          description: the channel the ad break is for
+        - name: callsign
+          description: identifier for the network, channel and ad_break
+        - name: ad_break_duration
+          description: Duration, in seconds, of the ad break
+        - name: is_dai_slot
+          description: binary true/false
+        - name: dai_slot_type
+          description: slot type. Midroll or NULL 
+        - name: dai_slot_owner
+          description: providor, distributor, or NULL
+        - name: asset_id
+          description: always NULL in the current version
+        - name: ad_break_start_ts
+          description: an approximation of when the ad break starts.  Based on the created_at column (which is in the source)
+        - name: ad_break_end_ts
+          description: an approximation of when the ad break ends.  Based on adding the created_at column and the duration

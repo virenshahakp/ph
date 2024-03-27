@@ -1,0 +1,6 @@
+models: # or seeds:
+  - name: tbl_join_user_id__sutured_pid
+    tests:
+      - dbt_expectations.expect_compound_columns_to_be_unique:
+          column_list: ["sutured_pid", "user_id"]
+          

@@ -1,0 +1,46 @@
+version: 2
+
+sources:
+  - name: rails_prod
+    database: warehouse
+    schema: rails_prod
+    loader: segment
+    loaded_at_field: uuid_ts
+
+    quoting:
+      database: true
+      schema: true
+      identifier: true
+
+    freshness:
+      warn_after: {count: 8, period: hour}
+      error_after: {count: 24, period: hour}
+
+    tables:
+      - name: account_created
+      - name: apply_coupon_succeeded
+      - name: cancellation_complete
+      - name: cancellation_scheduled
+      - name: experiment_viewed
+      - name: fast_plan_state_changed 
+      - name: fsm_state_changed
+      - name: identifies
+      - name: login_code_generated
+      - name: message_sent
+      - name: pages
+      - name: package_added
+      - name: package_dropped
+      - name: package_payment_failed
+      - name: package_payment_succeeded
+      - name: payment_failed
+      - name: payment_refunded
+      - name: payment_succeeded
+      - name: signup_code_generated
+      - name: subscription_reactivated
+      - name: subscription_started
+      - name: trial_started
+      - name: trial_blocked
+      - name: trial_lapsed
+      - name: users
+      - name: user_credentialed
+        freshness: null # do not check freshness for this table, it exists but awaiting FAST rollout

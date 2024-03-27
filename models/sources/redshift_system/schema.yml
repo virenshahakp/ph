@@ -1,0 +1,40 @@
+version: 2
+
+models:
+  - name: pg_class_source
+    description: >
+      A Postgres/Redshift system table describing tables/relations present in the database. For more details on contents:
+      https://www.postgresql.org/docs/8.0/catalog-pg-class.html
+  - name: pg_locks_source
+    description: >
+      A Postgres/Redshift system table describing active table lock requests. For more details on contents:
+      https://www.postgresql.org/docs/8.0/view-pg-locks.html
+  - name: pg_namespace_source
+    description: >
+      A Postgres/Redshift system table describing schemas/namespaces present in the database. For more details on contents:
+      https://www.postgresql.org/docs/8.0/catalog-pg-namespace.html
+  - name: query_history_source
+    description: >
+      Redshift system table containing data query history. For more details on contents:
+      https://docs.aws.amazon.com/redshift/latest/dg/SYS_QUERY_HISTORY.html
+  - name: query_info_source
+    description: >
+      Redshift system table containing data query runs. For more details on contents:
+      https://docs.aws.amazon.com/redshift/latest/dg/r_STL_QUERY.html
+  - name: query_metrics_source
+    description: >
+      Redshift system table containing data query run metrics. For more details on contents:
+      https://docs.aws.amazon.com/redshift/latest/dg/r_SVL_QUERY_METRICS_SUMMARY.html
+  - name: stl_scan_source
+    description: >
+      Redshift system table containing data scan operations. For more details on contents:
+      https://docs.aws.amazon.com/redshift/latest/dg/r_STL_SCAN.html
+  - name: svv_table_info_source
+    description: >
+      Redshift system table containing data table state. For more details on contents:
+      https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_TABLE_INFO.html
+  - name: svv_transactions_source
+    description: >
+      A Redshift system table describing active query transactions. For more details on contents:
+      https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_TRANSACTIONS.html
+   

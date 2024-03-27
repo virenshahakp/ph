@@ -1,0 +1,29 @@
+version: 2
+
+models:
+  - name: airbyte_ad_revenue_stage
+    description: >
+      Ad revenue and impressions for the current calendar year. Prior year revenue
+      is captured in a static table uploaded to `uploads.ad_revenue_historic`
+      The test for date parts should be updated each time data is migrated from this
+      import to the historic table.
+    tests:
+      - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
+          date_col: impression_date
+          date_part: day
+          test_start_date: '2023-01-01'    
+  - name: airbyte_ad_revenue_by_network_stage
+    description: Ad revenue per month by network
+  - name: airbyte_ad_revenue_per_hour_stage
+    description: Ad revenue per hour    
+  - name: airbyte_costs_stage
+    description: Company wide costs
+  - name: airbyte_daily_spend_stage
+    description: Spend on marketing
+  - name: airbyte_media_groups_stage
+    description: Channels and media groups for philo channels
+  - name: airbyte_qa_users_stage
+    description: QA test users
+  - name: airbyte_quality_of_experience_benchmarks_stage
+    description: QoE benchmarks for Philo
+

@@ -1,0 +1,162 @@
+version: 2
+models:
+  - name: account_monthly_costs_stage
+    description: Sum of costs for each subscriber for each month. Data is imported from accounting spreadsheets. 
+    tests:
+      - unique:
+          column_name: "concat(month, account_id)"
+  - name: confirmed_biller_payments_stage
+    description: >
+      A table with one record for each payment from billers for which we have an explicit event on each payment.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: received_at
+        description: When payment was recorded.
+      - name: packages
+        description: '{{ doc("packages") }}'
+      - name: subscriber_state
+        description: The subscriber state as reported by Philo's rails app.
+        tests:
+          - accepted_values:
+              values: "{{ var('subscriber_state_accepted_values') }}"
+          - dbt_utils.at_least_one             
+      - name: subscriber_billing
+        description: The billing platform for the account.
+        tests:
+          - not_null
+          - accepted_values:
+              values: "{{ var('subscriber_billing_accepted_values') }}"
+      - name: amount
+        description: The amount of this payment.
+      - name: list_price
+        description: >
+          The full retail price of this package. For some billers this is deduced 
+          from subsequent payments and not explicitly recorded.
+      - name: is_gift
+        description: Was this payment a gift.
+        tests:
+          - accepted_values:
+              values: [true, false]
+              quote: false
+      - name: promotion
+        description: The promotion, if any, associated with this payment
+      - name: is_active
+        description: Is the account active at the time of the payment
+        tests:
+          - accepted_values:
+              values: [true, false]
+              quote: false
+      - name: payment_number
+        description: An integer count of the cumulative payments made by this account via confirmed biller events.
+  - name: inferred_biller_payments_stage
+    description: >
+      A table with one record for each payment for billers who we only have an indication of when 
+      a subscription starts and when it is cancelled.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: received_at
+        description: >
+          When the payment was calculated to have been made. 
+          This is based off of the initial transaction date and implied auto-renewal events.
+      - name: packages
+        description: '{{ doc("packages") }}'
+      - name: subscriber_state
+        description: The subscriber state as reported by Philo's rails app.
+        tests:
+          - accepted_values:
+              values: "{{ var('subscriber_state_accepted_values') }}"
+          - dbt_utils.at_least_one
+      - name: subscriber_billing
+        description: The billing platform for the account.
+        tests:
+          - not_null
+          - accepted_values:
+              values: "{{ var('subscriber_billing_accepted_values') }}"
+      - name: amount
+        description: The amount of this payment.
+      - name: list_price
+        description: >
+          The full retail price of this package. For some billers this is deduced 
+          from subsequent payments and not explicitly recorded.
+      - name: is_gift
+        description: Was this payment a gift, not currently supported by this type of biller.
+        tests:
+          - accepted_values:
+              values: [false]
+              quote: false
+      - name: promotion
+        description: The promotion, if any, associated with this payment. Not currently supported by this type of biller.
+      - name: payment_number
+        description: An integer count of the cumulative payments inferred to have been made by this account.
+  - name: payment_event_paid_user_subscription_range
+    description: >
+      Identify a continuous range of time an account is paid based off of the confirmed and inferred biller payment events.
+      This model is used for historical purposes in calculating paid user subscription ranges, but data from January 12, 2022
+      forward are calculated by using the data in the rails_sync_account_access_ranges model.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: packages
+        description: An array of strings reflecting the content packages the account had at the start of the range.
+      - name: subscriber_state
+        description: '{{ doc("subscriber_state") }}'
+      - name: subscriber_billing
+        description: '{{ doc("subscriber_billing") }}'
+      - name: first_bill_amount
+        description: The amount paid on the account's first bill
+      - name: auto_renew_amount
+        description: The amount that the account will be charged on each renewal
+      - name: is_first_bill_gift
+        description: Was the first month a gift?
+      - name: date_range_start
+        description: The starting timestamp of the subscription range.
+      - name: date_range_end
+        description: The ending timestamp of the subscription range.
+      - name: is_active
+        description: Is this range the currently active range?
+      - name: payment_occurs_at
+        description: On what day will this account regularly be billed on
+      - name: cancel_scheduled_at
+        description: The timestamp when this account last scheduled a subscription cancellation.
+      - name: seq
+        description: The sequence number of the subscription ranges, monotonically increasing for each account.
+  - name: rails_sync_account_access_ranges
+    description: >
+      Identify a continuous range of time an account has a specific biller and product (package) activated. 
+      This model is used for data from January 12, 2022 forward based upon a daily snapshot of the rails production database.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: subscriber_billing
+        description: '{{ doc("subscriber_billing") }}'
+      - name: product_sku
+        description: The SKU which represents the specific product the user is subscribed to on the biller.
+      - name: activated_plan
+        description: The philo plan (e.g. philo-2021) the account has access to.
+      - name: status
+        description: An indication of whether this range reflects a 7-day trial, an extended-trial or a non/post-trial period.
+        tests:
+          - accepted_values:
+              values: [
+                'in-7day-trial',
+                'in-extended-trial',
+                'post-trial'
+              ]
+      - name: subscription_hash
+        description: >
+          A surrogate key md5 hash combining the biller, product_sku, activated_plan, and status. 
+          If this value changes we know that something about the subscription changed.
+      - name: date_range_start_at
+        description: The time of the snapshot from rails when the user first recorded access to this specific subscription hash.
+      - name: date_range_end_at
+        description: The time of the snapshot from rails when the user no longer had access to this specific subscription hash.
+      - name: is_active
+        description: Is this range the currently active range?
+      - name: is_paid_range
+        description: Is this subscription range paid or is it a trial or other non-paid range?

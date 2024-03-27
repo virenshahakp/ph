@@ -1,0 +1,14 @@
+packages:
+- package: calogica/dbt_expectations
+  version: 0.10.1
+- package: dbt-labs/codegen
+  version: 0.12.1
+- package: dbt-labs/redshift
+  version: 0.9.0
+- package: elementary-data/elementary
+  version: 0.12.2
+- package: calogica/dbt_date
+  version: 0.10.0
+- package: dbt-labs/dbt_utils
+  version: 1.1.1
+sha1_hash: 38e820eaed918a3b76177b685ca286dabbb4a7f1

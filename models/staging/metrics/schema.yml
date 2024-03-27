@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: active_days_stage
+    description: Counts the number of days where a user watched more than 10 minutes per day.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: context_campaign_source
+        description: Channel source of paid campaign
+      - name: context_campaign_name
+        description: Name assigned to a paid campaign
+      - name: context_campaign_term
+        description: Name of term used to identify a campaign strategy.
+      - name: signed_up_at
+        description: Date a user signed up for Philo.
+      - name: first_paid_at
+        description: Date a user first paid for Philo.
+      - name: ltv_revenue
+        description: Total revenue (subscriptions and ads) per user account.
+      - name: active_days
+        desciption: The number of days where an account user watched more than 10 minutes.
+      - name: minutes
+        desscription: Total minutes watched.
+      - name: last_playback_time 
+        description: Date a show or movies was last watched.
+    

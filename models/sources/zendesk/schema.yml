@@ -1,0 +1,43 @@
+version: 2
+
+models:
+  - name: zendesk_zd_agents_source
+    description: Basic details about each support agent from Philo and our support agency Partners
+    columns:
+      - name: agent_id
+        description: The unique user id in zendesk
+        tests: 
+          - unique
+          - not_null        
+      - name: account_id   
+        description: '{{ doc("account_id") }}'
+      - name: has_phone       
+        description: Does the record include a phone number?
+      - name: has_email       
+        description: Does the record include an email address?
+      - name: organization_id 
+        description: The zendesk organization identifier
+      - name: agent_role      
+        description: The zendesk role assigned to the agent
+      - name: custom_role_id  
+        description: The zendesk custom role id for the agent
+      - name: default_group_id
+        description: The zendesk group id for the agent
+      - name: site            
+        description: The site/location the agent works at
+      - name: tags            
+        description: A set of tags applied to the agent
+      - name: is_suspended       
+        description: Is the agent account suspended?
+      - name: created_at      
+        description: When the record was initially created
+        tests: 
+          - not_null        
+      - name: updated_at      
+        description: When the record was last updated
+        tests: 
+          - not_null        
+      - name: email           
+        description: The agent's email address.
+      - name: vendor          
+        description: Which vendor, if any, the agent works for.

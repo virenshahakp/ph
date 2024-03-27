@@ -1,0 +1,153 @@
+version: 2
+
+models:
+  - name: chromecast_prod_identifies_stage
+    description: Identify events that connect an anonymous id to a Philo user_id
+    columns:
+      - name: anonymous_id
+        description: Segment generated anonymous id
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: received_at
+        description: When the identify event was received
+      - name: context_device_id
+        description: A unique device id for this chromecast device
+      - name: timestamp
+        description: When the identify event occurred according to the browser
+  - name: chromecast_prod_launch_stage
+    description: Launch events tracked via segment on chromecast prod
+    columns:
+      - name: launch_id
+        description: Segment generated unique event id
+      - name: anonymous_id
+        description: Segment generated unique id
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: received_at
+        description: When the launch event was received
+      - name: context_device_id
+        description: A unique device id for this chromecast device
+      - name: timestamp
+        description: When the launch event occurred according to the chromecast
+  - name: chromecast_prod_player_state_changed_boundaries_stage
+    description: Player state changed records annotated with boundary flags and validation attributes
+    columns:
+      - name: event_id
+        description: Segment generated event id
+      - name: user_id
+        description: >
+          {{ doc("user_id") }}
+          The user (profile) that watched this asset.
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+      - name: asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: timestamp
+        description: '{{ doc("timestamp") }}'
+      - name: delay
+        description: >
+          The number of seconds the user is watching behind live; this should be
+          null when the asset is not live.
+      - name: hashed_session_id
+        description: '{{ doc("hashed_session_id") }}'
+      - name: context_ip
+        description: '{{ doc("context_ip") }}'
+      - name: bitrate
+        description: Always null as derived tables did not send this information.
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+      - name: position_start
+        description: '{{ doc("position_start") }}'
+      - name: position_stop
+        description: '{{ doc("position_stop") }}'
+      - name: action
+        description: Player action for this event (start, stop, sync)
+      - name: position_duration_seconds
+        description: The elapsed duration from the playback positions
+      - name: watched_range_timestamp_duration_seconds
+        description: The elapsed duration from the timestamps of the start and end of this range
+      - name: is_starting_event
+        description: Indicator for the starting event of a watched range
+      - name: is_ending_event
+        description: Indicator for the ending event of a watched range
+      - name: previous_action
+        description: The action for the previous event in this range
+      - name: previous_timestamp
+        description: The timestamp for the previous event in this range
+      - name: next_action
+        description: The action for the next event in this range
+      - name: next_timestamp
+        description: The timestamp for the next event in this range
+      - name: watched_range_start_at
+        description: Client timestamp for the first event in this range
+      - name: watched_range_end_at
+        description: Client timestamp for the last event in this range      
+      - name: has_reporting_delay
+        description: Did this event come more than 310 seconds after the last event?
+      - name: has_position_start_jump
+        description: Is this position start different than the previous value by more than 10 seconds?
+      - name: has_position_stop_jump
+        description: Is this position stop more than 310 seconds after the last position stop event?
+      - name: played_asset_reporting_delay_count
+        description: The number of events in this range with a reporting delay
+      - name: played_asset_position_start_jump_count
+        description: The number of events in this range with a start jump
+      - name: played_asset_position_stop_jump_count
+        description: The number of events in this range with a stop jump      
+      - name: played_asset_total_event_count
+        description: The total number of events in this range
+      - name: dbt_processed_at 
+        description: '{{ doc("dbt_processed_at") }}'
+  - name: chromecast_prod_player_state_changed_stage
+    description: Video playback events that tracked what users watched via segment on chromecast prod
+  - name: chromecast_prod_watched_ranges_stage
+    description: Continuous ranges of watching an asset
+    columns:
+      - name: event_id
+        description: Segment generated event id
+      - name: user_id
+        description: >
+          {{ doc("user_id") }}
+          The user (profile) that watched this asset.
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+      - name: asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: requested_asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: played_asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: timestamp_start
+        description: The timestamp, from the client, the user first started watching the range.
+      - name: timestamp
+        description: The timestamp, from the client, indicating the end of the watched range.
+      - name: delay
+        description: >
+          The number of seconds the user is watching behind live; this should be
+          null when the asset is not live.
+      - name: hashed_session_id
+        description: '{{ doc("hashed_session_id") }}'
+      - name: context_ip
+        description: '{{ doc("context_ip") }}'
+      - name: bitrate
+        description: Always null as derived tables did not send this information.
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+      - name: position_start
+        description: '{{ doc("position_start") }}'
+      - name: position_stop
+        description: '{{ doc("position_stop") }}'
+      - name: action
+        description: Player action that ended the event range
+      - name: position_duration_seconds
+        description: The elapsed duration from the playback positions
+      - name: watched_range_timestamp_duration_seconds
+        description: The elapsed duration from the timestamps of the start and end of this range
+      - name: watched_seconds
+        description: The minimum of position changes and timestamp differences
+      - name: dbt_processed_at 
+        description: '{{ doc("dbt_processed_at") }}'

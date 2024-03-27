@@ -1,0 +1,151 @@
+version: 2
+
+sources:
+  - name: guide
+    database: warehouse
+    schema: guide
+    loader: rails_ott_analytics_scripts
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    tables:
+      - name: broadcasts
+        description: Broadcasts on all channels
+        columns:
+          - name: id
+            tests:
+              - not_null
+              - unique:
+                  severity: warn
+          - name: _id
+            tests:
+              - not_null
+              - unique:
+                  severity: warn
+          - name: channel_id
+            tests:
+              - not_null
+          - name: show_id
+            tests:
+              - not_null
+          - name: episode_id
+          - name: asset_id
+          - name: asset_type
+          - name: starts_at
+            tests:
+              - not_null
+          - name: ends_at
+            tests:
+              - not_null
+          - name: is_new
+          - name: is_premiere
+          - name: run_time
+      - name: channels
+        description: Channels
+        columns:
+          - name: id
+            tests:
+              - not_null
+              - unique
+          - name: _id
+            tests:
+              - not_null
+              - unique
+          - name: callsign
+            tests:
+              - not_null
+              - unique
+          - name: name
+            tests:
+              - not_null
+          - name: has_public_view            
+          - name: is_premium
+      - name: shows
+        description: Shows
+        columns:
+          - name: id
+            tests:
+              - not_null
+              - unique:
+                  severity: warn
+          - name: _id
+            tests:
+              - not_null
+              - unique:
+                  severity: warn
+          - name: title
+            tests:
+              - not_null
+          - name: entity_type
+            tests:
+              - not_null
+          - name: has_public_view  
+          - name: orig_air_date   
+      - name: episodes
+        description: Episodes
+        columns:
+          - name: id
+            tests:
+              - not_null
+              - unique:
+                  severity: warn
+          - name: _id
+            tests:
+              - not_null
+              - unique:
+                  severity: warn
+          - name: title
+            tests:
+              - not_null
+          - name: espisode_num
+          - name: subtitle
+            tests:
+              - not_null
+          - name: orig_air_date
+          - name: created_at
+      - name: genres
+      - name: genres_shows
+      - name: recordings
+        description: Recordings
+        columns:
+          - name: id
+            tests:
+              - not_null
+              - unique:
+                  severity: warn
+          - name: _id
+            tests:
+              - not_null
+              - unique:
+                  severity: warn
+          - name: broadcast_id
+            tests:
+              - not_null
+          - name: duration_over_record
+            tests:
+              - not_null
+          - name: created_at
+      - name: vod_assets
+        description: Video On Demand assets
+        columns:
+          - name: id
+            tests:
+              - not_null
+              - unique:
+                  severity: warn
+          - name: channel_id
+            tests:
+              - not_null
+          - name: show_id # There are VOD assets with null show_id
+          - name: episode_id
+          - name: license_start
+          - name: license_end
+          - name: run_time
+            tests:
+              - not_null
+          - name: entity_type
+            tests:
+                - not_null

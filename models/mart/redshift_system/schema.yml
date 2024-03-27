@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: fct_redshift_query_history
+    description: >
+      {{ doc("query_history") }}
+  - name: fct_redshift_query_metrics
+    description: >
+      {{ doc("query_metrics") }}
+  - name: fct_redshift_stl_scan
+    description: >
+      {{ doc("stl_scan") }}
+  - name: fct_redshift_table_info_snap
+    description: >
+      {{ doc("table_info") }}
+  - name: fct_redshift_ungranted_locks
+    description: >
+      {{ doc("ungranted_locks") }}
+   

@@ -1,0 +1,47 @@
+version: 2
+
+models:
+    - name: viziotv_prod_rebuffering_end_source
+      description: rebuffering end events on viziotv
+
+    - name: viziotv_prod_rebuffering_start_source
+      description: rebuffering start events on viziotv  
+
+    - name: viziotv_prod_stream_end_source
+      description: stream end events on viziotv
+
+    - name: viziotv_prod_stream_start_source
+      description: stream start events on viziotv  
+  
+    - name: viziotv_prod_stream_error_source
+      description: stream error events on viziotv  
+
+    - name: viziotv_prod_player_state_changed_source
+      description: Video playback events that tracked what users watched via segment on viziotv prod
+    - name: viziotv_prod_pages_source
+      description: Pages events tracked via segment on the samsung app
+      columns: 
+        - name: anonymous_id
+          description: '{{ doc("anonymous_id") }}'
+          tests:
+            - not_null
+        - name: context_user_agent_id
+          description: A md5 hash of the user agent, to be used in user agent attribute lookups
+        - name: device_id
+          description: A unique identifier for the device the screen was requested from 
+        - name: environment_analytics_version
+          description: '{{ doc("environment_analytics_version") }}'
+        - name: event_id
+          description: '{{ doc("event_id") }}'
+        - name: loaded_at
+          description: '{{ doc("loaded_at") }}'
+        - name: received_at
+          description: '{{ doc("received_at") }}'
+        - name: screen_name
+          description: A name, typically descriptive, for the screen loaded
+        - name: user_id
+          description: '{{ doc("user_id") }}'
+        - name: visited_at 
+          description: The timestamp the event was received by Segment's tracking service.
+          tests:
+            - not_null

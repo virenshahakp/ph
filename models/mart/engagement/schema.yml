@@ -1,0 +1,603 @@
+version: 2
+
+models:
+  - name: fct_account_platforms
+    description: >
+      Identify the lifetime usage of each platform for each account and rank them.
+      We rank minutes consumed and streams started as ways to identify the platform rank.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: platform
+        description: '{{ doc("platform") }}'
+      - name: stream_starts
+        description: Stream starts on this platform
+      - name: total_stream_starts
+        description: Stream starts across all platforms
+      - name: platform_streams_rank
+        description: Platform rank based upon streams started
+      - name: stream_percentage
+        description: Percentage of streams on this platform
+      - name: platform_minutes
+        description: Minutes on this platform
+      - name: total_minutes
+        description: Minutes across all platforms
+      - name: platform_minutes_rank
+        description: Platform rank based upon minutes consumed
+      - name: minutes_percentage
+        description: Percentage of minutes watched on this platform  
+  - name: fct_account_trial_usage
+    description: Usage statistics for accounts during the trial.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        # tests:
+        #   - not_null
+      - name: created_at
+        description: When the account was created
+        # tests:
+        #   - not_null:
+        #       severity: warn
+      - name: profiles_used
+        description: Number of profiles used
+        # tests:
+        #   - not_null
+      - name: minutes
+        description: The total minutes watched
+        # tests:
+        #   - not_null
+      - name: sessions
+        description: Number of playback sessions
+        # tests:
+        #   - not_null
+      - name: distinct_shows
+        description: Number many shows were watched
+      - name: distinct_platforms
+        description: Number of platforms used
+        # tests:
+        #   - not_null
+      - name: active_days
+        description: Number of days that had a playback session
+        # tests:
+        #   - not_null
+  - name: fct_dialog_events
+    description: all dialog events
+    columns:
+      - name: id
+        descrtiption: unique key set by segment
+      - name: user_id
+        description: '{{ doc("user_id") }}' 
+      - name: context_instance_id
+        description: internally set dialog id
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+      - name: dialog_event
+        description: The event type of message that was recorded
+        tests:
+          - accepted_values:
+              values: [
+                'dialog_displayed'
+                , 'dialog_dismissed'
+                , 'dialog_approved'
+              ]
+      - name: platform
+        description: '{{ doc("platform") }}'
+      - name: type
+        description: the type of the dialog
+      - name: view
+        description: the view that the dialog was interacted with on
+  - name: fct_notification_events
+    description: all notification events from all platforms that include sent, sent_to_client, received, clicked, and dismissed
+    columns:
+      - name: message_id
+        descrtiption: unique key set by segment
+      - name: user_id
+        description: '{{ doc("user_id") }}' 
+      - name: message_external_id
+        description: internally set message id (set on the backend and sent to segment)
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+      - name: message_event
+        description: The event type of message that was recorded
+        tests:
+          - accepted_values:
+              values: [
+                'message_received'
+                , 'message_clicked'
+                , 'message_opened'
+                , 'message_dismissed'
+                , 'message_sent'
+                , 'message_sent_to_client'
+              ]
+      - name: platform
+        description: '{{ doc("platform") }}'
+        tests:
+          - not_null
+          - accepted_values:
+              values: [
+                  'android'
+                , 'androidtv'
+                , 'dataserver'
+                , 'fire'
+                , 'firetv'
+                , 'ios'
+                , 'rails'
+                , 'roku'
+                , 'tvos'
+                , 'web'
+              ]
+  - name: fct_notification_events_life_cycle_marketing
+    description: notification events from all platforms that include sent, sent to client, received, clicked, and dismissed for life cycle marketing, which exclude duplicate message events and select null values
+    columns:
+      - name: message_id
+      - name: user_id
+        description: '{{ doc("user_id") }}' 
+      - name: message_external_id
+        description: internally set message id (set on the backend and sent to segment)
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+      - name: message_event
+        description: The event type of message that was recorded
+        tests:
+          - accepted_values:
+              values: [
+                'message_received'
+                , 'message_clicked'
+                , 'message_opened'
+                , 'message_dismissed'
+                , 'message_sent'
+                , 'message_sent_to_client'
+              ]
+      - name: platform
+        description: '{{ doc("platform") }}'
+        tests:
+          - not_null
+          - accepted_values:
+              values: [
+                  'rails'
+              ]
+  - name: fct_playback_session_attribution
+    description: Create a unique lookup for each playback session that provides a user_id, the first played asset, and playback attribution
+    columns:
+      - name: attributed_item_first_touch
+        description: a view, screen, or a home page collection the user first interacted with, to which the play is attributed to
+      - name: collection_id
+        description: b64 encoded id value of the home page collection user interacted with
+      - name: collection_id_first_touch
+        description: b64 encoded id value of the home page collection user interacted with first on their journey, to which the play is attributed to
+      - name: collection_index_first_touch
+        description: index value indicating the order of the home page collection user interacted with first on their journey, to which the play is attributed to
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+      - name: played_asset_id
+        description: The asset that dataserver delivered in this playback session. It may differ from what the client requested.
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+  - name: fct_playback_session_geography
+    description: Use playback session dma data to determine where a content was consumed
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+      - name: dma_code
+        description: Nielsen DMA number if available
+      - name: dma_name
+        description: Nielsen DMA name if available
+      - name: geohash
+        description: Hashed lat/long
+      - name: created_at
+        description: The created_at value for the playback session.
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+  - name: fct_programmer_show_summary
+    description: A denormalized table to drive superset programmer reporting.
+    columns:
+      - name: watched_at_est
+        description: When the viewing started in Eastern Time (not UTC)
+        tests:
+          - not_null
+      - name: channel_callsign
+        description: The callsign for the channel
+      - name: channel_name
+        description: The human friendly channel name
+      - name: show_title
+        description: The human friendly name of the show
+      - name: episode_title
+        description: The human friendly name of the episode
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: has_paid
+        description: Is this a paid user?
+      - name: dma_code
+        description: The DMA identifier, if known
+      - name: dma_name
+        description: The DMA name, if known
+      - name: demographic_gender
+        description: The gender for the user obtained from rails prod
+      - name: demographic_age_range
+        description: The age_range for the user obtained from rails prod
+      - name: demographic_income 
+        description: The income for the user obtained from rails prod
+      - name: platform    
+        description: '{{ doc("platform") }}'
+      - name: asset_type
+        description: The type of asset watched
+      - name: is_paid_programming
+        description: Is this content a program type of "TBA", "Off Air", or "Paid Programming"
+      - name: playbacks
+        description: The count of playback starts for the user on this content
+      - name: total_live_hours
+        description: How many of the watched hours were live viewing?
+      - name: total_dvr_hours
+        description: How many of the watched hours were DVR viewing?
+      - name: total_look_back_hours
+        description: How many of the watched hours were lookback viewing?
+      - name: total_vod_hours
+        description: How many of the watched hours were VOD viewing?
+      - name: total_hours
+        description: How many watched hours in total?        
+  - name: fct_stream_starts
+    description: >
+      A table with one record for each stream start with platform,
+      asset, and session identifiers. An incrementing stream_number
+      integer is created to count the streams that each user_id has
+      started on the platform. This can be used in addition to the
+      event timestamp information to order stream start data for 
+      each user. Note that user_id can be null.
+    columns:
+      - name: event_id
+        description: Unique hash of the event name and the segment id
+        tests:
+          - unique:
+              severity: warn
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: hashed_session_id
+        description: '{{ doc("hashed_session_id") }}'
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+      - name: asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: played_asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: requested_asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: adapted_bitrate
+        description: '{{ doc("adapted_bitrate") }}'
+      - name: duration
+        description: The amount of time in milliseconds that it took to start the stream.
+      - name: position_start
+        description: '{{ doc("position_start") }}'
+      - name: platform
+        description: '{{ doc("platform") }}'
+        tests:
+          - not_null
+          - accepted_values:
+              values: [
+                  'android'
+                , 'androidtv'
+                , 'chromecast'
+                , 'fire'
+                , 'firetv'
+                , 'ios'
+                , 'roku'
+                , 'samsung'
+                , 'tvos'
+                , 'viziotv'
+                , 'web'
+              ]
+      - name: event_date
+        description: The day (in UTC) of the stream start.
+      - name: stream_number
+        description: An incrementing integer value assigned to each stream start for each user.
+        tests:
+          - not_null:
+              where: "dbt_processed_at > current_date - interval '1 day'"
+      - name: dbt_processed_at
+        description: '{{ doc("dbt_processed_at") }}'
+  - name: fct_user_platforms
+    description: >
+      Identify the lifetime usage of each platform for each user and rank them.
+      We rank minutes consumed and streams started as ways to identify the platform rank.
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+        tests:
+          - not_null
+      - name: platform
+        description: '{{ doc("platform") }}'
+        tests:
+          - accepted_values:
+              values: [
+                  'android'
+                , 'androidtv'
+                , 'chromecast'
+                , 'fire'
+                , 'firetv'
+                , 'ios'
+                , 'roku'
+                , 'samsung'
+                , 'tvos'
+                , 'viziotv'
+                , 'web'
+              ]
+      - name: stream_starts
+        description: Stream starts on this platform
+      - name: total_stream_starts
+        description: Stream starts across all platforms
+      - name: platform_streams_rank
+        description: Platform rank based upon streams started
+      - name: stream_percentage
+        description: Percentage of streams on this platform
+      - name: platform_minutes
+        description: Minutes on this platform
+      - name: platform_days_used
+        description: On how many days did the user consume content on this platform
+      - name: total_minutes
+        description: Minutes across all platforms
+      - name: platform_minutes_rank
+        description: Platform rank based upon minutes consumed
+      - name: minutes_percentage
+        description: Percentage of minutes watched on this platform
+  - name: fct_screen_events
+    description: chronological record of user's journey across screens on an app
+    columns:
+      - name: anonymous_id
+        description: '{{ doc("anonymous_id") }}'
+      - name: dbt_processed_at
+        description: '{{ doc("dbt_processed_at") }}'
+      - name: environment_analytics_version
+        description: '{{ doc("environment_analytics_version") }}'
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+      - name: screen_name
+        description: A name, typically descriptive, for the screen loaded
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+  - name: fct_user_screen_journey
+    description: a chronological history of user's journey across screens, views, and plays on a platform
+    columns:
+      - name: anonymous_id
+        description: '{{ doc("anonymous_id") }}'
+      - name: attributed_item_first_touch
+        description: a view, screen, or a home page collection the user first interacted with, to which the play is attributed to
+      - name: collection_id
+        description: b64 encoded id value of the home page collection user interacted with
+      - name: collection_id_first_touch
+        description: b64 encoded id value of the home page collection user interacted with first on their journey, to which the play is attributed to
+      - name: collection_index
+        description: index value indicating the order of the home page collection user interacted with
+      - name: collection_index_first_touch
+        description: index value indicating the order of the home page collection user interacted with first on their journey, to which the play is attributed to
+      - name: dbt_processed_at
+        description: '{{ doc("dbt_processed_at") }}'
+      - name: environment_analytics_version
+        description: '{{ doc("environment_analytics_version") }}'
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+      - name: screen_name
+        description: A name, typically descriptive, for the screen loaded
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: view
+        description: the view name (a page name) the user interacted with
+  - name: fct_user_show_hours
+    description: >
+      For each user show combination summarize the amount of engagement with the show. This is
+      originally built for season roll-on notifications in the app to find, when there is a new
+      season of content, whom we may want to notify about to prompt them to re-engage with a show
+      they have previously watched.
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: show_id
+        description: '{{ doc("show_id") }}'
+      - name: first_watched_at
+        description: The date of the first stream of the show on this channel.
+      - name: last_watched_at
+        description: The most recent stream of the show on this channel.
+      - name: episodes_watched
+        description: >
+          The number of distinct episodes of this series or show that the user has watched. 
+          Watch means any amount of viewing in this case.
+          If the content does not distinguish episodes (movies, some news & game shows) this will be 0.
+      - name: hours_watched
+        description: The total number of hours the user has watched this series or show on this channel.
+      - name: saves
+        description: The number of times the user has saved this show or series. Not restricted to the channel.
+  - name: fct_user_show_journey
+    description: >
+      We use this fact table to see how a user progresses through channels, shows, and series while watching on Philo.
+      VOD assets reflect the channel/programming partner from whom we ingested the content. 
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+        tests:
+          - not_null
+      - name: channel_callsign
+        description: '{{ doc("channel_callsign") }}'
+      - name: channel_name
+        description: '{{ doc("channel_name") }}'
+      - name: show_title
+        description: '{{ doc("show_title") }}'
+      - name: philo_series_id
+        description: '{{ doc("philo_series_id") }}'
+      - name: first_watched_at
+        description: The date of the first stream of the show on this channel.
+      - name: last_watched_at
+        description: The most recent stream of the show on this channel.
+      - name: episodes_watched
+        description: >
+          The number of distinct episodes of this series or show that the user has watched. 
+          Watch means any amount of viewing in this case.
+          If the content does not distinguish episodes (movies, some news & game shows) this will be 0.
+      - name: hours_watched
+        description: The total number of hours the user has watched this series or show on this channel.
+      - name: saves
+        description: The number of times the user has saved this show or series. Not restricted to the channel.
+      - name: stream_starts
+        description: The total number of stream starts for this user for the series or show on this channel.
+      - name: seq
+        description: The sequence or order in which a user first streamed a series or show on Philo.
+      - name: seq_by_channel
+        description: The sequence or order in which a user first streamed a series or show on this channel on Philo.
+  - name: fct_watched_minutes
+    description: >
+      How many minutes users watched assets. Due to the way we aggregate this
+      data, there can be multiple entries in this table when a user watches the
+      same asset in one sitting (user_id, playback_session_id, and asset_id). This
+      means a simple count(1) will over count the actually number of times a
+      user has watched something.
+    columns:
+      - name: user_id
+        description: >
+          {{ doc("user_id") }}
+          The user (profile) that watched this asset.
+        tests:
+          - not_null
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+        tests:
+          - not_null:
+              severity: warn
+      - name: asset_id
+        description: '{{ doc("asset_id") }}'
+        tests:
+          - not_null
+      - name: asset_type
+        description: The asset's type.
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['CHANNEL', 'RECORDING', 'VOD', 'LOOKBACK']
+      - name: platform
+        description: '{{ doc("platform") }}'
+        tests:
+          - not_null
+          - accepted_values:
+              values: [
+                  'android'
+                , 'androidtv'
+                , 'chromecast'
+                , 'fire'
+                , 'firetv'
+                , 'ios'
+                , 'roku'
+                , 'samsung'
+                , 'tvos'
+                , 'viziotv'
+                , 'web'
+              ]
+      - name: channel_name
+        description: '{{ doc("channel_name") }}'
+      - name: channel_callsign
+        description: '{{ doc("channel_callsign") }}'
+      - name: show_title
+        description: '{{ doc("show_title") }}'
+      - name: show_id
+        description: '{{ doc("show_id") }}'
+      - name: episode_title
+        description: '{{ doc("episode_title") }}'
+      - name: episode_id
+        description: '{{ doc("episode_id") }}'
+      - name: run_time
+        description: '{{ doc("run_time") }}'
+      - name: tms_series_id
+        description: '{{ doc("tms_series_id") }}'
+      - name: series_title
+        description: '{{ doc("series_title") }}'
+      - name: philo_series_id
+        description: '{{ doc("philo_series_id") }}'
+      - name: is_live
+        description: Boolean indicating if the show was watched live.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: is_paid_programming
+        description: Is this content a program type of "TBA", "Off Air", or "Paid Programming"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]        
+      - name: minutes
+        description: The number of minutes the asset was watched.
+        tests:
+          - not_null
+      - name: timestamp_start
+        description: The timestamp, from the client, the user first started watching this asset.
+        tests:
+          - not_null:
+              severity: warn
+      - name: timestamp
+        description: The timestamp, from the client, the user last watched this asset.
+        tests:
+          - not_null
+  - name: fct_watched_ranges
+    description: Ranges of continuous playback over an asset for each user.
+    columns:
+      - name: user_id
+        description: >
+          {{ doc("user_id") }}
+          The user (profile) that watched this asset.
+      - name: playback_session_id
+        description: '{{ doc("playback_session_id") }}'
+      - name: asset_id
+        description: '{{ doc("asset_id") }}'
+      - name: timestamp_start
+        description: The timestamp, from the client, the user first started watching the range.
+      - name: timestamp
+        description: The timestamp, from the client, the user last watched this range.
+      - name: received_at
+        description: The timestamp, from the server, the user last watched this range.
+      - name: delay
+        description: >
+          The number of seconds the user is watching behind live; this will be
+          null when the asset is not live.
+      - name: position_start
+        description: '{{ doc("position_start") }}'
+      - name: position_stop
+        description: >
+          The presentation time in seconds the user stopped watching a
+          continuous range of content.
+      - name: hashed_session_id
+        description: '{{ doc("hashed_session_id") }}'        
+      - name: context_ip
+        description: '{{ doc("context_ip") }}'
+      - name: platform
+        description: '{{ doc("platform") }}'
+      - name: channel_name
+        description: '{{ doc("channel_name") }}'
+      - name: channel_callsign
+        description: '{{ doc("channel_callsign") }}'
+      - name: show_title
+        description: '{{ doc("show_title") }}'
+      - name: show_id
+        description: '{{ doc("show_id") }}'
+      - name: episode_title
+        description: '{{ doc("episode_title") }}'
+      - name: episode_id
+        description: '{{ doc("episode_id") }}'
+      - name: run_time
+        description: '{{ doc("run_time") }}'
+      - name: tms_series_id
+        description: '{{ doc("tms_series_id") }}'
+      - name: series_title
+        description: '{{ doc("series_title") }}'
+      - name: philo_series_id
+        description: '{{ doc("philo_series_id") }}'

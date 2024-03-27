@@ -1,0 +1,31 @@
+version: 2
+
+sources:
+  - name: stripe_prod
+    database: warehouse
+    schema: stripe_prod
+    loader: stripe_datashare
+    loaded_at_field: batch_timestamp
+
+    quoting:
+      database: true
+      schema: true
+      identifier: false
+
+    freshness:
+      warn_after: {count: 8, period: hour}
+      error_after: {count: 24, period: hour}
+
+    tables:
+      - name: charges
+      - name: customers
+      - name: disputes
+      - name: invoice_line_items
+      - name: invoices
+      - name: plans
+        freshness: null # lookup table, rarely updated
+      - name: prices 
+        freshness: null # lookup table, rarely updated
+      - name: products
+        freshness: null # lookup table, rarely updated
+      - name: refunds

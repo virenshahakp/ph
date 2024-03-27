@@ -1,0 +1,380 @@
+version: 2
+
+models:
+  - name: rails_prod_account_created_source
+    description: Server side event for creation of a Philo user account
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: timestamp
+        description: When the account was created
+      - name: received_at
+        description: When the segment event was received
+  - name: rails_prod_cancellation_complete_source
+    description: Philo account cancellation completed
+    columns:
+      - name: cancellation_complete_id
+        description: Segment event id
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: packages
+        description: Initial package(s) the account subscribed to
+      - name: subscriber_state
+        description: The subscriber state as reported by Philo's rails app.
+        tests:
+          - accepted_values:
+              values: "{{ var('subscriber_state_accepted_values') }}"
+          - dbt_utils.at_least_one
+      - name: subscriber_billing
+        description: The billing platform for the account.
+        tests:
+          - not_null
+          - accepted_values:
+              values: "{{ var('subscriber_billing_accepted_values') }}"
+      - name: is_active
+        description: A constant indicating the account is not active following completed cancellation (Boolean FALSE)
+      - name: received_at
+        description: The timestamp for the cancellation
+  - name: rails_prod_cancellation_scheduled_source
+    description: Philo account cancellation is scheduled
+    columns:
+      - name: cancellation_scheduled_id
+        description: Segment event id
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: subscriber_state
+        description: The subscriber state as reported by Philo's rails app.
+        tests:
+          - accepted_values:
+              values: "{{ var('subscriber_state_accepted_values') }}"
+          - dbt_utils.at_least_one
+      - name: subscriber_billing
+        description: '{{ doc("subscriber_billing") }}'
+        tests:
+          - not_null
+          - accepted_values:
+              values: "{{ var('subscriber_billing_accepted_values') }}"
+      - name: received_at
+        description: Segment message received timestamp
+      - name: timestamp
+        description: Rails timestamp for when the cancellation was scheduled
+  - name: rails_prod_experiment_viewed_source
+    description: AB experiment meta table
+    columns:
+      - name: anonymous_id
+        description: '{{ doc("anonymous_id") }}'
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: experiment
+        description: The name of the experiment
+      - name: variant
+        description: The variant of the experiment to which the user belongs
+      - name: start_date
+        description: The start date of the experiment
+  - name: rails_prod_fast_plan_state_changed_source
+    description: A record of each change to the fast plan access for a user
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: subscriber_billing
+        description: '{{ doc("subscriber_billing") }}'
+        tests:
+          - accepted_values:
+              values: "{{ var('subscriber_billing_accepted_values') }}"
+      - name: old_biller 
+        description: The previous biller for the account, if any.
+      - name: old_fsm_state
+        description: The previous state of the account, if any.
+      - name: reason
+        description: An approximate reason for the state change (not always able to determine this information at the time the event fires)
+      - name: subscriber_state
+        description: The status the account changed to.
+      - name: state_started_at
+        description: The timestamp of when the state changed occurred.
+      - name: user_is_credentialed
+        description: Boolean value indicating whether or not the FAST user had credentials at the time the event fired
+      - name: new_fast_plan_state
+        description: The fast plan state the account switched to at the time the event fired (preenrolled, enrolled, unenrolled)
+      - name: old_fast_plan_state
+        description: The previous fast plan state of the account.
+  - name: rails_prod_fsm_state_changed_source
+    description: A record of each change to the account billing status (fsm = finite state machine)
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: subscriber_billing
+        description: '{{ doc("subscriber_billing") }}'
+        tests:
+          - accepted_values:
+              values: "{{ var('subscriber_billing_accepted_values') }}"
+      - name: old_fsm_state
+        description: The previous state of the account, if any.
+      - name: subscriber_state
+        description: The status the account changed to.
+      - name: state_started_at
+        description: The timestamp of when the state changed occurred.
+  - name: rails_prod_identifies_source
+    description: Segment identify calls initiated from rails prod
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: anonymous_id
+        description: '{{ doc("anonymous_id") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: hashed_session_id
+        description: '{{ doc("hashed_session_id") }}'
+      - name: subscriber_state
+        description: '{{ doc("subscriber_state") }}'
+        tests:
+          - accepted_values:
+              values: "{{ var('subscriber_state_accepted_values') }}"
+      - name: subscriber_billing
+        description: '{{ doc("subscriber_billing") }}'
+  - name: rails_prod_login_code_generated_source
+  - name: rails_prod_message_sent_source
+    description: notification events for sent messages
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: answers
+        description: Answer from inapp notifications such as the welcome survey
+      - name: message_id
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+        tests:
+          - not_null:
+              severity: error
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+        tests:
+          - not_null:
+              severity: error
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: message_external_id
+        description: internally set message id (set on the backend and sent to segment)
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: message_event
+        description: The type of message that was recorded
+        tests:
+          - accepted_values:
+              values: [
+                'message_received'
+                , 'message_clicked'
+                , 'message_opened'
+                , 'message_dismissed'
+                , 'message_sent'
+                , 'message_sent_to_client'
+              ]
+      - name: message_channel
+        description: channel the notification is delivered through
+      - name: message_name
+        description: Name of the notification 
+  - name: rails_prod_pages_source
+    description: Pages events tracked via segment on rails prod
+    columns:
+      - name: anonymous_id
+        tests:
+          - not_null
+      - name: visited_at
+        tests:
+          - not_null
+  - name: rails_prod_payment_succeeded_source
+    description: Successful payment events
+    columns:
+      - name: payment_succeeded_id
+        description: Segment event id
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+      - name: packages
+        description: Initial package(s) the account subscribed to
+      - name: subscriber_state
+        description: The subscriber state as reported by Philo's rails app.
+        tests:
+          - accepted_values:
+              values: "{{ var('subscriber_state_accepted_values') }}"
+          - dbt_utils.at_least_one
+      - name: subscriber_billing
+        description: The billing platform for the account.
+        tests:
+          - not_null
+          - accepted_values:
+              values: "{{ var('subscriber_billing_accepted_values') }}"
+      - name: rev_share_partner
+        description: The name of the revenue sharing partner for this account
+      - name: amount
+        description: The amount of the payment in dollars (integer, no cents)
+      - name: is_gift
+        description: Flag to indicate if the account is a gift depends on the gift and promotion fields.
+      - name: is_active
+        description: A constant indicating the account is active following payment (Boolean TRUE)
+      - name: received_at
+        description: When the segment event was received
+      - name: timestamp
+        description: When rails recorded the payment success
+  - name: rails_prod_signup_code_generated_source
+  - name: rails_prod_subscription_started_source
+    description: Philo account subscription starts
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: subscribed_at
+        description: When the subscription started
+      - name: subscriber_billing
+        description: The billing platform for the account.
+        tests:
+          - accepted_values:
+              values: "{{ var('subscriber_billing_accepted_values') }}"
+  - name: rails_prod_user_credentialed_source
+    description: fired when an uncredentialed (FAST-only) account holder adds either a phone or email credential to their account.
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+        tests:
+          - not_null
+      - name: credential_type
+        description: The credentialtype added to the account 
+        test: 
+          - accepted_values:
+              values: [
+                'email'
+                , 'phone'
+              ]
+  - name: rails_prod_users_source
+    description: Philo user account details
+    columns:
+      - name: user_id
+        description: '{{ doc("user_id") }}'
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: roles
+        description: The roles granted for this user. Ranging from billing, vip, super, to loadgen users.
+      - name: subscriber_billing
+        description: >
+          The billing platform for the account. This is all known billers plus a value "unknown" for accounts
+          that will not have had a billing platform specified.
+        tests:
+          - accepted_values:
+              values: [
+                'apple'
+                , 'amazon'
+                , 'bestbuy'
+                , 'chargebee'
+                , 'edu'
+                , 'google'
+                , 'roku'
+                , 'stripe'
+                , 'unbilled'
+                , 'unknown'
+              ]
+      - name: subscriber_state
+        description: The subscriber state as reported by Philo's rails app.
+        tests:
+          - accepted_values:
+              values: "{{ var('subscriber_state_accepted_values') }}"
+          - dbt_utils.at_least_one
+      - name: created_at
+        description: When the user was created
+      - name: labels
+        description: Indicator of alpha users or roku signups
+      - name: packages
+        description: The content package that the account has subscribed to.
+      - name: zip
+        description: The zip code associated with the account, many will be null
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 99999
+              row_condition: "zip is not null"
+              strictly: false
+      - name: dma_code
+        description: The designated marketing area code associated with the account, many will be null
+      - name: dma_region
+        description: Standardized name for the region for the marketing area associated with the account, many will be null
+      - name: dma_name
+        description: Standardized name for the marketing area associated with the account, many will be null
+      - name: income
+        description: US Dollars for annual income associated with the account, many will be null
+      - name: age_range
+        description: Inferred age range of the account holder. May not be updated after initial account creation.
+        tests:
+          - accepted_values:
+              values: [
+                 '{{ "18-20" | as_text }}'
+                ,'{{ "21-24" | as_text }}'
+                ,'{{ "25-29" | as_text }}'
+                ,'{{ "30-34" | as_text }}'
+                ,'{{ "35-39" | as_text }}'
+                ,'{{ "40-44" | as_text }}'
+                ,'{{ "45-49" | as_text }}'
+                ,'{{ "50-54" | as_text }}'
+                ,'{{ "55-59" | as_text }}'
+                ,'{{ "60-64" | as_text }}'
+                ,'{{ "65-69" | as_text }}'
+                ,'{{ "70-74" | as_text }}'
+                ,'{{ "75+"   | as_text }}'
+              ]
+      - name: gender
+        description: Inferred gender of the account holder.
+      - name: referrer_id
+        description: User id of the account that referred this Philo user.
+      - name: referral_type
+        description: The type of referral
+      - name: has_email
+        description: A flag to indicate whether we have an email in our database for this user. Many non-root accounts are null or unknown in this table.
+      - name: has_phone
+        description: A flag to indicate whether we have a phone number in our database for this user. Many non-root accounts are null or unknown in this table.
+      - name: direct_billed
+        description: Boolean value to indicate whether this is a direct billed user
+      - name: signup_source
+        description: String to indicate attribution of where the user signed up from
+  - name: rails_prod_package_added_source
+    description: Philo package (addon) added
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: received_at
+        description:  '{{ doc("received_at") }}'
+      - name: package
+        description: String to indicate an individual package (addon) added to the account
+        tests:
+          - accepted_values:
+              values: "{{ var('addon_accepted_values') }}"
+          - dbt_utils.at_least_one
+      - name: trial_duration
+        description: Integer duration (in seconds) of the package trial; set to 0 if no trial (e.g. if already used for an addon)
+      - name: trial_remaining
+        description: Integer duration (in seconds) of the remaining trial; set to 0 if no trial remaining
+  - name: rails_prod_package_dropped_source
+    description: Philo package (addon) dropped
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: package
+        description: String to indicate an individual package (addon) added to the account
+        tests:
+          - accepted_values:
+              values: "{{ var('addon_accepted_values') }}"
+          - dbt_utils.at_least_one
+      - name: trial_duration
+        description: Integer duration (in seconds) of the package trial; set to 0 if no trial (e.g. if already used for an addon)
+      - name: trial_remaining
+        description: Integer duration (in seconds) of the remaining trial; set to 0 if no trial remaining
+  - name: rails_prod_package_payment_succeeded_source
+    description: Philo package (base subscription or addon) line item from a successful payment
+  - name: rails_prod_package_payment_failed_source
+    description: Philo package (base subscription or addon) line item from a failed payment

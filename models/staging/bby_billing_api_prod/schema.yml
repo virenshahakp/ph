@@ -1,0 +1,280 @@
+version: 2
+
+models:
+  - name: bby_billing_api_prod_activated_stage
+    description: Best buy activation as reported to our billing api
+    columns:
+      - name: anonymous_id
+        description: '{{ doc("anonymous_id") }}'
+      - name: activated_at
+        description: A timestamp
+      - name: bby_contract_number
+        description: '{{ doc("bby_contract_number") }}'        
+      - name: bby_serial_number
+        description: '{{ doc("bby_serial_number") }}'
+      - name: bby_sku
+        description: '{{ doc("bby_sku") }}'
+      - name: bby_store_number
+        description: '{{ doc("bby_store_number") }}'
+      - name: bby_transaction_date
+        description: '{{ doc("bby_transaction_date") }}'
+      - name: list_price
+        description: The full price of the package being activated.
+        tests:
+          - not_null
+      - name: packages
+        description: The Philo packages being activated.
+        tests:
+          - not_null
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+  - name: bby_billing_api_prod_cancelled_stage
+    description: Best buy cancelations as reported to our billing api
+    columns:
+      - name: anonymous_id
+        description: '{{ doc("anonymous_id") }}'
+      - name: cancelled_at
+        description: A timestamp
+      - name: cancel_reason_code
+        description: The cancellation code
+      - name: end_date
+        description: When the contract will end
+      - name: bby_contract_number
+        description: '{{ doc("bby_contract_number") }}'        
+      - name: bby_serial_number
+        description: '{{ doc("bby_serial_number") }}'
+      - name: bby_sku
+        description: '{{ doc("bby_sku") }}'
+      - name: bby_store_number
+        description: '{{ doc("bby_store_number") }}'
+      - name: bby_transaction_date
+        description: '{{ doc("bby_transaction_date") }}'
+      - name: packages
+        description: The Philo packages being activated.
+        tests:
+          - not_null        
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+  - name: bby_billing_api_prod_identifies_stage
+    description: Identifies to map anonymous_ids to user_ids
+    columns:
+      - name: anonymous_id
+        description: '{{ doc("anonymous_id") }}'
+      - name: user_id
+        description: The Philo user (and account) id
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+  - name: bby_billing_api_prod_modified_stage
+    description: Best buy subscription modifications as reported to our billing api
+    columns:
+      - name: anonymous_id
+        description: '{{ doc("anonymous_id") }}'
+      - name: modified_at
+        description: A timestamp
+      - name: modify_reason_code
+        description: The cancellation code
+      - name: bby_contract_number
+        description: '{{ doc("bby_contract_number") }}'        
+      - name: bby_serial_number
+        description: '{{ doc("bby_serial_number") }}'
+      - name: bby_sku
+        description: '{{ doc("bby_sku") }}'
+      - name: bby_store_number
+        description: '{{ doc("bby_store_number") }}'
+      - name: bby_transaction_date
+        description: '{{ doc("bby_transaction_date") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+  - name: bby_billing_api_prod_redeemed_stage
+    description: Best buy subscription redemption as reported to our billing api
+    columns:
+      - name: anonymous_id
+        description: '{{ doc("anonymous_id") }}'
+      - name: redeemed_at
+        description: A timestamp
+      - name: bby_contract_number
+        description: '{{ doc("bby_contract_number") }}'        
+      - name: bby_serial_number
+        description: '{{ doc("bby_serial_number") }}'
+      - name: bby_sku
+        description: '{{ doc("bby_sku") }}'
+      - name: bby_store_number
+        description: '{{ doc("bby_store_number") }}'
+      - name: bby_transaction_date
+        description: '{{ doc("bby_transaction_date") }}'
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+  - name: bby_billing_prod_payment_succeeded
+    description: >
+      A full payment succeeded event for best buy requires both the purchase
+      (activated) event and the creation of an account on Philo (redeemed).
+      We take some purchase information from the "activated" event
+      and the rest from the "redeemed" and identify events that are used to
+      link the best buy purchase to the Philo account.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+        tests:
+          - not_null
+      - name: activated_at
+        description: The time of the best buy transaction and subscription activation.
+      - name: packages
+        description: '{{ doc("packages") }}'
+        tests:
+          - accepted_values:
+              values: [
+                '{{ "[\"philo-plus\"]" | as_text }}'
+                , '{{ "[\"philo-2021\"]" | as_text }}'
+              ]
+      - name: subscriber_state
+        description: '{{ doc("subscriber_state") }}'
+        tests:
+          - accepted_values:
+              values: "{{ var('subscriber_state_accepted_values') }}"
+          - dbt_utils.at_least_one
+      - name: subscriber_billing
+        description: '{{ doc("subscriber_billing") }}'
+        tests:
+          - accepted_values:
+              values: [
+                'bestbuy'
+              ]
+      - name: amount
+        description: The monthly cost of the subscription in dollars.
+      - name: is_gift
+        description: Is this subscription a gift? Currently no gifts occur with the best buy biller.
+        tests:
+          - accepted_values:
+              values: [ FALSE ]
+              quote: false
+      - name: is_active
+        description: Indication that the subscription is active at the time of the event.
+        tests:
+          - accepted_values:
+              values: [ TRUE ]
+              quote: false
+      - name: bby_price_type
+        description: >
+          An indication of the type of purchase, discounted or full price.
+          When the user pays something at the time of purchase (price_type = 0)
+          we consider them a paid subscriber from the time of the redemption.
+          When the user pays nothing (price_type = 1 or NULL) at the time of
+          the bby transaction we consider them a paid subscriber one month after
+          their activated event (day of purchase from BBY).
+        tests:
+          - accepted_values:
+              values: [0, 1]
+              quote: false       
+  - name: bby_billing_prod_subscription_cancelled
+    description: >
+      A table of cancellations that have been processed. These cancellations
+      can be reversed if a modify event follows the cancellation in an appropriate
+      amount of time.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+        tests:
+          - not_null
+      - name: end_date
+        description: The last day best buy will consider the account as being active.
+      - name: cancellation_effective_at
+        description: The last day Philo will consider the account as being active (potentially before best buy's dunning ends).
+      - name: cancel_reason_code
+        description: The best buy cancellation code.
+      - name: packages
+        description: '{{ doc("packages") }}'
+        tests:
+          - accepted_values:
+              values: [
+                '{{ "[\"philo-plus\"]" | as_text }}'
+                , '{{ "[\"philo-2021\"]" | as_text }}'
+              ]
+      - name: subscriber_state
+        description: '{{ doc("subscriber_state") }}'
+        tests:
+          - accepted_values:
+              values: "{{ var('subscriber_state_accepted_values') }}"
+          - dbt_utils.at_least_one
+      - name: subscriber_billing
+        description: '{{ doc("subscriber_billing") }}'
+        tests:
+          - accepted_values:
+              values: [
+                'bestbuy'
+              ]
+      - name: event
+        description: The segment event string.
+  - name: bby_billing_prod
+    description: >
+      A view of the set of payments, cancellation, and modifications
+      applied to bestbuy events to standardize into our common set of 
+      completed subscription payment and cancellation messages.
+      This model includes adjusting best buy free trials and logic for
+      cancellations and the reversal of a cancellation.
+      A notable adjustment is that for initially un-paid accounts we
+      adjust the "received_at" value to indicate the start of a paid
+      period instead of when the event was processed or received.
+    columns:
+      - name: account_id
+        description: '{{ doc("account_id") }}'
+        tests:
+          - not_null
+      - name: received_at
+        description: '{{ doc("received_at") }}'
+        tests:
+          - not_null
+      - name: activated_at
+        description: The time of the best buy transaction and subscription activation.
+      - name: packages
+        description: '{{ doc("packages") }}'
+        tests:
+          - accepted_values:
+              values: [
+                '{{ "[\"philo-plus\"]" | as_text }}'
+                , '{{ "[\"philo-2021\"]" | as_text }}'
+              ]
+      - name: subscriber_state
+        description: '{{ doc("subscriber_state") }}'
+        tests:
+          - accepted_values:
+              values: "{{ var('subscriber_state_accepted_values') }}"
+          - dbt_utils.at_least_one
+      - name: subscriber_billing
+        description: '{{ doc("subscriber_billing") }}'
+        tests:
+          - accepted_values:
+              values: [
+                'bestbuy'
+              ]
+      - name: amount
+        description: The monthly cost of the subscription in dollars.
+      - name: is_gift
+        description: Is this subscription a gift? Currently no gifts occur with the best buy biller.
+        tests:
+          - accepted_values:
+              values: [ FALSE ]
+              quote: false
+      - name: is_active
+        description: Indication that the subscription is active at the time of the event.
+        tests:
+          - accepted_values:
+              values: [ TRUE ]
+              quote: false
